@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.2 6/Feb/1998
+% Version 1.2c 9/April/1998
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -58,6 +58,8 @@
 %    m_xy2ll.m  - converts from map coordinates to long/lat
 %
 %    m_tba2b.m  - used in installing high-resolution elevation database.
+%
+%    m_vec.m    - fancy arrows
 %
 %  Internal functions (not meant to be user-callable)
 %

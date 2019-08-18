@@ -775,7 +775,9 @@ labelled contours:
 clabel(cs,h,'fontsize',6);
 </pre>
 
-
+<p>
+Fancy arrows (i.e. with width, head shape, and colour specifications) can be generated using
+<code> m_vec.m </code>. See the on-line help for more details about the use of <code>m_vec</code>.
 
 <hr>
 
@@ -924,6 +926,8 @@ m_grid('linestyle','none');
 <li>    m_contourf - draws filled contours
 <p>
 <li>    m_tba2b.m   - used in installing high-resolution elevation database.
+<p>
+<li>    m_vec.m     - fancy arrows
 </ol>
 
   Internal functions (not meant to be user-callable)
@@ -970,43 +974,40 @@ results in an incorrect warning flag being set
 when dividing some numbers by NaN. You can safely ignore these errors and
 wait for v5.2
 
-<p>
-<li> One user (Matlab 5.0 and 5.1 on Solaris) reported a problem when 
-trying to use a filled contour map 
-(of bathymetry). Although the plot looked OK on the screen the postscript
-output apparently had the drawing order of contour patches mixed up so that
-some contour levels didn't appear in the printed output. I could not reproduce
-the problem. However, it can be fixed by commenting out the following line
-in <code>m_grid.m</code>:
 
-<pre>
-patch('xdata',X(:),'ydata',Y(:),'zdata',-1e10*ones(prod(size(Y)),1),'facecolor',get(gca,'color'),...
-      'edgecolor','k','linest','none','userdata','m_color');
-</pre>
-
-This will give plots on the screen a transparent background. If you have this problem,
-let me know.
-
-<p>
-<li> Why do I always get labels at map boundaries even when I explicitly set x/yticks to a vector of
-values? 
-
-<p>
-For various reasons this seemed a good idea, and, (even better) the code made this this easiest
-choice to implement. However, in v1.2 this no longer happens - you only get ticks at exactly the locations
-specified. There is one exception: if <em> one </em> of the map limits is specified as a tick location,
-the other one will be labelled automatically. Let me know if this is a problem.
 
 
 </ol>
 
 
+<h2> <a name="p11">12. Changes since last release   </a> </h2> <p>
+
+<ol>
+<li> some v1.1 and 1.2 users reported problems with layers appearing in incorrect order (usually PC
+users). This was due to some kind of conflict with the map background patch. I have changed the way
+in which this is specified and layering appears to work correctly for all machines. Let me know
+if you have problems with this - emailing me your version of m_grid will help.
+
+<p>
+<li> A small bug in m_contourf resulted in patches extending beyond the map edge; this has now been
+fixed.
+
+<p>
+<li> Addition of E. Firing's fancy vector code (m_vec.m).
+
+<p>
+<li> Small changes in the auto-gridding so that edge limits are not automatically
+labelled (this makes things look a little cleaner).
+
+</ol>
+
 <hr>
 
 <a href="../map.html"> Back to home page </a>
 
+
 <hr>
 
-<I> Last changed 6/Feb/1998. Questions and comments to 
+<I> Last changed 9/April/1998. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

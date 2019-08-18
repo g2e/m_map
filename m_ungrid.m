@@ -10,7 +10,7 @@ function m_ungrid;
 
 hh=get(gca,'children');
 
-things=get(hh,'userdata');
+things=get(hh,'tag');
 
 for i=1:length(hh),
   if ~isempty(things{i}) & strmatch('m_',things{i}),

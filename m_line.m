@@ -11,7 +11,7 @@ function h=line(long,lat,varargin);
 %    parameter/value pairs to specify additional properties of the lines.
 %    These are standard 'line' properties.
 %
-%    See aslo LINE, M_LL2XY
+%    See also LINE, M_LL2XY
 
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 17/Jan/1998

@@ -16,6 +16,9 @@ function [cs,h,cf]=m_contourf(long,lat,data,varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+% 19/02/98 - type - should have been 'clip','patch', rather than 'off'.
+
+
 global MAP_PROJECTION 
 
 % Have to have initialized a map first
@@ -36,7 +39,9 @@ data(i)=NaN;
 
                  % And then recompute positions without clipping. THis
                  % is necessary otherwise contouring fails (X/Y with NaN
-                 % is a no-no.
-if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','off'); end;  
+                 % is a no-no. Note that this only clips properly down
+                 % columns of long/lat - not across rows. In general this
+                 % means patches may nto line up properly a right/left edges.
+if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','patch'); end;  
 
 [cs,h]=contourf(X,Y,data,varargin{:});

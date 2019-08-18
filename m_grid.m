@@ -25,6 +25,11 @@ function m_grid(varargin);
 % 16/02/98 - Made a little fudge to allow the user to fully specify grid location
 %            without getting the edge points. It doesn't quite work if only *one* edge
 %            point is desired....but I hope it will be OK that way.
+% 19/02/98 - PC-users complain about layers getting out of order! Their fault for using
+%            such an awful OS...however (with help from Eric Firing) I think I have
+%            a fix.
+%  7/04/98 - Another fix to grid locations to not automatically add edge points
+%            (as requested by EF)
 
 % Note that much of the work in generating line data 
 % is done by calls to the individual projections - 
@@ -159,23 +164,29 @@ end;
 [X,Y]=feval(MAP_PROJECTION.routine,'box');
 
 if strcmp(gbox,'on');
-  line(X(:),Y(:),'linest','-','linewi',glinewidth,'color',gcolor,'userdata','m_box','clip','off');
+  line(X(:),Y(:),'linest','-','linewi',glinewidth,'color',gcolor,'tag','m_box','clip','off');
 end;
 
 % Axes background - to defeat the inverthardcopy, I need a non-white border (the edgecolor),
 % but sneakily I can set it's width to (effectively) 0 so it doesn't actually show!
-%% 2/11/97 Add zdata to get this at the bottom./
-patch('xdata',X(:),'ydata',Y(:),'zdata',-1e10*ones(prod(size(Y)),1),'facecolor',get(gca,'color'),...
-      'edgecolor','k','linest','none','userdata','m_color');
+%
+% Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
+% so now I just draw a patch
+patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
+      'edgecolor','k','linest','none','tag','m_color');
 
 % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
 % cover anything)
-%%% 2/11/97 - remove this
-%% show=get(0, 'ShowHiddenHandles');
-%% set(0, 'ShowHiddenHandles', 'on');
-%% hh=get(gca,'children');
-%% set(gca,'children',hh([2:end 1]));
-%% set(0, 'ShowHiddenHandles', show);
+ show=get(0, 'ShowHiddenHandles');
+ set(0, 'ShowHiddenHandles', 'on');
+ hh=get(gca,'children');
+ htags = get(hh,'tag');
+ k = strmatch('m_color',htags);
+ hht = hh;
+ hh(k) = [];
+ hh = [hh;hht(k)];
+ set(gca,'children',hh);
+ set(0, 'ShowHiddenHandles', show);
 
 
 % X-axis labels and grid
@@ -206,7 +217,7 @@ if ~isempty(xtick),
 
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'userdata','m_xgrid');
+      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_xgrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -240,20 +251,20 @@ if ~isempty(xtick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'userdata','m_xticks-lower','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_xticks-lower','clip','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'userdata','m_xticks-upper','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_xticks-upper','clip','off');
  end;
 
  % Add the labels! (whew)
 
  ik=1:size(X,2);
- if length(xtick)>1 & length(xtick)==size(X,2)-2, ik=2:size(X,2)-1; end;
 
  for k=ik,
-   text(xx(k),yy(k),labs{k},'horizontal',horiz,'vertical',vert, ...
+   [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
+   text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk, ...
         'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
-        'userdata','m_xticklabel');
+        'tag','m_xticklabel');
  end;
 
  if fudge_north=='y',
@@ -274,7 +285,7 @@ if ~isempty(ytick),
  % Draw the grid
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'userdata','m_ygrid');
+      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_ygrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -307,18 +318,18 @@ if ~isempty(ytick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'userdata','m_yticks-left','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_yticks-left','clip','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'userdata','m_yticks-right','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_yticks-right','clip','off');
  end;
 
  % Finally - the labels!
  ik=1:size(X,2);
- if length(ytick)>1 & length(ytick)==size(X,2)-2, ik=2:size(X,2)-1; end;
 
  for k=ik,
-   text(xx(k),yy(k),labs{k},'horizontal',horiz,'vertical',vert,...
-        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,'userdata','m_yticklabels');
+   [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
+   text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk,...
+        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,'tag','m_yticklabels');
  end;
 
 end;
@@ -334,8 +345,33 @@ set(get(gca,'title'),'visible','on');
 set(get(gca,'xlabel'),'visible','on');
 set(get(gca,'ylabel'),'visible','on');
 
-
-
+%-------------------------------------------------------------
+% upright simply turns tick labels right-side up while leaving
+% their positions unchanged.
+% Sat  98/02/21 Eric Firing
+%
+function   [rotang, horiz, vert] = upright(rotang, horiz, vert);
+if rotang > 180, rotang = rotang - 360; end
+if rotang < -180, rotang = rotang + 360; end
+if rotang > 90,
+   rotang = rotang - 180;
+elseif rotang < -90,
+   rotang = 180 + rotang;
+else
+   return    % no change needed.
+end
+switch horiz(1)
+   case 'l'
+      horiz = 'right';
+   case 'r'
+      horiz = 'left';
+end
+switch vert(1)
+   case 't'
+      vert = 'bottom';
+   case 'b'
+      vert = 'top';
+end
   
 
 %--------------------------------------------------------------------------
@@ -459,4 +495,8 @@ else
   utx=[X(end,:);X(end,:)+tlen*(X(end-1,:)-X(end,:))./lx];
   uty=[Y(end,:);Y(end,:)+tlen*(Y(end-1,:)-Y(end,:))./lx];
 end;
+
+
+
+
 

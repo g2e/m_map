@@ -120,13 +120,15 @@ function gval=m_getinterval(gmin,gmax,gtick);
 %
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 2/Apr/1997
-
+%
+% 9/Apr/98 - changed things so that max/min limits are not automatically
+%            added (this feature made map corners messy sometimes) 
 
 % If ticks are specified, we just make sure they are within the limits
 % of the map.
 
 if length(gtick)>1,
-  gval=[gmin gtick(gtick(:)>gmin+200*eps & gtick(:)<gmax-200*eps) gmax];
+  gval=[gtick(gtick(:)>=gmin & gtick(:)<=gmax)];
 
 % Otherwise, we try to fit approximately gtick ticks in the interval
 else
@@ -145,7 +147,7 @@ else
 
     gval=niceints(I)/60*[ceil(gmin*60/niceints(I)):fix(gmax*60/niceints(I))];
     
-    gval=[gmin gval(gval>gmin+200*eps & gval<gmax-200*eps) gmax];
+    gval=[gval(gval>=gmin & gval<=gmax) ];
   else
     gval=[gmin gmax];
   end;
@@ -153,7 +155,7 @@ end;
 
  
 %--------------------------------------------------------------
-function [vals,labI,X,Y]=m_rectgrid(direc,Xlims,Ylims,Nx,Ny,label_pos);
+function [X,Y,vals,labI]=m_rectgrid(direc,Xlims,Ylims,Nx,Ny,label_pos);
 % M_RECTGRID This handles some of the computations involved in creating grids
 %            for rectangular maps. Essentially we make our "first guess" using the
 %            lat/long limits. Then these curves are clipped to the boundaries, after
@@ -173,7 +175,9 @@ vals=mu_util('axisticks',Xlims(1),Xlims(2),Nx);
 
 if strcmp(MAP_VAR_LIST.rectbox,'on') |  strcmp(MAP_VAR_LIST.rectbox,'circle'),
 
- vals=vals(2:end-1);  % We don't want the end limits here
+ % We don't want the end limits here.
+ if vals(end) == Xlims(2), vals(end) = []; end
+ if vals(1)   == Xlims(1), vals(1)   = []; end
 
  if direc(1)=='x',
   [lg,lt]=meshgrid(vals,Ylims(1)+diff(Ylims)*[0:1/Ny1:1]);

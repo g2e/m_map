@@ -1,13 +1,18 @@
 function h=m_quiver(long,lat,u,v,varargin);
+% M_QUIVER Makes a quiverplot on a map (QUIVER-style)
 %    M_QUIVER(LONG,LAT,U,V) plots velocity vectors as arrows with components 
-%    (u,v) at the points (LONG,LAT) on the currently defined map.  The 
+%    (U,V) at the points (LONG,LAT) on the currently defined map.  The 
 %    matrices LONG,LAT,U,V must all be the same size. U and V contain the 
 %    eastward and northward components of velocity. Arrow scaling is automatic.
 % 
 %    M_QUIVER(X,Y,U,V,S) automatically scales the arrows to fit within the 
 %    grid and then stretches them by S.  Use S=0 to plot the arrows without 
 %    the automatic scaling; In this case the scaling is 1 unit/degree 
-%    latitude. 
+%    latitude. Note that we do not scale arrows with respect to map 
+%    coordinates! Instead, the arrows will correspond better to actual motions
+%    over some time step. The tradeoff is that a single scale arrow cannot
+%    be accurate for the entire map (M_VEC scales arrows according to
+%    map coordinates).
 % 
 %    M_QUIVER(...,LINESPEC) uses the plot linestyle specified for
 %    the velocity vectors.  Any marker in LINESPEC is drawn at the base
@@ -15,13 +20,13 @@ function h=m_quiver(long,lat,u,v,varargin);
 %    no marker at all.  See PLOT for other possibilities. M_QUIVER is a wrapper
 %    for QUIVER - for fancier arrows it is possible to replace the call to 
 %    QUIVER with one to another routine that draws fancy arrows, e.g. 
-%    ARROW (from TMW user-contrib software archive).
+%    ARROW (from TMW user-contrib software archive), or to use M_VEC.
 %
 %    M_QUIVER(...,'filled') fills any markers specified.
 % 
 %    H = M_QUIVER(...) returns a vector of line handles.
 % 
-%    See also QUIVER.
+%    See also QUIVER, M_VEC
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 20/Jan/97
 %
