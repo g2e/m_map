@@ -1,9 +1,12 @@
 function han = m_plot(varargin)
 
 % M_PLOT Plot objects on an M_MAP plot.   All of the normal
-% Matlab plot options are available.  
-
+% Matlab plot options are available.  NOTE - this isn't exactly
+% like plot as only the first two arguments are actually converted
+% to map coords, i.e.:
+%
 % USAGE: M_PLOT(LON,LAT,[OPTIONS]) 
+%
 
 % Deirdre Byrne, dbyrne@umeoce.maine.edu 00/07/27 (v1.1)
 %

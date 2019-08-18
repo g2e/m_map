@@ -38,7 +38,9 @@ function m_grid(varargin);
 % 16/10/05 - Kirk Ireson discovered that the way to fix those annoying 'cut-throughs'
 %            in fancy_box was to add a 'large' zdata...so I've adapted his fix in
 %            fancybox and fancybox2.
-
+% 21/11/06 - added 'backcolor'
+% 16/4/07  - sorted ticklabels when user-specified (prevents an odd problem near in
+%            azimuthal projections).
 
 % Note that much of the work in generating line data 
 % is done by calls to the individual projections - 
@@ -70,6 +72,7 @@ ytick=6;
 xlabels=NaN;
 ylabels=NaN;
 gcolor='k';
+gbackcolor='w'; %%get(gcf,'color');
 glinestyle=':';
 glinewidth=get(gca,'linewidth');
 gbox='on'; 
@@ -94,13 +97,13 @@ while k<=length(varargin),
       gbox=varargin{k+1};
     case 'xti',
       if length(varargin{k})==5,
-        xtick=varargin{k+1};
-      else
+        xtick=sort(varargin{k+1});   % Added 'sort' here for people who put things in
+      else                           % a random order near poles
         xlabels=varargin{k+1};
       end;
     case 'yti',
       if length(varargin{k})==5,
-        ytick=varargin{k+1};
+        ytick=sort(varargin{k+1});
       else
         ylabels=varargin{k+1};
       end;
@@ -110,6 +113,8 @@ while k<=length(varargin),
       gyticklabeldir=varargin{k+1};
     case 'col',
       gcolor=varargin{k+1};
+    case 'bac',
+      gbackcolor=varargin{k+1};
     case 'lin',
       switch lower(varargin{k}(1:5)),
          case 'linew',
@@ -146,6 +151,7 @@ while k<=length(varargin),
       disp('      ''ticklen'',value');
       disp('      ''tickdir'',( ''in'' | ''out'' )');
       disp('      ''color'',colorspec');
+      disp('      ''backcolor'',colorspec');
       disp('      ''linewidth'', value');
       disp('      ''linestyle'', ( linespec | ''none'' )');
       disp('      ''fontsize'',value');
@@ -198,7 +204,7 @@ end;
 a=version;
 %%if  sscanf(a.Version,'%f') >6.0 & ~ispc,
 if  sscanf(a(1:3),'%f') >6.0 & ~ispc,
-  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',get(gca,'color'),...
+  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
 	'edgecolor','k','linest','none','tag','m_grid_color');
 
 else
@@ -207,7 +213,7 @@ else
 % way (above) with higher versions. Maybe the PC version works now?
 % Unfortunately this kludge has some strange side-effects.
 
-  patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
+  patch('xdata',X(:),'ydata',Y(:),'facecolor',gbackcolor,...
 	'edgecolor','k','linest','none','tag','m_grid_color');
 
   % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
@@ -246,7 +252,7 @@ if ~isempty(xtick),
 
  [X,Y,lg,lgI]=feval(MAP_PROJECTION.routine,'xgrid',xtick,gxaxisloc);
  [labs,scl]=m_labels('lon',lg,xlabels);
-
+ 
  % Draw the grid. Every time we draw something, I first reshape the matrices into a long
  % row so that a) it plots faster, and b) all lines are given the same handle (which cuts
  % down on the number of children hanging onto the axes).

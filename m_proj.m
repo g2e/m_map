@@ -16,6 +16,12 @@ function m_proj(proj,varargin)
 % it's mine, so you can't sell it.
 %
 % 20/Sep/01 - Added support for other coordinate systems.
+% 25/Feb/07 - Swapped "get" and "set" at lines 34 and 47 
+%		to make it consistent with the help 
+%		(and common Matlab style)
+%	    - Added lines 62-70 & 74 
+%		to harden against error when no proj is set
+%             (fixes thanks to Lars Barring)
 
 global MAP_PROJECTION MAP_VAR_LIST MAP_COORDS
 
@@ -28,7 +34,7 @@ proj=lower(proj);
 
 switch proj,
 
-  case 'get',              % Print out their names
+  case 'set',              % Print out their names
     if nargin==1,
       disp(' ');
       disp('Available projections are:'); 
@@ -41,7 +47,7 @@ switch proj,
       disp(X);
     end;
 
-  case 'set',              % Get the values of all set parameters
+  case 'get',              % Get the values of all set parameters
     if nargin==1,
       if isempty(MAP_PROJECTION),
          disp('No map projection initialized');
@@ -53,9 +59,19 @@ switch proj,
          disp(X);
       end;
     else
-      k=m_match(varargin{1},projections(:).name);
-      eval(['X=' projections(k).routine '(''get'');']);
-      disp(X);
+      if isempty(MAP_PROJECTION),          
+        k=m_match(varargin{1},projections(:).name);
+        eval(['X=' projections(k).routine '(''set'',projections(k).name);']);
+        X=strvcat(X, ...
+                  ' ', ...
+                  '**** No projection is currently defined      ****', ...
+                  ['**** USE "m_proj(''' varargin{1} ''',<see options above>)" ****']);
+        disp(X);
+      else
+	k=m_match(varargin{1},projections(:).name);
+	eval(['X=' projections(k).routine '(''get'');']);
+	disp(X);
+      end;	
     end;
 
   case 'usage',

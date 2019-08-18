@@ -35,8 +35,9 @@ function h=m_quiver(long,lat,u,v,varargin);
 %
 
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
-
-
+% 7/jul/06 - changed angle calc to work correctly very near boundaries.
+% 12/jul/06 - fixed a factor of 10 error that crept into the length of unscaled
+%             arrows between version 1.3f and 1.4a (pointed out D. Kaplan).
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -51,11 +52,18 @@ end;
 
 [X,Y]=m_ll2xy(long,lat,'clip','point');
 
-[XN,YN]=m_ll2xy(long,lat+.001,'clip','point');
-[XE,YE]=m_ll2xy(long+(.001)./cos(lat*pi/180),lat,'clip','point');
+% This is the old way, now replaced  - RP 7/jun/06
+%[XN,YN]=m_ll2xy(long,lat+.001,'clip','point');
+%[XE,YE]=m_ll2xy(long+(.001)./cos(lat*pi/180),lat,'clip','point');
 
-mU=u.*(XE-X)*100 + v.*(XN-X)*100;
-mV=u.*(YE-Y)*100 + v.*(YN-Y)*100;
+%mU=u.*(XE-X)*100 + v.*(XN-X)*100;
+%mV=u.*(YE-Y)*100 + v.*(YN-Y)*100;
+
+[XN ,YN ]=m_ll2xy([long(:) long(:)]',[lat(:) lat(:)+.001]','clip','off');
+[XE ,YE ]=m_ll2xy([long(:) long(:)+(.001)./cos(lat(:)*pi/180)]',[lat(:) lat(:)]','clip','off');
+mU=u.*reshape(diff(XE),size(lat))*1000 + v.*reshape(diff(XN),size(lat))*1000;
+mV=u.*reshape(diff(YE),size(lat))*1000 + v.*reshape(diff(YN),size(lat))*1000;
+
 
 h=quiver(X,Y,mU,mV,varargin{:});
 set(h,'tag','m_quiver');

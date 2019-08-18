@@ -56,6 +56,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %        15/Dec/05  - speckle additions
 %        21/Mar/06  - handling of gshhs v1.3 (developed from suggestions by
 %                     Martin Borgh)
+%        26/Nov/07 - changed 'finite' to 'isfinite; after warnings
 %
 
 % This software is provided "as is" without warranty of any kind. But
@@ -129,15 +130,19 @@ switch MAP_PROJECTION.routine,
    % min long because that can cause problems in trying to decide which way
    % curves are oriented when doing the fill algorithm below. So instead
    % I sort of crunch the scale, preserving topology.
-   nn=ncst(:,1)<MAP_VAR_LIST.longs(1);
-   ncst(nn,1)=(ncst(nn,1)-MAP_VAR_LIST.longs(1))/100+MAP_VAR_LIST.longs(1);
+   %
+   % 12/Sep/2006 - in the gsshs_crude database we have a lot of long skinny
+   % things which interact badly with this - so I offset the scrunch 2 degrees
+   % away from the bdy
+   nn=ncst(:,1)<MAP_VAR_LIST.longs(1)-2;
+   ncst(nn,1)=(ncst(nn,1)-MAP_VAR_LIST.longs(1)+2)/100+MAP_VAR_LIST.longs(1)-2;
   elseif MAP_VAR_LIST.longs(2)>180,
    Area=[Area;Area];
    k=[k;k(2:end)+k(end)-1];
    ncst=[ncst;[ncst(2:end,1)+360 ncst(2:end,2)]];
    % Ditto.
-   nn=ncst(:,1)>MAP_VAR_LIST.longs(2);
-   ncst(nn,1)=(ncst(nn,1)-MAP_VAR_LIST.longs(2))/100+MAP_VAR_LIST.longs(2);
+   nn=ncst(:,1)>MAP_VAR_LIST.longs(2)+2;
+   ncst(nn,1)=(ncst(nn,1)-MAP_VAR_LIST.longs(2)-2)/100+MAP_VAR_LIST.longs(2)+2;
   end;
 end;
 
@@ -188,9 +193,10 @@ switch optn,
   
   for i=1:length(k)-1,
     x=X(k(i)+1:k(i+1)-1);
-    fk=finite(x);
+    fk=isfinite(x);
     if any(fk),
       y=Y(k(i)+1:k(i+1)-1);
+%% if i>921, disp('pause 1'); pause; end; 
       nx=length(x);
       if Area(i)<0, x=flipud(x);y=flipud(y); fk=flipud(fk); end;
 %clf
@@ -208,7 +214,7 @@ switch optn,
         if c_edge(x(1),y(1))==9999,
           x=x([(ed(1)+1:end) (1:ed(1))]);
           y=y([(ed(1)+1:end) (1:ed(1))]);
-          fk=finite(x);
+          fk=isfinite(x);
           st=find(diff(fk)==1)+1;
           ed=[find(diff(fk)==-1);nx];
           if length(st)<length(ed), st=[1;st]; end
@@ -289,6 +295,7 @@ switch optn,
 	       p_hand(i)=m_hatch(xx,yy,'outspeckle',varargin{2:end});
             end;
 	  end;  
+%%%if i>921, disp(['paused-2 ' int2str(i)]);pause; end;
           ed(1)=[];st(1)=[];edge2(1)=[];edge1(1)=[];
         else
           xx=[xx;x(st(mi):ed(mi))];
@@ -296,7 +303,7 @@ switch optn,
           ed(1)=ed(mi);st(mi)=[];ed(mi)=[];
           edge2(1)=edge2(mi);edge2(mi)=[];edge1(mi)=[];
         end;
-%%disp(['paused-2 ' int2str(i)]);pause;
+%%if i>921, disp(['paused-2 ' int2str(i)]);pause; end;
       end;
     end; 
   end;  
@@ -311,7 +318,7 @@ switch optn,
   [X,Y]=m_ll2xy(ncst(:,1),ncst(:,2),'clip','on');
  
   % Get rid of 2-point lines (these are probably clipped lines spanning the window)
-  fk=finite(X);        
+  fk=isfinite(X);        
   st=find(diff(fk)==1)+1;
   ed=find(diff(fk)==-1);
   k=find((ed-st)==1);

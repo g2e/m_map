@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
-% Version 1.4c 9 jan.2005
+% Version 1.4d 8 Nov.2006
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -45,6 +45,7 @@
 %
 %    m_grid.m      - draws grids 
 %    m_scale       - forces map to a given scale.
+%    m_ruler       - draw a scale ruler
 %
 %    m_ungrid.m    - erases map elements (if you want to change parameters)
 %
@@ -125,10 +126,7 @@
 % email: rich@eos.ubc.ca 
 %
 %
-% Dec 15 2005  - added m_hatch, modified all mp_*, mu_coast, m_gshhs_*
-%                to properly use m_hatch for speckled edges.
-%
-
+ 
 
     
 

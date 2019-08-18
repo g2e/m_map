@@ -20,6 +20,7 @@ function varargout=mu_util(optn,varargin);
 
 % 31/Mar/04 - added a fix in m_rectgrid that caused problems when a map
 % boundary coincided with a grid line.
+% 26/Oct/07 - fixed the same problem when it occurred near SOUTH pole!
 
 switch optn,
   case 'clip',
@@ -81,7 +82,7 @@ if ~strcmp(cliptype,'point'),
     Yc(I)=Y(I)+(Xedge-X(I)).*(Y(I+1)-Y(I))./bt;
     Yc(I(ibt))=(Y(I(ibt))+Y(I(ibt)+1))/2;
     Xc(I)=Xedge;
-    indx(I(finite(Yc(I))))=0;
+    indx(I(isfinite(Yc(I))))=0;
   end;
 
   % Find regions where we suddenly come out of the area
@@ -101,7 +102,7 @@ if ~strcmp(cliptype,'point'),
     Yc(I+1)=Y(I)+(Xedge-X(I)).*(Y(I+1)-Y(I))./bt;
     Yc(I(ibt)+1)=(Y(I(ibt))+Y(I(ibt)+1))/2;
     Xc(I+1)=Xedge;
-    indx(I(finite(Yc(I+1)))+1)=0;
+    indx(I(isfinite(Yc(I+1)))+1)=0;
   end;
 
 end;
@@ -195,9 +196,9 @@ if strcmp(MAP_VAR_LIST.rectbox,'on') |  strcmp(MAP_VAR_LIST.rectbox,'circle'),
 
  % Now we find the first/last unclipped values; these will be our correct starting points.
  % (Note I am converting to one-dimensional addressing).
-
- istart=sum(cumsum(finite(X))==0)+1+[0:size(X,2)-1]*size(X,1);
- iend=size(X,1)-sum(cumsum(finite(flipud(X)))==0)+[0:size(X,2)-1]*size(X,1);
+ 
+ istart=sum(cumsum(isfinite(X))==0)+1+[0:size(X,2)-1]*size(X,1);
+ iend=size(X,1)-sum(cumsum(isfinite(flipud(X)))==0)+[0:size(X,2)-1]*size(X,1);
 
  % Now, in the case where map boundaries coincide with limits it is just possible
  % that an entire column might be NaN...so in this case make up something just
@@ -205,6 +206,10 @@ if strcmp(MAP_VAR_LIST.rectbox,'on') |  strcmp(MAP_VAR_LIST.rectbox,'circle'),
  
  i3=find(iend==0); 
  if any(i3), istart(i3)=1; iend(i3)=1; end; 
+
+ % do same fix for istart (thanks Ben Raymond for finding this bug)
+ i3=find(istart>prod(size(X)));
+ if any(i3), istart(i3)=1; iend(i3)=1; end;
   
  % Now go back and find the lat/longs corresponding to those points; these are our new
  % starting points for the lines (Note that the linear interpolation for clipping at boundaries
@@ -302,10 +307,10 @@ MAP_VAR_LIST.lats=[min(real(lt)) max(real(lt))];
 
 % Are the poles within the axis limits? (Test necessary for oblique mercator and azimuthal)
 [px,py]=feval(MAP_PROJECTION.routine,'ll2xy',[0 0],[-90 90],'clip','point');
-if finite(px(1)), MAP_VAR_LIST.lats(1)=-90; end;
-if finite(px(2)), MAP_VAR_LIST.lats(2)= 90; end;
+if isfinite(px(1)), MAP_VAR_LIST.lats(1)=-90; end;
+if isfinite(px(2)), MAP_VAR_LIST.lats(2)= 90; end;
 
-if any(finite(px)),
+if any(isfinite(px)),
   MAP_VAR_LIST.longs=[-179.9 180]+exp(1); % we add a weird number (exp(1)) to get away from 
                          % anything that might conceivably be desired as a 
                          % boundary - it makes grid generation easier.

@@ -51,6 +51,7 @@ function [hp, ht] = mvec(s, x, y, varargin)  % and color, etc
 %
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 % 2/May/01 - small bug fix (thx to Pierre Jaccard)
+% 7/jun/06 - arrows near boundaries were not done correctly - now fixed.
 
 global MAP_PROJECTION
 
@@ -308,10 +309,19 @@ uvmag = abs(u + i*v);
 % Arrow lengths in plot data units:
 L = uvmag*sc/UVperIn;
 
+% base of arrows. Don't plot if outside boundaries (except for keys for which clip is off)
 [xs, ys] = m_ll2xy(x,y, 'clip', clip);
-[xsp, ysp] = m_ll2xy(x+0.1*u./uvmag, y+0.1*v.*cos(y*pi/180)./uvmag, 'clip', clip);
+
+%[xsp, ysp] = m_ll2xy(x+0.1*u./uvmag, y+0.1*v.*cos(y*pi/180)./uvmag, 'clip', clip);
 % Vector angles in the Cartesian data-unit system of m_map:
-Ang = angle( (xsp-xs) + i*(ysp-ys) );
+%Ang = angle( (xsp-xs) + i*(ysp-ys) );
+% ABove angle calc could fail when arrows were near boundaries. Replace with this.
+% Now we calculate angles. Use a small offset, and keep clipping off to prevent odd things
+% happening.
+%    - RP 7/Jun/06
+[xsp, ysp] = m_ll2xy([x x+0.00001*u./uvmag]',[y y+0.00001*v.*cos(y*pi/180)./uvmag]' , 'clip', 'off');
+Ang = angle( diff(xsp)' + i*diff(ysp)' );
+
 if ~isempty(key), Ang = 0; end
 
 
@@ -413,7 +423,8 @@ Faces = reshape(Faces,7,nvec).';
 % Extremely narrow patches don't show up on the screen (although they seem
 % to be printed OK) when EdgeColor is 'none', so when the arrows are all
 % the same color, set the EdgeColor to be the same as FaceColor.
-hp = patch('Faces', Faces, 'Vertices', Vert, 'tag', 'm_vec');
+% Set clip off here so arrows are complete - RP 7/Jun/06
+hp = patch('Faces', Faces, 'Vertices', Vert, 'tag', 'm_vec','clip','off');
 if ischar(c) | (size(c,1) == 1 & size(c,2) == 3),
    set(hp, 'EdgeColor', c, 'FaceColor', c, 'LineWidth', 0.1);
 else

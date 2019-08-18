@@ -52,7 +52,8 @@ if any(~i(:)),
  % Bug in contourf call - Solution Number: 1-1W36E8
   if any(strfind(version,'(R14) Service Pack 3')) | ...
      any(strfind(version,'7.2.0.294 (R2006a)')) | ....
-     any(strfind(version,'7.2.0.232 (R2006a)')),
+     any(strfind(version,'7.2.0.294 (R2006a)')) | ....
+     any(strfind(version,'7.4.0.336 (R2007a)')),
    [cs,h]=contourf('v6',X,Y,data,varargin{:});
   else
    [cs,h]=contourf(X,Y,data,varargin{:});

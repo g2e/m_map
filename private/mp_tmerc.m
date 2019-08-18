@@ -138,12 +138,13 @@ switch optn,
       case name(5),
         
         % Have to use interative scheme to get intermediate variable "theta".
+	%   cos(theta) changed to cos(2*theta) -thanks Zhigang Xu! Dec 2006.
         theta=(asin(lat/90)+lat*pi180)/2;
-        dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(theta))/2;
+        dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(2*theta))/2;
         k=1;
         while any(abs(dt(:))>.001) & k<15,
           theta=theta+dt;
-          dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(theta))/2;
+          dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(2*theta))/2;
           k=k+1;
  %% fprintf('%f %f\n',max(theta(:))/pi180,max(abs(dt(:))));
         end;
