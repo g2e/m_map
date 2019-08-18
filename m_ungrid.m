@@ -20,10 +20,15 @@ function m_ungrid(goptn)
 % it's mine, so you can't sell it.
 
 if nargin==0
-  mstr='m_grid_';
+    mstr='m_grid_';
 else
-  mstr=['m_' lower(goptn)];
+    mstr=['m_' lower(goptn)];
+    if strmatch('utm',lower(goptn)) & strncmp('m_utm_grid',get(gca,'tag'),5)
+         set(gca,'visible','off');
+         return
+    end
 end
+
 
 hh=get(gca,'children');
 

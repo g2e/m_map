@@ -83,16 +83,16 @@ switch optn
     MAP_VAR_LIST.ulats = [40 44];
     MAP_VAR_LIST.zone = 0;		% will be computed if not there
     MAP_VAR_LIST.hemisphere = -1;
-    MAP_VAR_LIST.ellipsoid = 'normal';
+    MAP_VAR_LIST.ellipsoid = 'wgs84';
     MAP_VAR_LIST.rectbox='off';
     k=2;
 
     while k<length(varargin) 
       switch varargin{k}(1:3)
 	case 'lon'
-	  MAP_VAR_LIST.ulongs=varargin{k+1};
+	  MAP_VAR_LIST.ulongs=varargin{k+1}(:)';
 	case 'lat'
-	  MAP_VAR_LIST.ulats=varargin{k+1};
+	  MAP_VAR_LIST.ulats=varargin{k+1}(:)';
 	case 'zon'
 	  MAP_VAR_LIST.zone=varargin{k+1};
 	case 'hem'

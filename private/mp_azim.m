@@ -70,9 +70,9 @@ switch optn
     while k<length(varargin)
       switch varargin{k}(1:3)
          case 'lon'
-           MAP_VAR_LIST.ulong=varargin{k+1};
+           MAP_VAR_LIST.ulong=varargin{k+1}(:)';
          case 'lat'
-           MAP_VAR_LIST.ulat=varargin{k+1};
+           MAP_VAR_LIST.ulat=varargin{k+1}(:)';
          case {'rad','alt'}
            MAP_VAR_LIST.uradius=varargin{k+1};
          case 'rec'

@@ -8,6 +8,17 @@ function h=m_streamline(long,lat,u,v,varargin)
 %    eastward and northward components of velocity (in m/s or equivalent, NOT
 %    degrees lat/long  per sec or equivalent). Arrow scaling is automatic.
 % 
+%   Note - this is basically a call to STREAMSLICE, which has some limitations and
+%   cannot be used for ALL projections. In particular, STREAMSLICE requires that
+%
+%            [X,Y]=m_ll2xy(LONG,LAT,'clip','point')
+%
+%   returns X/Y matrices that themselves must be monotonic and plaid (as if produced
+%   by MESHGRID). This means that a) none of the points are from outside the map
+%   boundaries (since the M_LL2XY call will turn them into NaN), and b) you are
+%   probably limited to cylindrical projections (miller, mercator, equidistant 
+%   cylindrical). 
+%
 %   M_STREAMLINE(...,density) modifies the automatic spacing of the streamlines. 
 %   Density must be greater than 0. The default value is 1; higher values 
 %   produce  more streamlines on each plane. For example, 2 produces 
@@ -60,6 +71,11 @@ end
 
 
 [X,Y]=m_ll2xy(long,lat,'clip','point');
+
+if any(isnan(X(:)))
+  error(['M_Map : ' mfilename ' : InvalidInputs - input data includes points outside the map area']);
+end
+  
 
 [XN ,YN ]=m_ll2xy([long(:) long(:)]',[lat(:) lat(:)+.001]','clip','off');
 [XE ,YE ]=m_ll2xy([long(:) long(:)+(.001)./cos(lat(:)*pi/180)]',[lat(:) lat(:)]','clip','off');

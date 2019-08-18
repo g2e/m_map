@@ -62,7 +62,8 @@ function h=m_gshhs(resolution,varargin)
 % 20/Jan/2008 - added borders and rivers from gshhs v1.10
 % 4/DEc/11 - isstr to ischar
 % Sep/14 - added hierarchy to borders
-
+% Aug/18 - fixed error that occurred when called m_gshhs_X with 'save'
+%          option (Thanks to H. Grant for pointing this out).
 
 
 % Root of directories where all the gshhs_X.b, wdb_borders-X.b and wdb_rivers_X.b
@@ -110,6 +111,7 @@ m_coord('geographic');
 if length(varargin)>1 && strcmp(varargin{1},'save')
   [ncst,Area,k]=mu_coast(res_char,file);
   save(varargin{2},'ncst','k','Area');
+  h=varargin{2};   % Error if you call m_gshhs_i with 'save' option - thanks HG, Aug/1/2018
 else
   h=mu_coast([res_char flaglim],file,varargin{:},'tag',tag_name);
 end

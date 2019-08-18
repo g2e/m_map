@@ -29,10 +29,11 @@
  <li><a href="./map.html#relnotes">Release Notes</a></li>
  <li><a href="./mapug.html">Users Guide</a></li>
  <li><a href="./map.html#examples">Example Code<a></li>
+ <li><a href="./map.html#Citation">Citation<a></li>
  <li><a href="./map.html#ack">Acknowledgements</a></li>
 </ul>   
 
-<p class="menu"> Last changed 15/Dec/2017. Questions and comments to <a
+<p class="menu"> Last changed 9/Jan/2019. Questions and comments to <a
  href="mailto:rich@eos.ubc.ca">rich@eos.ubc.ca</a></p> 
   
   </div>
@@ -57,7 +58,7 @@ would...or you can invest in Matlab's own mapping toolbox (with a similarly stee
 
 
 
-<h2> Announcing M_Map v1.4i! <br> (released Dec/2017)</h2>
+<h2> Announcing M_Map v1.4j! <br> (released May/2018)</h2>
 
 
 
@@ -142,6 +143,17 @@ bathymetry databases.</li>
       </td>
     </tr>
     <tr>
+       <td align="center" valign="middle"><a href="#17._shaded2"><img src="././doc/new.gif" align="left"><img src="./doc/SouthChinaSea.png"
+ alt=""   width="125" class="click"></a></td>
+     <td align="center" valign="middle"><a href="#18._shaded3"><img src="././doc/new.gif" align="left"><img src="./doc/VanHarb.png"
+ alt=""   width="125" class="click"></a></td>
+ <td></td>
+   <td></td>
+    <td align="center" valign="middle"><a href="#21._colmaps"><img src="././doc/new.gif" align="left"><img src="./doc/exColmaps.png"
+ alt=""   width="125" class="click"></a></td>
+
+   </tr>
+    <tr>
       <td align="center" valign="middle"><a href="map.html#1._Global_SST"><img src="./doc/exsst.png"
  alt=""   width="125" class="click"></a>
       <td align="center" valign="middle"> <a
@@ -165,8 +177,11 @@ bathymetry databases.</li>
  src="./doc/exargo.png" alt=""   width="125" class="click"> </a>  </td>
   <td align="center" valign="middle"><a href="map.html#7._SAR"><img
  src="./doc/exSAR.png" alt=""   width="125" class="click"> </a>  </td>
-  <td></td>
-  <td></td>
+    <td align="center" valign="middle"><a href="#16._shaded1"><img src="././doc/new.gif" align="left"><img src="./doc/shaded1.png"
+ alt=""   width="125" class="click"></a></td>
+      <td align="center" valign="middle"><a href="#17._goog"><img src="././doc/new.gif" align="left"><img src="./doc/exgoog.png"
+ alt=""   width="125" class="click"></a></td>
+   
    <td></td>
   
 
@@ -215,8 +230,13 @@ automatically adding names to your map), through its home page at
 <hr>
 <h2> <a name="relnotes"> Release Notes</a></h2>
 
-<p>New in release 1.4i:<img
- src="././doc/new.gif" align="left"></p>
+<p>New in release 1.4j (May/2018):<img src="././doc/new.gif" align="left"></p>
+<ol>
+<li>Shaded relief mapping with <code>m_shadedrelief</code>.</li>
+<li>An independent grid for UTM maps with <code>m_utmgrid</code></li>
+</ol>
+
+<p>New in release 1.4i (Jan/2018): </p>
 <ol> 
 <li> Finally sorted out the major "2014b and later matlab graphics engine" related problems with <code>m_grid</code>, as well as many
 minor graphics improvements.
@@ -228,7 +248,7 @@ minor graphics improvements.
 <li> Added link to a Chinese translation of the Users Guide, as well as to the mapping GUI MAP-LAB which is built on top of M_Map.</li>
 <li> List of coded examples updated, and a few new ones added.</li>
 </ol>
-<p>New in release 1.4h are</p>  
+<p>New in release 1.4h (Nov/2017) are</p>  
 <ol>
   <li> ETOPO2v2 and ETOPO1 support.
   <li> Handled some warnings about BITMAX that arise in Matlab 2014b. Note - I have only been able to
@@ -237,7 +257,7 @@ minor graphics improvements.
   "may consider fixing this in future releases".
   <li> Added option to output national+state or national borders only in <code>m_gshhs</code>.
 </ol>
-<p>  New in release 1.4g are</p>
+<p>  New in release 1.4g (Jan/2014) are</p>
 <ol>
   <li><code>m_ellipse.m</code> to plot tidal ellipses (say, from <a href="http://www.eos.ubc.ca/~rich/index.html#T_Tide"> T_Tide </a>)
   <li>Option to use either decimal-degrees or degrees/decimal-minutes in grid axis labels
@@ -245,27 +265,27 @@ minor graphics improvements.
   M_Map has a workaround that MOSTLY works, but it would
   be better to avoid using 2013b.
   </ol>
-<p>New in release 1.4f are</p>
+<p>New in release 1.4f (May/2012) are</p>
 <ol>
   <li><code>m_shaperead.m </code>to read SHAPEFILES! (so <a href="http://www.naturalearthdata.com/">Natural Earth</a> can be
   used for political boundaries instead of DCW, among other opportunities) </li>
   <li>gshhs version 2 support</li>
   <li> partial OCTAVE compatibility </li>
  </ol>
-<p>New in release 1.4e are</p>
+<p>New in release 1.4e (May/2010) </p>
 <ol>
   <li>GSHHS Now comes with the WDB rivers and borders database, and
       links to them have been added via <code>m_gshhs.m </code></li>
   <li>Ellipsoidal Albers and Lambert conic projections included </li>
  </ol>
-<p>New in release 1.4d are</p>
+<p>New in release 1.4d (Oct/2007) are</p>
 <ol>
   <li>Modifications to work around bugs in matlab7 <code>contourf</code> </li>
   <li>Robinson projection</li>
   <li>A few compatibility issues with current matlab versions
   <li>Upgraded hooks into some databases.
  </ol>
-<p>New in release 1.4b are</p>
+<p>New in release 1.4b (Jun/2006) are</p>
 <ol>
   <li>m_hatch for hatched and speckled patches</li>
   <li>old-fashioned speckled coastlines (good for B&amp;W pics - see <a
@@ -276,7 +296,7 @@ minor graphics improvements.
 earth.<br>
   </li>
 </ol>
-<p>New in release 1.4 are</p>
+<p>New in release 1.4 (Nov/2005) are</p>
 <ol>
   <li><code>m_pcolor</code></li>
   <li><code>m_coord</code> (to allow for geographic and geomagnetic coordinate
@@ -617,6 +637,79 @@ set(gcf,'color','w');  % otherwise 'print' turns lakes black
 <img src="./doc/exbathym.png"  width=65%>
 
 
+
+<h4><a name="17._shaded2"></a> <a name="e16"></a>16. Shaded Relief (Example 1)</h4>
+<pre>
+[ELEV,LON,LAT]=m_etopo2([105 125 5 24]);
+
+m_proj('equidist','lat',[5 24],'long',[105 125],'sphere','sphere');
+
+caxis([-6000 0]);
+colormap(flipud([flipud(m_colmap('blues',10));m_colmap('jet',118)]));
+m_shadedrelief(LON,LAT,ELEV,'gradientfactor',3);
+
+m_gshhs_i('patch',[.8 .8 .8]);
+ 
+m_grid('box','fancy');
+
+ax=m_contfbar(.97,[.5 .9],ELEV,[-6000:100:000],'edgecolor','none','endpiece','no');
+xlabel(ax,'meters','color','k');
+</pre>
+
+<img src="./doc/SouthChinaSea.png"  width=100%>
+
+
+<h4><a name="18._shaded3"></a> <a name="e16"></a>17. Shaded Relief (Example 2)</h4>
+<pre>
+m_proj('utm','ellipse','grs80','zone',10,'lat',[49+15.7/60 49+21/60],...
+        'long',[-123-15/60 -123-3/60]);      
+
+% Uses multibeam bathymetry with 10m horizontal resolution
+
+caxis([-150 0]);
+colormap([m_colmap('water',128)]);
+m_shadedrelief(x2,y2,-Z2,'lightangle',-45,'gradfactor',8,'coord','utm');
+
+% Add some contours
+hold on;
+
+[cs,h]=contour(x2,y2,Z2,[0:20:150],'color','k');
+clabel(cs,h,'fontsize',6);
+hold off;
+
+% Land parts from a previously saved high-resolution coastline
+
+m_usercoast('/ocean/rich/more/mmapbase/bcgeo/PNW.mat','patch',[255 251 71]/255);
+m_usercoast('/ocean/rich/more/mmapbase/bcgeo/PNWrivers.mat','patch',[255 251 71]/255);
+
+% Lat/long AND a UTM grid
+ 
+m_grid('tickdir','out','fontsize',12,'linest','none','xaxisloc','top','yaxisloc','right');
+m_utmgrid('xcolor','b','ycolor','b','linest','-');
+
+m_ruler([.5 .8],.9,'tickdir','out','ticklen',[.007 .007]);
+xlabel('Vancouver Harbour','color','k'); 
+</pre>
+
+<img src="./doc/VanHarb.png"  width=100%>
+
+<h4><a name="21._colmaps"></a>18. Colourmaps</h4>
+
+ <pre>
+ % This command generates the figure
+ % In each subplot title is the M_COLMAP call that 
+ % generated the colourmap displayed.
+ %
+ % Uses of these colourmaps can be seen
+ % in other maps in this gallery.
+
+ m_colmap demo
+
+</pre>
+
+<img src="./doc/exColmaps.png"  width=100%>
+
+
 <h2><a name="satellite_examples"></a>Examples of satellite data manipulation</h2>
 
 <h4><a name="1._Global_SST"></a>1. Global SST (or any variable on a global Lat/Long grid)</h4>
@@ -634,7 +727,7 @@ set(gcf,'color','w');  % otherwise 'print' turns lakes black
  %...and defines this Lat/Long grid for the data
  Plat=90-.25-[0:359]*.5;Plon=-180+.25+[0:719]*.5;
  
- % Since the grid is rectangluar in lat/long (i.e. not
+ % Since the grid is rectangular in lat/long (i.e. not
  % really a projection at all, although it is included in
  % m_map under the name 'equidistant cyldindrical'), we 
  % don't want to use the 'image' technique. Instead... 
@@ -749,7 +842,7 @@ xlabel(hh,'% Ice cover');
 <img src="./doc/exterra.png" alt="nerdhome"   width=65%>
 
 
-<h4><a name="4._A_subset_of_a_global_dataset"></a>4. ;A subset of a global dataset (HDF format)</h4>
+<h4><a name="4._A_subset_of_a_global_dataset"></a>4. A subset of a global dataset (HDF format)</h4>
 <pre>
   % Ocean colour data from http://seawifs.gsfc.nasa.gov/SEAWIFS.html
   %
@@ -787,7 +880,7 @@ xlabel(hh,'% Ice cover');
   lglm=fix(diff(LONLIMS)/pin.Longitude_Step);
   
   % load the subset of data needed for the map limits given  
-  P=hdfread('../m_mapWKA20040972004104.L3m_8D_CHLO_4KM','l3m_data',...
+  P=hdfread('../m_map/WKA20040972004104.L3m_8D_CHLO_4KM','l3m_data',...
             'Index',{[ilt ilg],[],[ltlm lglm]});
   
   % Convert data into log(Chla) using the equations given. Blank no-data.
@@ -981,8 +1074,103 @@ title(titlestr)
 
 <img src="./doc/exSAR.png" alt="SAR"   width=70%>
 
+<h4><a name="16._shaded1"></a> <a name="e16"></a>8. Shaded Relief from a high-resolution topography (netCDF format) </h4>
+
+<pre>
+clat=[48+46/60 49+5/60];clon=[-125-15/60 -124-55/60]; % Barkley Sound
+
+%% Read data from a netcdf file
+fname='/ocean/rich/more/mmapbase/noaa_bc3/barkley_sound_1_navd88_2016.nc';
+lat=ncread(fname,'lat');
+lon=ncread(fname,'lon');
+ilat=lat>=clat(1) & lat<=clat(2);
+ilon=lon>=clon(1) & lon<=clon(2);
+Z=ncread(fname,'Band1',[ find((ilon),1,'first') find((ilat),1,'first')],...
+                       [ sum(ilon) sum(ilat)],[1 1]);
 
 
+m_proj('equidistant','lon',clon,'lat',clat);   % Projection
+
+%   The shaded relief version (right hand plot))
+
+subplot(1,2,2);
+caxis([-300 1210]);  % 1210 chosen by manual adjustment
+                     % since  'waterline" appears to be at about Z=2 (vertical datum for
+                     % bathymetry is 'lowest normal tide')
+colormap([m_colmap('blues',32);m_colmap('gland',128)]);   % Colormap sizes chosen because...
+                                                          % ... 32/128 = (300+2)/(1210-2)
+
+m_shadedrelief(lon(ilon),lat(ilat),Z');   
+
+m_grid('box','fancy','grid','none','fontsize',14);
+
+m_contfbar( [.3 .7],.98, Z',[-300:1210],...
+            'axfrac',.02,'endpiece','no','levels','match','edgecolor','none');          
+
+% The normal contour version (left hand plot))
+
+subplot(1,2,1);
+m_contourf(lon(ilon),lat(ilat),Z',[-300:25:-25 2 50:50:200 300:100:1200 1210]);
+
+caxis([-300 1210]);   
+colormap([m_colmap('blues',32);m_colmap('gland',128)]);
+
+m_grid('box','fancy','tickdir','out','grid','none','fontsize',14);
+
+m_contfbar( [.3 .7],.98, Z',[-300:25:-25 2 50:50:200 300:100:1200 1210],...
+            'axfrac',.02,'endpiece','no','levels','match');          
+</pre>
+
+<img src="./doc/shaded1.png"  width=100%>
+
+<h4><a name="17._goog"></a>9.  Google Maps Static API</h4>
+
+
+<pre> 
+% Axis limits 
+lms=[-123-[14 8]/60 49+[10 13.5]/60];   
+
+% plot_google_maps.m from the mathworks user contributed files database:
+% https://www.mathworks.com/matlabcentral/fileexchange/27627-zoharby-plot_google_map
+% accesses the static google maps map tiles, returning a lat/long gridded
+% image that is just bigger than the given limits.
+clf;
+axis(lms);
+[Glon,Glat,Gimg]=plot_google_map('maptype','satellite','refresh',0,'autoaxis',0);
+clf;
+
+% This projection is best for a grided lat/long image.
+m_proj('equidistant cylindrical','lat',lms(3:4),'lon',lms(1:2));
+
+[GX,GY]=m_ll2xy(Glon,Glat,'clip','off'); % Map coordinates
+
+G2=imadjust(Gimg,[0 1],[0 1],.6);        % Images are a little dark
+image(GX,GY,G2);
+set(gca,'ydir','normal');
+
+% Add the outline box
+m_grid('tickdir','out','box','fancy');
+m_ruler([.4 .9],1.05,6,'tickdir','in','ticklen',.01);
+</pre>
+
+<img src="./doc/exgoog.png"  width=100%>
+
+
+
+<hr>
+
+
+
+
+
+<h2> <a name="Citation"> Citation</a></h2>
+ <p> If you decide that M_Map made a significant contribution to a project, and you want  
+ acknowledge that contribution with a citation (thanks!), I recommend something like the following:</p>
+	<ul>
+	<li> <cite> Pawlowicz, R., 2018. "M_Map: A mapping package for MATLAB", version 1.4j, [Computer software], available 
+online at <a href="https://www.eoas.ubc.ca/~rich/map.html">www.eoas.ubc.ca/~rich/map.html</a>.</cite>
+  </li>
+</ul>
 <hr>
 
 <h2> <a name="ack"> Acknowledgements</a></h2>

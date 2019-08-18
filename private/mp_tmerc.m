@@ -114,17 +114,22 @@ switch optn
     end
     MAP_VAR_LIST.clong=NaN;
     MAP_VAR_LIST.rectbox='off';
+    MAP_VAR_LIST.aussiemode=false;
     k=2;longs_def=0;
     while k<length(varargin)
       switch varargin{k}(1:3)
          case 'lon'
-           MAP_VAR_LIST.ulongs=varargin{k+1};longs_def=1;
+           MAP_VAR_LIST.ulongs=varargin{k+1}(:)';longs_def=1;
          case 'clo'
            MAP_VAR_LIST.clong=varargin{k+1};
          case 'lat'
-           MAP_VAR_LIST.ulats=varargin{k+1};
+           MAP_VAR_LIST.ulats=varargin{k+1}(:)';
          case 'rec'
            MAP_VAR_LIST.rectbox=varargin{k+1};
+	 case 'aus' % aussiemode - my joke
+	   if strcmp(varargin{k+1},'on')
+	     MAP_VAR_LIST.aussiemode=true;
+	   end   
          otherwise
            disp(['Unknown option: ' varargin{k}]);
       end
@@ -192,7 +197,7 @@ switch optn
           theta(notpoles)=theta(notpoles)+dt(notpoles);  % fixed May 2012
           dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(2*theta))/2;
           k=k+1;
- %% fprintf('%f %f\n',max(theta(:))/pi180,max(abs(dt(:))));
+ % fprintf('%f %f\n',max(theta(:))/pi180,max(abs(dt(:))));
         end
         if k==15, warning('Iterative coordinate conversion is not converging!'); end
         theta(notpoles)=theta(notpoles)+dt(notpoles);  % fixed May 2012
@@ -216,9 +221,11 @@ switch optn
         [Y,X]=mu_util('clip',varargin{4},Y,MAP_VAR_LIST.ylims(1),Y<MAP_VAR_LIST.ylims(1),X);
         [Y,X]=mu_util('clip',varargin{4},Y,MAP_VAR_LIST.ylims(2),Y>MAP_VAR_LIST.ylims(2),X);
     end
+    if MAP_VAR_LIST.aussiemode, Y=-Y; X=-X; end;
 
   case 'xy2ll'
     
+    if MAP_VAR_LIST.aussiemode, varargin{2}=-varargin{2}; varargin{1}=-varargin{1}; end;
     switch MAP_PROJECTION.name
       case name(1)
         D=varargin{2}+MAP_VAR_LIST.clat*pi180;

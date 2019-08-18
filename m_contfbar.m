@@ -42,10 +42,14 @@ function [ ax,h ] = m_contfbar( varargin )
 %    the contourobject H. This is useful to add titles, xlabels, etc.
 %
 %    M_CONTFBAR(BAX,...) where BAX is an axis handle draws the colourbar
-%    for that axis. Note that if you call COLORMAP(BAX,...) to give a
-%    colormap for axis BAX, then you also have to call M_CONTFBAR(BAX,...),
-%    but if you call COLORMAP without specifying an axes then you must
-%    call M_CONTFBAR without specifying an axes.
+%    for that axis.
+%
+%    Note that if you assign a colormap to the specific axes BAX for which
+%    you want a colorbar by calling COLORMAP(BAX,...), then in order to 
+%    import that colormap to the colorbar you must use M_CONTFBAR(BAX,...). 
+%    However, if you call COLORMAP without specifying an axes (which sets 
+%    the figure colormap) then you must call M_CONTFBAR without specifying 
+%    an axis.
 %
 %    Calling M_CONTFBAR a second time will replace the first colourbar.
 %    Calling M_CONTFBAR without arguments will erase a colourbar.
@@ -55,7 +59,7 @@ function [ ax,h ] = m_contfbar( varargin )
 
 % R. Pawlowicz Nov/2017
 %     Dec/2017 - inherit colormaps from the source axes.
-%
+%     Dec/2018 - if no axis specified, inherit colors from gca
 
 % if users enters a '0' or a '1' as the first argument it can
 % easily be interpreted as a figure handle - make sure this
@@ -69,14 +73,14 @@ if nargin>0 && length(varargin{1})==1 && ishandle(varargin{1})
    if  strcmp(get(varargin{1},'type'),'axes')
       savax=varargin{1};
       varargin(1)=[];
-      inheritcolormap=true;
+    %  inheritcolormap=true;
    else
       error(['map: ' mfilename ':invalidAxesHandle'],...
             ' First argument must be an axes handle ');
    end   
 else
     savax=gca;
-    inheritcolormap=false;
+   % inheritcolormap=false;
 end
 
 % Delete any existing colorbars associated with savax
@@ -85,7 +89,7 @@ if ~isempty(oldax) && ishandle(oldax) && strcmp('m_contfbar',get(oldax,'tag'))
     delete(oldax);
 end
 
-if length(varargin)==0  % No input arguments? - exit immediately after deleting old colorbar.
+if isempty(varargin)  % No input arguments? - exit immediately after deleting old colorbar.
     return
 elseif length(varargin)>=4
     posx=varargin{1};
@@ -231,7 +235,8 @@ end
 [~,h]=contourf(fakex,fakey,fakedata,Levels,'clipping','off',edgeargs{:});
 set(h,'clipping','off');   % Makes endpieces show in 2014b and later
 
-line(fakex',fakey','color','k');
+line(fakex',fakey','color','k'); % long sides 
+line(fakex,fakey,'color','k');
 
 if horiz
     set(ax,'xlim',Clevel([1 end]),'ytick',[],'clipping','off',...
@@ -247,9 +252,9 @@ set(ax,'tickdir','out','box','off','layer','bottom',...
     'ticklength',[.03 .03],'tag','m_contfbar',varargin{:});
 
 % Inherit the colormap. - fix Dec/28/2017
-if inheritcolormap
+%if inheritcolormap
    colormap(ax,colormap(savax));
-end
+%end
 
 
 % Tuck away the info that there is a colorbar

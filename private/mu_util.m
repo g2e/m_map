@@ -142,7 +142,7 @@ else
     
     exactint=(gmax-gmin)/(gtick-1)*60; %interval in minutes
 
-    if strcmp(gtickstyle,'dm')
+    if strcmp(gtickstyle,'dm') || strcmp(gtickstyle,'da')
        % These are the intervals which we will allow (they are "nice" in the sense
        % that they come to various even multiples of minutes or degrees)
        niceints=[0.1 0.2 0.25 0.5 ...

@@ -1,4 +1,4 @@
-function m_proj(proj,varargin)
+function outval=m_proj(proj,varargin)
 % M_PROJ  Initializes map projections info, putting the result into a structure
 %
 %         M_PROJ('get') tells you the current state
@@ -7,6 +7,7 @@ function m_proj(proj,varargin)
 %                                   'get' list.
 %         M_PROJ('proj name','property',value,...) initializes a projection.
 %
+%         OUT=M_PROJ(...) returns a data structure with projection settings
 %
 %         see also M_GRID, M_LL2XY, M_XY2LL.
 
@@ -22,6 +23,7 @@ function m_proj(proj,varargin)
 %	    - Added lines 62-70 & 74 
 %		to harden against error when no proj is set
 %             (fixes thanks to Lars Barring)
+% 18/Jan/18 - added output variable
 
 global MAP_PROJECTION MAP_VAR_LIST MAP_COORDS
 
@@ -103,7 +105,8 @@ switch proj
     if strcmp(MAP_PROJECTION.version.Name,'Octave')
        MAP_PROJECTION.IsOctave=true;
        MAP_PROJECTION.newgraphics=false;
-       MAP_PROJECTION.LARGVAL=bitmax;
+       MAP_PROJECTION.LARGVAL=flintmax; % was bitmax, but flintmax works in 3.8.1 and in 4.2 and later
+                                        % octave issues a warning that bitmax should be replaced with flintmax
     else
        MAP_PROJECTION.IsOctave=false;
        if verLessThan('matlab','8.4')
@@ -120,7 +123,9 @@ switch proj
        end
     end
     
- 
+ if nargout==1
+     outval=MAP_VAR_LIST;
+ end
 
 
 end

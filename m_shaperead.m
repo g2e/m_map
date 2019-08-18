@@ -35,6 +35,8 @@ function M=m_shaperead(fname,UBR)
 % R. Pawlowicz rpawlowicz@eos.ubc.ca 24/Jan/2011
 %   Sep/2015 - added fix for variables that begin with a digit!
 %   Nov/2017 - improvement to opening files
+%   Mar/2018 - but dbf data as subfield of the dbf field to prevent
+%              namespace collisions (W. Rosenthal pointed out this problem)
 
 %
 % This software is provided "as is" without warranty of any kind. But
@@ -90,7 +92,7 @@ fclose(fidl);
 
 
 % Read the dbf file. If it isn't there
-% we should stil try to read the shp file.
+% we should still try to read the shp file.
  
 fidl=fopen([fname '.dbf'],'r','l'); % little-endian read
 
@@ -160,17 +162,18 @@ M=struct('version',head2(1),'shape_type',head2(2),...
          'MBRy',head3([2 4]),...
          'MBRz',head3(5:6),...
          'MBRm',head3(7:8),...
-	 'filelength16',head1(7),...
+	     'filelength16',head1(7),...
          'type',NaN,'ctype',' ',...
-	 'ncst',cell(1,1),'mbr',NaN(lrec,4),...
-	 'dbfversion',ver,...
-	 'dfbdate',mdat+[1900 0 0],'fieldnames',cell(1,1),...
-         'dbfdata',cell(1,1));
+	     'ncst',cell(1,1),'mbr',NaN(lrec,4),...
+	     'dbfversion',ver,...
+	     'dfbdate',mdat+[1900 0 0],'fieldnames',cell(1,1),...
+         'dbfdata',cell(1,1),'dbf',[]);
+
 
 M.fieldnames=fnam;
 M.dbfdata=dbf;
 for k=1:nfield
-  M=setfield(M,fnam{k},dbf(:,k));
+  M.dbf=setfield(M.dbf,fnam{k},dbf(:,k));
 end
 
 
@@ -342,13 +345,13 @@ for k=1:lrec
   end
 end
 fclose(fidl);
-
+  
 irem=find(~ikp);
 M.dbfdata(irem,:)=[];
 M.ncst(irem,:)=[];
 M.mbr(irem,:)=[];
 for k=1:nfield
-  M.(fnam{k})(irem,:)=[];
+  M.dbf.(fnam{k})(irem,:)=[];
 end
 
   

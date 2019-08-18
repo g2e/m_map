@@ -23,7 +23,7 @@ function m_demo(index)
 
 global MAP_PROJECTION
 
-N_EXAMPLES=13;
+N_EXAMPLES=14;
 
 if nargin==0
  index=1:N_EXAMPLES;
@@ -129,13 +129,13 @@ switch i
   
     m_proj('lambert','lon',[-10 20],'lat',[33 48]);
     if MAP_PROJECTION.IsOctave
-       [CS,CH]=m_tbase('contourf',[-5000:500:3000]); 
+       [CS,CH]=m_etopo2('contourf',[-5000:500:0 250:250:3000]); 
     else
-       [CS,CH]=m_tbase('contourf',[-5000:500:3000],'edgecolor','none');
+       [CS,CH]=m_etopo2('contourf',[-5000:500:0 250:250:3000],'edgecolor','none');
     end
     m_grid('linestyle','none','tickdir','out','linewidth',3);
 
-    colormap([ m_colmap('blues',40); m_colmap('greens',25)]);
+    colormap([ m_colmap('blues',80); m_colmap('gland',50)]);
     brighten(.5);
     
     ax=m_contfbar(1,[.5 .8],CS,CH);
@@ -265,10 +265,23 @@ switch i
       m_text(ln(end),lt(end),sprintf('%s - %d km',cities{k},round(range)));
     end
     
-    %% set(gcf,'color','w');  % To defeat the tendency of print to turn white into black
+    % set(gcf,'color','w');  % To defeat the tendency of print to turn white into black
     
     title('Great Circle Routes','fontsize',12,'fontweight','bold');
-       
+     
+    case 14
+        clf
+        m_proj('lambert','long',[-130 -122],'lat',[48 52.5],'rect','on');
+        [CS,CH]=m_etopo2('contourf',[-3000:500:-500 -200 -100 -50 -1 2 20 50 100 250:250:2000],'edgecolor','none');
+        
+        colormap([m_colmap('blues',96);m_colmap('gland',64)]);  
+        caxis([-3000 2000]);
+        
+        m_grid('linewi',2,'tickdir','out','yaxisloc','right');
+        
+        ax=m_contfbar(-.03,[.5 .8],CS,CH,'edgecolor','none');
+        title(ax,{'meters',''}); % Move up by inserting a blank line
+        
 end
   
  if i<length(index)
