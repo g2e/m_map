@@ -6,6 +6,9 @@ function m_demo(num);
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 7/May/1997
 % (thanks to Art Newhall for putting these examples into an m-file).
 %
+% 27/July/98 - more examples.
+% 17/Aug/98     "
+%
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
@@ -51,21 +54,31 @@ disp('        ...drawing');
 
 
 clf;
+
+subplot(211);
 Slongs=[-100 0;-75 25;-5 45; 25 145;45 100;145 295;100 290];
 Slats= [  8 80;-80  8; 8 80;-80   8; 8  80;-80   0;  0  80];
 for l=1:7,
  m_proj('sinusoidal','long',Slongs(l,:),'lat',Slats(l,:));
- m_coast('patch','g');
  m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
         'ytick',[-80:20:80],'yticklabels',[],'linest','-','color',[.9 .9 .9]);
+ m_coast('patch','g');
 end;
-xlabel('Interrupted Sinusoidal Projection of World Oceans','visible','on');
-
-% The multiple maps trick is useful only with this projection. In order to
-% see all the maps we must undo the axis limits set by m_grid calls:
-
+xlabel('Interrupted Sinusoidal Projection of World Oceans');
+% In order to see all the maps we must undo the axis limits set by m_grid calls:
 set(gca,'xlimmode','auto','ylimmode','auto');
 
+subplot(212);
+Slongs=[-100 43;-75 20; 20 145;43 100;145 295;100 295];
+Slats= [  0  90;-90  0;-90   0; 0  90;-90   0;  0  90];
+for l=1:6,
+ m_proj('mollweide','long',Slongs(l,:),'lat',Slats(l,:));
+ m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
+        'ytick',[-80:20:80],'yticklabels',[],'linest','-','color','k');
+ m_coast('patch',[.6 .6 .6]);
+end;
+xlabel('Interrupted Mollweide Projection of World Oceans');
+set(gca,'xlimmode','auto','ylimmode','auto');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('  hit return to continue');
@@ -136,3 +149,49 @@ m_proj('lambert','lon',[-10 20],'lat',[33 48]);
 m_tbase('contourf');
 m_grid('linestyle','none');
 colormap(jet);
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('  hit return to continue');
+pause
+disp('        ...drawing');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Example showing the default coastline and all of the GSHHS coastlines.
+
+clf
+axes('position',[.35 .6 .37 .37]);
+m_proj('albers equal-area','lat',[40 60],'long',[-90 -50],'rect','on');
+m_coast('patch',[0 1 0]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+m_text(-69,41,'Standard coastline','color','r','fontweight','bold');
+
+axes('position',[.09 .5 .37 .37]);
+m_proj('albers equal-area','lat',[40 54],'long',[-80 -55],'rect','on');
+m_gshhs_c('patch',[.2 .8 .2]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top');
+m_text(-80,52.5,'GSHHS\_C (crude)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.13 .2 .37 .37]);
+m_proj('albers equal-area','lat',[43 48],'long',[-67 -59],'rect','on');
+m_gshhs_l('patch',[.4 .6 .4]);
+m_grid('linest','none','linewidth',2,'tickdir','out');
+m_text(-66.5,43.5,'GSHHS\_L (low)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.35 .05 .37 .37]);
+m_proj('albers equal-area','lat',[45.8 47.2],'long',[-64.5 -62],'rect','on');
+m_gshhs_i('patch',[.5 .6 .5]);
+m_grid('linest','none','linewidth',2,'tickdir','out','yaxisloc','right');
+m_text(-64.4,45.9,'GSHHS\_I (intermediate)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.55 .23 .37 .37]);
+m_proj('albers equal-area','lat',[46.375 46.6],'long',[-64.2 -63.7],'rect','on');
+m_gshhs_h('patch',[.6 .6 .6]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+m_text(-64.18,46.58,'GSHHS\_H (high)','color','m','fontweight','bold','fontsize',14);
+
+
+
+

@@ -3,7 +3,7 @@
 </HEAD>
 <body bgcolor="FFF5EE">
 
-<h1 align="center">M_Map: User's Guide v1.2 </a></h1>
+<h1 align="center">M_Map: User's Guide v1.3b </a></h1>
 
 <hr>
 <center> <img src="./mlogo.gif">  </center> <br>
@@ -14,7 +14,7 @@
 
 <h2> <a name="p1">1. Getting started </a> </h2> <p>
 
-First, get all the files, either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2.zip"> zip archive </a>or a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2.tar.gz"> gzipped tar-file </a>and unpack them. Now, start up Matlab (version 5 or higher). Make
+First, get all the files, either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.zip"> zip archive </a>or a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.tar.gz"> gzipped tar-file </a>and unpack them. Now, start up Matlab (version 5 or higher). Make
 sure that the toolbox is in your path. This can be done simply by 
 <code>cd</code>'ing to the correct directory. 
 
@@ -42,6 +42,12 @@ is, this HTML document.
 (Note: you may want to install M_Map as a toolbox accessible to all
 users. To do this, unpack the files into $MATLAB/toolbox/m_map, and
 add that directory to the list defined in $MATLAB/toolbox/local/pathdef.m).
+
+<p>
+Instructions for installing the (optional) high-resolution bathymetry database are given
+in <a href="#p9"> Section 9 </a>, and instructions for installing the (optional)
+high-resolution GSHHS coastline database is given in <a href="#p9.5"> Section 10 </a>.
+However, we should first check that the basic setup is OK.
 
 <p>
 To see an example map, try this:
@@ -173,6 +179,8 @@ Available projections are:
      Transverse Mercator
      Sinusoidal
      Gall-Peters
+     Hammer-Aitoff
+     Mollweide
 </pre>
 
 If you want details about the possible options for any of these projections, add its name
@@ -403,7 +411,7 @@ the distortion in polar areas is extreme.
 
 </ol>
 
-<h3> <li>   <a name="p2.3">Conic Projections </h3>
+<h3> <li>   <a name="p2.3"> Conic Projections </h3>
 
 Conic projections result from projecting onto a cone wrapped around the sphere. The vertex
 of the cone lies on the rotational axis of the sphere. The cone is either
@@ -442,22 +450,49 @@ This projection is equal-area, but not conformal
 This projection is  conformal, but not equal-area.
 </ol>
 
+<h3> <li>   <a name="p2.4"> Miscellaneous global projections </h3>
+
+There are a number of projections which don't really fit into any of the above
+categories. Mostly these are global projections (i.e. they show the whole world),
+and they have been designed to be "pleasing to the eye". I'm not sure what use
+they are in general, but they make nice logos!
+<ol>
+
+  <h4><li> Hammer-Aitoff </h4>
+
+An equal-area projection with curved meridians and parallels.
+
+  <h4><li> Mollweide </h4>
+  
+Also called the Elliptical or Homolographic Equal-Area Projection. Parallels
+are straight (and parallel) in this projection. Note that 
+<a href="../map.html#e4">example 4</a> shows a rather sophisticated use designed
+to reduce distortion, a more standard map can be made using
+
+<pre>
+m_proj('mollweide');
+m_coast('patch','r');
+m_grid('xaxislocation','middle');
+</pre>
 
 </ol>
-<h3>   <a name="p2.4">4. Yeah, but which projection should I use?</h3>
+
+<h3> <li> <a name="p2.5"> Yeah, but which projection should I use?</h3>
 
 Well, it depends really on how large an area you are mapping. Usually, maps
 of the whole world are Mercator, although often the Miller Cylindrical
 projection looks better because it doesn't emphasize the polar areas as much.
+Another choice is the Hammer-Aitoff or Mollweide (which has meridians curving together near the 
+poles). Both are equal-area.
 It's probably not a good idea to use these projections for maps that don't
 have the equator somewhere near the middle. 
 
 <p>
 If you are plotting something with a large north/south extent, but not
 very wide (say, North and South America, or the North and South Atlantic), then 
-the Sinusoidal projection
+the Sinusoidal or Mollweide projections
 will look pretty good. Another choice is the Transverse Mercator, although
-that is usually used only for very large-scale maps.
+that is usually used only for very large-scale maps. 
 
 <p> 
 For smaller areas within one hemisphere or other (say, Australia, the
@@ -467,10 +502,10 @@ are subtle, and if you don't know much about projections it probably won't
 make much difference which one you use.
 
 <p>
-If you get smaller than that, it probably doesn't matter a whole lot which
+If you get smaller than that, it doesn't matter a whole lot which
 projection you use. One projection I find useful in many cases is the Oblique
 Mercator, since you can align it along a long (but narrow) coastal area.
-If longitude/latitude map limits are OK, use a Transverse Mercator or Conic
+If map limits along lines of longitude/latitude are OK, use a Transverse Mercator or Conic
 Projection.
 
 <p>
@@ -478,9 +513,9 @@ Polar areas are traditionally mapped using a Stereographic projection, since
 for some reason it looks nice to have a "bullseye" pattern of latitude lines.
 
 <p>
-If you want to get a quick idea of what any projection looks like, Default
-parameters for all functions are set for a "typical" usage, so if you
-want to get a quick idea of what any projection looks like, you can
+If you want to get a quick idea of what any projection looks like, default
+parameters for all functions are set for a "typical" usage, i.e. to
+get a quick idea of what any projection looks like, you can
 do so without having to figure out a lot of numerical values:
 
 <pre>
@@ -499,15 +534,18 @@ M_Map includes two fairly simple databases for coastlines and global elevation d
 Highly-detailed databases are not included in this release because they
 are a) extremely large and b) extremely
 time-consuming to process (loops are inherently involved). If more detailed maps
-are required, <a href="#p7"> section 7 </a> and <a href="#p8"> section 8 </a>
-give instructions on how to proceed.
+are required, <a href="#p9"> section 9 </a> and <a href="#p9.5"> section 10 </a>
+give instructions on how to add some freely-available high-resolution datasets.
+Read <a href="#p7"> section 7 </a> and <a href="#p8"> section 8 </a> if you
+want to add your own coastline/bathymetry data.
 
 <h2> <a name="p3.1"> 3.1 Coastline options  </a> </h2> <p>
 
 M_Map includes a 1/4 degree resolution coastline database. This is suitable for maps
 covering large portions of the globe, but is noticeably coarse for many large-scale
 applications. Users not satisfied with their regional map are directed to
- <a href="#p7"> section 7 </a> for more information on creating and using high-resolution
+ <a href="#p7"> section 7 </a> and/or <a href="#p9.5"> section 10 </a>
+for more information on creating and using high-resolution
 coastlines.
 
 The M_Map database is accessed using the <code> m_coast </code> function. Coastlines
@@ -702,6 +740,19 @@ a number of primitive functions have been added to take care of the coordinate c
 invisibly.
 
 <p>
+Maps are drawn to fit within the boundaries of the plot axes. Thus their scale
+is somewhat arbitrary. If you are interested in making a map to a given 
+scale, e.g. 1:200000 or something like that, you can do so by using the
+various Matlab axis handle properties relating data units to physical units.
+The data units are the projection coordinates, which are distances expressed
+as a fraction of earth radii. To get a map "distance" between two points,
+use the Cartesian distance between the points in the projection coordinate
+system and multiply by your favourite value for the earth's radius (usually
+around 6370 km).
+
+
+
+<p>
 Caution: One problem that sometimes occurs is that data does not appear on the plot due to
 ambiguities in longitude values. For example, if plot longitude limits are [-180 180],
 a point with a longitude of, say, 200, may not appear in cylindrical and conic projections. 
@@ -863,6 +914,40 @@ available for free from
 <p>
 As long as the data is stored in a mat-file as a rectangular matrix in longitude/latitude,
 modification of <code>m_elev</code> to make use this data should be straightforward.
+
+
+<ol>
+<h3> <a name="p8.1">  <li> </a> <a href="http://topex.ucsd.edu/marine_topo/text/topo.html">
+Sandwell and Smith Bathymetry  </a> </h3> <p>
+
+A recent new bathymetry with approximately 1km resolution in lower latitude areas
+is being used by many people. This dataset is described at 
+<a href="http://topex.ucsd.edu/marine_topo/text/topo.html">
+http://topex.ucsd.edu/marine_topo/text/topo.html </a> and is available as a 134Mb binary file
+at 
+<a href="ftp://topex.ucsd.edu/pub/global_topo_2min/topo_6.2.img"> 
+ftp://topex.ucsd.edu/pub/global_topo_2min/topo_6.2.img </a>. The authors have
+included an m-file 
+(<a href="ftp://topex.ucsd.edu/pub/global_topo_2min/matlab/mygrid_sand.m">mygrid_sand.m</a>)
+which can extract portions of the data. Once this database (and the m-file) is installed
+on your computer, you can use it in M_Map very easily. A typical usage is as follows:
+
+<pre>
+% Extract data
+[elevations,lat,lon]=mygrid_sand([lat_south lat_north long_west long_east]);
+
+% Use in M_Map command
+m_contour(lon,lat,elevations);
+</pre>
+
+For some projections, you must make sure that the 'lon' values returned by
+<code>mygrid_sand.m</code> fall within the range used in this projection
+(i.e. you may have to add/subtract 360). This seems to happen all the time
+for areas in the west (i.e. negative longitudes), if you forget this
+you often end up with bewildering error messages about empty vectors!
+
+</ol>
+
 <hr>
 
 <h2> <a name="p9">9. Using TerrainBase 5-minute global bathymetry/topography   </a> </h2> <p>
@@ -912,8 +997,99 @@ m_grid('linestyle','none','tickdir','out','linewidth',3);
 </pre>
 <center> <img src="./extbase.gif">  </center> <br>
 
+<h2> <a name="p9.5">9.  Using GSHHS high-resolution coastline database   </a> </h2> <p>
+
+<ol>
+<h3> <a name="p9.6"> <li> Installing GSHHS </h3> </a>
+
+<p>
+When drawing maps there is always a tradeoff between the execution time of the
+generating program and the resolution of the resulting map. Included in M_Map
+is a 1/4 degree coastline database which can be used to generate very fast maps,
+with adequate resolution for many purposes.
+
+<p>
+However, it is often desirable to be able to make detailed maps of limited geographic
+areas. For this purpose a higher-resolution coastline database is necessary.
+I have not included such a database in M_Map because it would greatly increase
+the size of the package. However, I have included m-files to access and use
+a popular high-resolution database called <a
+href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html"> GSHHS </a>
+
+<p> 
+As distributed, GSHHS consists of a hierarchical set of databases at different
+resolutions. The lowest or "crude" resolution is of not as good as the M_Map
+database, although it contains many more inland lakes. The "high" resolution
+consists of points about 200m apart. you can install part or all of the
+database (depending on how much disk space you have available).
+
+<p>
+How to install GSHHS:
+<ol>
+<li> Go to <a href="ftp://ftp.ngdc.noaa.gov/MGG/shorelines/" >
+ftp://ftp.ngdc.noaa.gov/MGG/shorelines/ </a>.
+<li> Get and uncompress any or all of the files <code> gshhs_c.b.gz,  
+ gshhs_l.b.gz, gshhs_i.b.gz</code> and/or <code>gshhs_h.b.gz</code>
+in a
+convenient directory. One useful place is in <code>m_map/private</code>.
+
+<li> If the database files are not in subdirectory <code> m_map/private </code>,
+you must edit the <code>FILNAME</code> settings in <code>m_gshhs_c.m,
+m_gshhs_l.m, m_gshhs_i.m</code> and/or <code>m_gshhs_h.m</code>
+</code>
+to point to the appropriate files.
+</ol>
+
+<h3> <a name="p9.7"> <li> Using GSHHS effectively </h3> </a>
+
+The simplest calling mechanism is identical to that for <code> m_coast </code>
+(<a href="#p3"> Section 3 </a>). For example, to draw a gray-filled 
+high-resolution coastline,
+
+<pre>
+m_gshhs_h('patch',[.5 .5 .5]);
+</pre>
+
+is sufficient. However, execution times may be very, very long, as the entire
+database must be searched and processed. I would not recommend trying to draw world
+maps with the intermediate or high-resolution coastlines! 
+There are two ways to speed this up.
+The first is merely to use a lower-resolution database, with fewer points.
+The second is useful if
+you are going to be repeatedly drawing
+a map (because, for example, it's the base figure for your work). In
+this case I recommend
+that you save an intermediate processed (generally smaller) file as follows:
+
+<pre>
+m_proj ...  % set up projection parameters
+
+% This command does not draw anything - it merely processes the 
+% high-resolution database using the current projection parameters 
+% to generate a smaller coastline file called "gumby"
+
+m_gshhs_h('save','gumby');
+
+% Now we can draw a few maps of the same area much more quickly
+
+figure(1);
+m_usercoast('gumby','patch','r');
+m_grid;
+
+figure(2);
+m_usercoast('gumby','linewidth',2,'color','b');
+m_grid('tickdir','out','yaxisloc','left');
+
+etc.
+</pre>
 
 
+
+</pre>
+
+
+
+</ol>
 <hr>
 
 <h2> <a name="p10">10. M_Map toolbox contents and description   </a> </h2> <p>
@@ -932,9 +1108,14 @@ m_grid('linestyle','none','tickdir','out','linewidth',3);
 <li>    m_ungrid.m - erases grids (if you want to change grid parameters)
 <p>
 
-<li>    m_coast.m  - draws a coastline
-<li>    m_elev.m   - draws elevation data
-<li>    m_tbase.m   - draws elevation data from high-resolution database
+<li>    m_coast.m     - draws a coastline
+<li>    m_elev.m      - draws elevation data
+<li>    m_tbase.m     - draws elevation data from high-resolution database
+<li>    m_gshhs_c.m   - draws coastline from GSHHS crude database
+<li>    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
+<li>    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
+<li>    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
+<li>    m_usercoast.m - draws a coastline using a user-specified subset database.
 <p>
 
 <li>    m_ll2xy.m  - converts from long/lat to map coordinates
@@ -962,12 +1143,11 @@ m_grid('linestyle','none','tickdir','out','linewidth',3);
 <p>
 
 <li>    private/mu_util.m   - various utility routines
+<li>    private/mu_coast.m  - routines to handle coastlines.
 <li>    private/clabel.m - patched version of clabel 
                          (matlab v5.1 version does not contain
                          capabilities for different text properties).    
 
-<li>    private/contourf.m  - patched version of contourf 
-(matlab v5.0 version works incorrectly, v5.1 OK) 
 <p>
 <li>    private/m_coasts.mat - coastline data
 </ol>
@@ -1012,24 +1192,12 @@ set(gcf,'color','white')
 <h2> <a name="p11">12. Changes since last release   </a> </h2> <p>
 
 <ol>
-<li> some v1.1 and 1.2 users reported problems with layers appearing in incorrect order (usually PC
-users). This was due to some kind of conflict with the map background patch. I have changed the way
-in which this is specified and layering appears to work correctly for all machines. Let me know
-if you have problems with this - emailing me your version of m_grid will help.
-
 <p>
-<li> A small bug in m_contourf resulted in patches extending beyond the map edge; this has now been
-fixed.
-
+<li> Hooks into GSHHS coastline database
 <p>
-<li> Addition of E. Firing's fancy vector code (m_vec.m).
-
+<li> Some small bugs in the patch algorithm for coastlines corrected.
 <p>
-<li> Small changes in the auto-gridding so that edge limits are not automatically
-labelled (this makes things look a little cleaner).
-
-<p>
-<li> Fancy box outline code added for really spiffy maps.
+<li> Two new projections.
 
 </ol>
 
@@ -1040,6 +1208,6 @@ labelled (this makes things look a little cleaner).
 
 <hr>
 
-<I> Last changed 20/May/1998. Questions and comments to 
+<I> Last changed 17/Aug/1998. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

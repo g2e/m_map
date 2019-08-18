@@ -15,17 +15,22 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 %      Geol. Surv. Bull. 1532, 2nd Edition, USGPO, Washington D.C., 1983.
 %
 % It was handy to include both the TM (a cylindrical projection) and the
-% so-called "pseudo-cylindrical" sinusoidal projection here. 
+% so-called "pseudo-cylindrical" sinusoidal projection here, and since we have
+% the sinusoidal, I started including the other "global" projections like the hammer.
+%
 % Transverse Mercator - cylindrical conformal
 % Sinusoidal - cylindrical equal-area
 % Gall-Peters - an area-conserving rectangular projection.
+% Hammer-Aitoff - another equal-area projection (for global pics)
 
 % 7/2/98 - Added defaults for Sinusoidal projection
 % 15/4/98 - Gall-Peters projection
+% 8/8/98 - Hammer-Aitoff
+% 17/8/98 - Mollweide projection.
 
 global MAP_PROJECTION MAP_VAR_LIST
 
-name={'Transverse Mercator','Sinusoidal','Gall-Peters'};
+name={'Transverse Mercator','Sinusoidal','Gall-Peters','Hammer-Aitoff','Mollweide'};
 
 pi180=pi/180;
 
@@ -64,6 +69,9 @@ switch optn,
       case name(3),
         MAP_VAR_LIST.ulongs=[30 390];
         MAP_VAR_LIST.ulats=[-65 65];
+      case {name(4),name{5}}
+        MAP_VAR_LIST.ulongs=[-300 60];
+        MAP_VAR_LIST.ulats=[-90 90];
     end;
     MAP_VAR_LIST.clong=NaN;
     MAP_VAR_LIST.rectbox='off';
@@ -116,6 +124,27 @@ switch optn,
       case name(3),
         X=pi180*(long-MAP_VAR_LIST.clong)*cos(45*pi180);
         Y=sin(lat*pi180)/cos(45*pi180);
+      case name(4),
+        z=sqrt((1+cos(lat*pi180).*cos((long-MAP_VAR_LIST.clong)*(pi180/2)))/2);
+        X=2*cos(lat*pi180).*sin((long-MAP_VAR_LIST.clong)*(pi180/2))./z;
+        Y=sin(lat*pi180)./z;
+      case name(5),
+        
+        % Have to use interative scheme to get intermediate variable "theta".
+        theta=(asin(lat/90)+lat*pi180)/2;
+        dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(theta))/2;
+        k=1;
+        while any(abs(dt(:))>.001) & k<15,
+          theta=theta+dt;
+          dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(theta))/2;
+          k=k+1;
+ %% fprintf('%f %f\n',max(theta(:))/pi180,max(abs(dt(:))));
+        end;
+        if k==15, warning('Iterative coordinate conversion is not converging!'); end;
+        theta=theta+dt;
+        
+        X=((long-MAP_VAR_LIST.clong).*cos(theta)+MAP_VAR_LIST.clong)/90;
+        Y=sin(theta);
     end;
 
     % Clip out-of-range values (rectboxes)
@@ -140,6 +169,14 @@ switch optn,
       case name(3),
         X=varagin{1}/cos(45*pi180)/pi180 + MAP_VAR_LIST.clong;
         Y=asin(varargin{2}*cos(45*pi180))/pi180; 
+      case name(4),
+        z=sqrt(1-(varargin{1}/4).^2-(varargin{2}/2).^2);
+        X=MAP_VAR_LIST.clong+2*atan2(z.*varargin{1},2*(2*z.^2-1))/pi180;
+        Y=asin(varargin{2}.*z)/pi180;
+      case name(5),
+        theta=asin(varargin{2});
+        Y=asin((2*theta+sin(2*theta))/pi)/pi180;
+        X=(varargin{1}*90-MAP_VAR_LIST.clong)./cos(theta)+MAP_VAR_LIST.clong;
     end;
         
   case 'xgrid',

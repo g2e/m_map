@@ -37,7 +37,7 @@ No more!
 
 <hr, width=.5>
 
-<center> <h4> Announcing M_Map v1.2d! </h4> </center>
+<center> <h4> Announcing M_Map v1.3b! </h4> </center>
 
 <hr, width=.5>
 
@@ -45,16 +45,17 @@ M_Map is a set of mapping tools written for Matlab v5.
 These include:
 
 <ol>
-<li> Routines to project data in 15 different spherical projections (and determine
+<li> Routines to project data in 17 different spherical projections (and determine
 inverse mappings) 
 <li> A grid generation routine to make nice axes with limits either in lat/long terms
 or in planar X/Y terms.
 <li> A coastline database (with 1/4 degree resolution)
 <li> A global elevation database (1 degree resolution)
+<li> Hooks into freely available high-resolution coastline and bathymetry databases
 
 </ol>
 
-<center> <h4> M_Map is now use at over 700 locations around the world! </h4> </center>
+<center> <h4> M_Map is now use at more than 800 locations around the world! </h4> </center>
 <p>
 <IMG SRC="./private/usermap.gif">  
 <p>
@@ -74,16 +75,35 @@ New in release 1.2d are
 <li> Gall-Peters projection (handy for large tropical areas)
 <li> Fancy outline boxes! (see <a href="./map.html#e2">example 2</a> and <a href="./map.html#e6">example 6</a>)
 </ol>
-<hr>
+New in release 1.3 are
+<ol>
+<li> High-resolution coastlines! (through hooks into the nested set of coastlines
+at different resolutions making up the <a
+href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html"> Global Self-consistent Hierarchical
+High-resolution Shoreline Database (GSHHS) </a> used by GMT (see <a href="./map.html#e9">example 9</a>)
+<li> Instructions on how to use the new <a href="http://topex.ucsd.edu/marine_topo/text/topo.html">
+Sandwell and Smith </a> bathymetry
 
+</ol>
+New in release 1.3b are
+<ol>
+<li> Hammer-Aitoff and Mollweide projections (<a href="#e4">example 4</a>)
+</ol>
+
+<hr>
 <h2> <a name=download> How to get M_Map </h2>
 
 <p>
-You can download the M_Map toolbox either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2d.tar.gz">
-gzipped tar-file </a>, or as <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2d.zip"> zip archive </a> (Click on these links to download). Both are
-around 180k in size. Once you have this archive, read the  <a href="./private/mapug.html#p1">  Getting started </a> section of the <a href="./private/mapug.html"> User's guide  </a> to
-correctly install this toolbox. If you want to see what you can do with M_Map,
-see <a href="#examples"> some examples</a>.
+You can download the M_Map toolbox either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.tar.gz">
+gzipped tar-file </a>, or as <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.zip"> zip archive </a> (Click on these links to download). Both are
+around 200k in size. Once you have this archive, read the  <a href="./private/mapug.html#p1">  Getting started </a> section of the <a href="./private/mapug.html"> User's guide  </a> to
+correctly install this toolbox, and sections <a href="./private/mapug.html#p9">9</a>
+and <a href="./private/mapug.html#p9.6">10.1</a> to install TerrainBase and GSHHS
+respectively.
+
+<p>
+A number of <a href="#examples"> examples</a> have been given to highlight the
+various capabilities of M_Map.
 
 <p>
 
@@ -97,7 +117,8 @@ see <a href="#examples"> some examples</a>.
 <li> <a href="./private/mapug.html#p2.1"> Azimuthal projections </a>
 <li> <a href="./private/mapug.html#p2.2"> Cylindrical and Pseudo-cylindrical projections </a>
 <li> <a href="./private/mapug.html#p2.3"> Conic projections </a>
-<li> <a href="./private/mapug.html#p2.4"> Yeah, but which projection should I use? </a><img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p2.4"> Miscellaneous global projections </a>
+<li> <a href="./private/mapug.html#p2.5"> Yeah, but which projection should I use? </a>
 </ol>
 <li> <a href="./private/mapug.html#p3"> Coastlines and Bathymetry  </a>
 <ol>
@@ -113,14 +134,22 @@ see <a href="#examples"> some examples</a>.
 <ol>
 <li> <a href="./private/mapug.html#p5.1"> Converting  longitude/latitude to projection coordinates </a>
 <li> <a href="./private/mapug.html#p5.2"> Converting  projection coordinates to longitude/latitude </a>
-<li> <a href="./private/mapug.html#p5.3"> Drawing lines, text, arrows, and contours </a> <img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p5.3"> Drawing lines, text, arrows, and contours </a> 
 </ol>
 <li> <a href="./private/mapug.html#p6"> More complex plots </a>
 <li> <a href="./private/mapug.html#p7"> Adding your own coastlines </a>
 <li> <a href="./private/mapug.html#p8"> Adding your own topography/bathymetry </a>
-<li> <a href="./private/mapug.html#p9"> Using TerrainBase 5-minute global bathymetry/topography </a> <img src="./private/new.gif">
+<ol>
+<li> <a href="./private/mapug.html#p8.1"> Sandwell and Smith Bathymetry  </a><img src="./private/new.gif">
+</ol>
+<li> <a href="./private/mapug.html#p9"> Using TerrainBase 5-minute global bathymetry/topography </a> 
+<li> <a href="./private/mapug.html#p9.5"> Using the GSHHS high-resolution coastline database </a> <img src="./private/new.gif">
+<ol>
+<li><a href="./private/mapug.html#p9.6"> Installing GSHHS </a>
+<li><a href="./private/mapug.html#p9.7"> Using GSHHS effectively </a>
+</ol>
 <li> <a href="./private/mapug.html#p10"> M_Map toolbox contents and description </a>
-<li> <a href="./private/mapug.html#p11"> Known Problems and Bugs </a> <img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p11"> Known Problems and Bugs </a> 
 <li> <a href="./private/mapug.html#p12"> Changes since last release </a> <img src="./private/new.gif">
 </ol>
 
@@ -171,21 +200,33 @@ m_coast('patch',[.7 .7 .7],'edgecolor','r');
 </pre>
 <center> <img src="./private/exster.gif">  </center> <br>
 
-<h4> Interrupted Sinusoidal projection of World Oceans </h4>
+<h4> <a name = "e4">Two Interrupted Projections of the World's Oceans </h4>
 <pre>
+subplot(211);
 Slongs=[-100 0;-75 25;-5 45; 25 145;45 100;145 295;100 290];
 Slats= [  8 80;-80  8; 8 80;-80   8; 8  80;-80   0;  0  80];
 for l=1:7,
  m_proj('sinusoidal','long',Slongs(l,:),'lat',Slats(l,:));
- m_coast('patch','g');
  m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
         'ytick',[-80:20:80],'yticklabels',[],'linest','-','color',[.9 .9 .9]);
+ m_coast('patch','g');
 end;
-
-% The multiple maps trick is useful only with this projection. In order to
-% see all the maps we must undo the axis limits set by m_grid calls:
-
+xlabel('Interrupted Sinusoidal Projection of World Oceans');
+% In order to see all the maps we must undo the axis limits set by m_grid calls:
 set(gca,'xlimmode','auto','ylimmode','auto');
+
+subplot(212);
+Slongs=[-100 43;-75 20; 20 145;43 100;145 295;100 295];
+Slats= [  0  90;-90  0;-90   0; 0  90;-90   0;  0  90];
+for l=1:6,
+ m_proj('mollweide','long',Slongs(l,:),'lat',Slats(l,:));
+ m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
+        'ytick',[-80:20:80],'yticklabels',[],'linest','-','color','k');
+ m_coast('patch',[.6 .6 .6]);
+end;
+xlabel('Interrupted Mollweide Projection of World Oceans');
+set(gca,'xlimmode','auto','ylimmode','auto');
+
 </pre>
 <center> <img src="./private/exsinus.gif">  </center> <br>
 
@@ -246,9 +287,53 @@ m_vec   % See code in m_vec.m for details
 
 <center> <img src="./private/exvec.gif">  </center> <br>
 
+
+<h4>  <a name = "e9">Zoom in on Prince Edward Island to show different coastline resolutions </h4>
+<pre>
+
+% Example showing the default coastline and all of the different resolutions 
+% of GSHHS coastlines as we zoom in on a section of Prince Edward Island.
+
+clf
+axes('position',[.35 .6 .37 .37]);
+m_proj('albers equal-area','lat',[40 60],'long',[-90 -50],'rect','on');
+m_coast('patch',[0 1 0]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+m_text(-69,41,'Standard coastline','color','r','fontweight','bold');
+
+axes('position',[.09 .5 .37 .37]);
+m_proj('albers equal-area','lat',[40 54],'long',[-80 -55],'rect','on');
+m_gshhs_c('patch',[.2 .8 .2]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top');
+m_text(-80,52.5,'GSHHS\_C (crude)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.13 .2 .37 .37]);
+m_proj('albers equal-area','lat',[43 48],'long',[-67 -59],'rect','on');
+m_gshhs_l('patch',[.4 .6 .4]);
+m_grid('linest','none','linewidth',2,'tickdir','out');
+m_text(-66.5,43.5,'GSHHS\_L (low)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.35 .05 .37 .37]);
+m_proj('albers equal-area','lat',[45.8 47.2],'long',[-64.5 -62],'rect','on');
+m_gshhs_i('patch',[.5 .6 .5]);
+m_grid('linest','none','linewidth',2,'tickdir','out','yaxisloc','right');
+m_text(-64.4,45.9,'GSHHS\_I (intermediate)','color','m','fontweight','bold','fontsize',14);
+
+axes('position',[.55 .23 .37 .37]);
+m_proj('albers equal-area','lat',[46.375 46.6],'long',[-64.2 -63.7],'rect','on');
+m_gshhs_h('patch',[.6 .6 .6]);
+m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+m_text(-64.18,46.58,'GSHHS\_H (high)','color','m','fontweight','bold','fontsize',14);
+
+
+</pre>
+
+<center> <img src="./private/exgshhs.gif">  </center> <br>
+
+
 <hr>
 
 
-<I> Last changed 14/May/1998. Questions and comments to 
+<I> Last changed 8/Aug/1998. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

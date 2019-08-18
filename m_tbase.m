@@ -26,7 +26,8 @@ function [values,longs,lats]=m_tbase(varargin);
 
 %%% This will have to be set by YOU the USER!
 
-PATHNAME='/users/rich/clim/elev/';
+PATHNAME='/users/rich/clim/elev/';   % Be sure to end the path with a "/" or
+                                     % whatever your separator is.
 
 %%% You probably won't want to change this...
 decmax=500;
@@ -90,6 +91,11 @@ if llong<0, rlong=rlong+360*12; llong=llong+360*12; end;
 eaxes=[llong rlong 90*12-blat 90*12-tlat];
 
 efid=fopen([PATHNAME 'tbase.int'],'r');
+
+if efid==-1,
+ error(sprintf(['Cannot open ' PATHNAME 'tbase.int !! \nHave you installed the database correctly?' ...
+        '\n           - see the User''s guide for instructions']));
+end;
 
 if (eaxes(2)>4319 ),   % Read it in in 2 pieces!
 

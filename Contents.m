@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.2d 8/May/1998
+% Version 1.3 15/June/1998
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -14,7 +14,7 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.2! 
+%                            Announcing M_Map v1.3! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
@@ -25,55 +25,61 @@
 %       X/Y terms. 
 %    3. A coastline database (with 1/4 degree resolution) 
 %    4. A global elevation database (1 degree resolution) 
+%    5. Hooks into freely available high-resolution coastlines and
+%       bathymetry/topography.
 %
-%
-% M_Map v1.2 is available via the web at 
+% M_Map v1.3 is available via the web at 
 %
 %       http://www.ocgy.ubc.ca/~rich/
 %
 %
 % Toolbox contents
 %
-%    Contents.m - This file
-%    m_demo.m   - demonstrates a few different maps.
+%    Contents.m    - This file
+%    m_demo.m      - demonstrates a few different maps.
 %
 %  User-callable functions
 %
-%    m_proj.m   - initializes projections
+%    m_proj.m      - initializes projections
 %
-%    m_grid.m   - draws grids 
-%    m_ungrid.m - erases grids (if you want to change grid parameters)
+%    m_grid.m      - draws grids 
+%    m_ungrid.m    - erases grids (if you want to change grid parameters)
 %
-%    m_coast.m  - draws a coastline
-%    m_elev.m   - draws elevation data from 1 degree database
-%    m_tbase.m  - draws elevation data from 5-minute TerrainBase database
+%    m_coast.m     - draws a coastline
+%    m_elev.m      - draws elevation data from 1 degree database
 %
-%    m_line.m   - draws line data in map coords
-%    m_text.m   - adds text data in map coords
-%    m_quiver   - draws arrows for vector data
-%    m_contour  - draws contour lines for gridded data
-%    m_contourf - draws filled contours
+%    m_tbase.m     - draws elevation data from 5-minute TerrainBase database
+%    m_gshhs_c.m   - draws coastline from GSHHS crude database
+%    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
+%    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
+%    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
+%    m_usercoast.m - draws a coastline using a user-specified subset database.
 %
-%    m_ll2xy.m  - converts from long/lat to map coordinates
-%    m_xy2ll.m  - converts from map coordinates to long/lat
+%    m_line.m      - draws line data in map coords
+%    m_text.m      - adds text data in map coords
+%    m_quiver      - draws arrows for vector data
+%    m_contour     - draws contour lines for gridded data
+%    m_contourf    - draws filled contours
 %
-%    m_tba2b.m  - used in installing high-resolution elevation database.
+%    m_ll2xy.m     - converts from long/lat to map coordinates
+%    m_xy2ll.m     - converts from map coordinates to long/lat
 %
-%    m_vec.m    - fancy arrows
+%    m_tba2b.m     - used in installing high-resolution elevation database.
+%
+%    m_vec.m       - fancy arrows
 %
 %  Internal functions (not meant to be user-callable)
 %
-%    private/mp_azim.m  - azimuthal projections
-%    private/mp_cyl.m   - cylindrical projections (equatorial)
-%    private/mp_conic.m - conic projections
-%    private/mp_tmerc.m - transverse cylindrical projections
-%    private/mp_omerc.m - oblique cylindrical projection
+%    private/mp_azim.m   - azimuthal projections
+%    private/mp_cyl.m    - cylindrical projections (equatorial)
+%    private/mp_conic.m  - conic projections
+%    private/mp_tmerc.m  - transverse cylindrical projections
+%    private/mp_omerc.m  - oblique cylindrical projection
 %
-%    private/mu_util.m  - various utility routines
+%    private/mu_util.m   - various utility routines
+%    private/mu_coast.m  - routines to handle coastlines.
 %
-%    private/contourf.m - patched version of contourf 
-%                         (matlab v5.1 version works incorrectly)    
-%    private/clabel.m - patched version of clabel 
+%    private/clabel.m    - patched version of clabel 
 %                         (matlab v5.1 version does not contain
 %                         capabilities for different text properties).    
 %

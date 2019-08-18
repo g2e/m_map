@@ -134,7 +134,7 @@ if length(gtick)>1,
 else
 
   if gtick>2,
-
+    
     exactint=(gmax-gmin)/(gtick-1)*60; %interval in minutes
 
     % These are the intervals which we will allow (they are "nice" in the sense

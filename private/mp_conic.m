@@ -62,6 +62,9 @@ switch optn,
       switch varargin{k}(1:3),
          case 'lon', 
            MAP_VAR_LIST.ulongs=varargin{k+1};
+           if MAP_VAR_LIST.ulongs(1)>MAP_VAR_LIST.ulongs(2),
+             MAP_VAR_LIST.ulongs=MAP_VAR_LIST.ulongs([2 1]);
+           end;
          case 'clo',
            MAP_VAR_LIST.clong=varargin{k+1};
          case 'lat',
