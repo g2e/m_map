@@ -26,6 +26,8 @@ function h=m_range_ring(long,lat,range,varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+
 global MAP_VAR_LIST
 
 pi180=pi/180;
@@ -83,3 +85,6 @@ for k=1:length(long),
 
 end;
 
+if nargout==0,
+ clear h
+end;

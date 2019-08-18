@@ -1,4 +1,4 @@
-function [cs,h,cf]=m_contourf(long,lat,data,varargin);
+function [cs,h]=m_contourf(long,lat,data,varargin);
 %  M_CONTOURF Adds filled contours to a map
 %    M_CONTOURF(LONG,LAT,DATA,...) is the same as M_CONTOUR except
 %    that contours are filled. Areas of data above a given level are
@@ -18,6 +18,7 @@ function [cs,h,cf]=m_contourf(long,lat,data,varargin);
 
 % 19/02/98 - type - should have been 'clip','patch', rather than 'off'.
 %  9/12/98 - handle all-NaN plots without letting contour crash.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 
 global MAP_PROJECTION 
@@ -50,4 +51,8 @@ if any(~i(:)),
  set(h,'tag','m_contourf');
 else
   cs=[];h=[];
+end;
+
+if nargout==0,
+ clear cs h
 end;

@@ -12,10 +12,11 @@ function h=m_patch(long,lat,C,varargin);
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 3/Sep/98
 % 
-%  10/Mar/99 - changed order of calls ('c' not handled correctly in mu_coast otherwise)
-%
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
+
+%  10/Mar/99 - changed order of calls ('c' not handled correctly in mu_coast otherwise)
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 [m,n]=size(long);
 
@@ -26,4 +27,8 @@ elseif m>1 & n==1,
 else
   h=mu_coast('vector',[reshape([long;long(1,:);NaN+ones(1,n)],(m+2)*n,1),...
                      reshape([lat;lat(1,:);NaN+ones(1,n)],(m+2)*n,1)],'patch',C,'tag','m_patch',varargin{:});
+end;
+
+if nargout==0,
+ clear h
 end;

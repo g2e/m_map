@@ -26,6 +26,7 @@ function [bndry_lon,bndry_lat] = m_plotbndry(name,varargin)
 % Changes: R. Pawlowicz 21/12/98 - changed interface to read from
 %          given directory, allow output, allow various line 
 %          properties to be specified.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 
 
@@ -119,3 +120,6 @@ else %Can't find binary file, load and process text file.
    
 end %if
 
+if nargout==0,
+ clear bndry_lon bndry_lat
+end;

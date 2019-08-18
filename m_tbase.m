@@ -22,6 +22,7 @@ function [values,longs,lats]=m_tbase(varargin);
 %
 % 17/1/98 - Allowed output of raw data, fixed small bug in selection that left
 %           some things off by 1/12 deg lat.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 
 %%% This will have to be set by YOU the USER!
@@ -176,3 +177,6 @@ else
 
 end;
 
+if nargout==0
+ clear values longs lats
+end;

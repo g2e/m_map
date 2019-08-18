@@ -16,6 +16,7 @@ function [cs,h]=m_contour(long,lat,data,varargin);
 
 % 9/Dec/98 - made sure bad things don't happen if all your lat/long
 %            points are out of the plot region.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 global MAP_PROJECTION
 
@@ -46,3 +47,8 @@ if any(~i(:)),
 else
   cs=[];h=[];
 end;
+
+if nargout==0,
+ clear cs h
+end;
+

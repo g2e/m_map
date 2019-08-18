@@ -44,7 +44,8 @@ function m_track(lon,lat,varargin);
 % 		   always follow heading ('true') or to always face upwards
 %		   ('upright'). changed quite a bit internally to make
 %		   faster and fix some bugs
-
+%    - 23/Aug/01 - if numinputs = 2 an extra initialization statement
+%                  was needed (thanks to Dan Lowen for this fix).
 
 
 global MAP_PROJECTION MAP_VAR_LIST
@@ -97,6 +98,9 @@ if numinputs > 2
       navTimes=varargin{1};
       k = 2;
    end
+else % numinputs = 2  % Extra case courtesy Dan Lowen.
+        navTimes = [];
+        k = 1;
 end
 
 % look at any remaining options

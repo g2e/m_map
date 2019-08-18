@@ -18,10 +18,12 @@ function h=m_text(long,lat,varargin);
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 17/Jan/1998
 %
-% 31/Jul/99 - changed to allow for X/Y vectors.
-%
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
+
+
+% 31/Jul/99 - changed to allow for X/Y vectors.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 global MAP_PROJECTION
 
@@ -38,4 +40,8 @@ end;
 h=text(X(:),Y(:),varargin{:});
 if length(h)>0 & isempty(get(h(1),'tag')),
  set(h,'tag','m_text');
+end;
+
+if nargout==0,
+ clear h
 end;

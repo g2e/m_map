@@ -23,6 +23,7 @@ function [values,longs,lats]=m_elev(varargin);
 % 2/10/97 - a minor bug in the edge-handling for filled contours!
 % 8/ 1/98 - better handling for options.
 % 23/1/98 - redid everything to allow for raw bathymetry output option.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -116,3 +117,7 @@ else
   values=topo;
 
 end;
+
+if nargout==0,
+ clear values lats longs
+end

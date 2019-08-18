@@ -49,6 +49,8 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %                     crossed the 180-deg longitude line.
 %        31/Aug/98  - added "f" gshhs support (Thanks to RAMO)
 %        17/June/99 - 'line' option as per manual (thanks to Brian Farrelly)
+%        3/Aug/01   - kludge fix for lines to South Pole in Antarctica (response
+%                     to Matt King).
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -281,6 +283,12 @@ switch optn,
   end;  
 
  otherwise,
+ 
+  % This handles the odd points required at the south pole by any Antarctic
+  % coastline by setting them to NaN (for lines only)
+  ii=ncst(:,2)<=-89.9;
+  if any(ii), ncst(ii,:)=NaN; end;
+  
   [X,Y]=m_ll2xy(ncst(:,1),ncst(:,2),'clip','on');
  
   % Get rid of 2-point lines (these are probably clipped lines spanning the window)

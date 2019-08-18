@@ -19,10 +19,12 @@ function scale_factor=m_scale(scale_factor),
 %         see also M_PROJ, M_GRID.
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 13/Nov/1998
-%     1/Feb/99 - added scale calculations for return value.
-%
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
+
+%     1/Feb/99 - added scale calculations for return value.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+%
 
 % Need earth radius, in centimeters.
 erad=637813700; %cm (from WGS-84)
@@ -85,6 +87,9 @@ else
   end;
 end;
 
+if nargout==0,
+  clear scale_factor
+end;
 
 
 

@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.3 20/Dec/1998
+% Version 1.3 6/Nov/2000
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -14,7 +14,7 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3e! 
+%                            Announcing M_Map v1.3f! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
@@ -59,8 +59,10 @@
 %    m_plotbndry.m - draws a political boundary from the DCW 
 %    m_usercoast.m - draws a coastline using a user-specified subset database.
 %
+%    m_plot.m      - draws line data in map coords
 %    m_line.m      - draws line data in map coords
 %    m_text.m      - adds text data in map coords
+%    m_legend.m    - Draw a legend box
 %    m_quiver      - draws arrows for vector data
 %    m_contour     - draws contour lines for gridded data
 %    m_contourf    - draws filled contours
@@ -70,6 +72,9 @@
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
+%
+%    m_lldist      - distance between points (long/lat coordinates)
+%    m_xydist      - distance between points (map projection coordinates)
 %
 %    m_tba2b.m     - used in installing high-resolution elevation database.
 %

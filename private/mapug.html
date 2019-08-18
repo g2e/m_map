@@ -791,6 +791,12 @@ Titles and x/ylabels can be added to maps using the <code>title</code> and
 the 'visible' property had
 to be explicitly set to 'on'; this is now done within m_grid).
 
+<h3> <a name="p4.3"><li> Legend Boxes </h3>
+
+A legend box can be added to the map using <code>m_legend</code>. Only some
+of the functionality of <code>legend</code> is currently included. The legend
+box can be dragged and dropped using the mouse button.
+
 </ol>
 <hr>
 
@@ -846,11 +852,12 @@ Most of the time you when you want to plot something on a map you want to do so
 by specifying longitude/latitude coordinates, instead of the usual X/Y locations. 
 To do so in M_Map, replace  
 calls 
-to <code> line, text, quiver, patch,
+to <code> plot, line, text, quiver, patch,
 contour, and contourf </code> with M_Map equivalents that recognize
 lontgitude/latitude coordinates by prepending "m_" to the function name. For example,
 
 <pre>
+m_plot(LONG,LAT,...line properties)   % draw a line on a map (erase current plot)
 m_line(LONG,LAT,...line properties)   % draw a line on a map
 m_quiver(LONG,LAT,U,V,S)              % A quiver plot
 m_text(LONG,LAT,'string')             % Text
@@ -1000,6 +1007,26 @@ Conversion from projection coordinates to longitude/latitude is straightforward:
 </pre>
 
 There are no options.
+
+<h3> <a name="p5.6"><li> Computing distances between points </h3>
+
+Geodesic distances on a spherical earth can be computed between pairs of
+wither geographic (long/lat) or map (X/Y) coordinates using the functions
+<code>m_lldist</code> and <code>m_xydist</code>. For example,
+<pre>
+DIST=m_lldist([20 30],[44 45])
+</pre>
+computes the distance from 20E, 44N to 30E, 45N. Alternatively, if you want to compute 
+the distance between two points selected by the mouse:
+<pre>
+[X,Y]=ginput(2);
+DIST=m_xydist(X,Y)
+</pre>
+
+will return that distance.
+
+Because of the inaccuracies implicit in a spherical earth approximation the
+true geodesic distances may differ by 1% or so from the computed distances.
 
 </ol>
 
@@ -1330,8 +1357,10 @@ etc.
 <li>    m_plotbndry.m - draws a political boundary from the DCW
 <li>    m_usercoast.m - draws a coastline using a user-specified subset database.
 <p>
+<li>    m_plot.m     - draws line data in map coords
 <li>    m_line.m     - draws line data in map coords
 <li>    m_text.m     - adds text data in map coords
+<li>    m_legend.m   - Draw a legend box
 <li>    m_patch.m    - adds patch data in map coords
 <li>    m_quiver     - draws arrows for vector data
 <li>    m_contour    - draws contour lines for gridded data
@@ -1342,6 +1371,9 @@ etc.
 <li>    m_ll2xy.m    - converts from long/lat to map coordinates
 <li>    m_xy2ll.m    - converts from map coordinates to long/lat
 <p>
+<li>   m_lldist      - distance between long/lat points
+<li>   m_xydist      - distance between map coordinate points.
+<p?
 <li>    m_tba2b.m   - used in installing high-resolution elevation database.
 <p>
 <li>    m_vec.m     - fancy arrows
@@ -1432,17 +1464,14 @@ Matlab.
 
 <ol>
 <p>
-<li> Many, many internal changes in the way coastlines are handled. Code functionality
-shifted, rearranged, etc. These changes should NOT
-be visible to the user, please let me know if they are!
+<li> Several minor bug fixes. Also changes so that missing a ';' will not
+necessarily result in a flood of data to the screen for most functions.
 <p>
-<li> m_scale, m_track, m_plotbndry, m_range_ring primitives
+<li> m_xydist and m_lldist primitives for computing distances.
 <p>
-<li> Some small bugs in the patch algorithm for coastlines corrected.
+<li> m_legend.
+<li> m_plot
 <p>
-<li> UTM projection
-<p>
-<li> Extented m_ungrid usage to all available plot elements (grids, coastlines, etc.)
 
 </ol>
 
@@ -1453,6 +1482,6 @@ be visible to the user, please let me know if they are!
 
 <hr>
 
-<I> Last changed 10/Aug/2000. Questions and comments to 
+<I> Last changed 6/Nov/2000. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

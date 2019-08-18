@@ -18,6 +18,7 @@ function h=m_line(long,lat,varargin);
 % 8/Dec/98 - changed switch test to only 3 letters (thus letting
 %            "tag" properties through).
 % 18/july/00 - Fixed m_line so you could do clipping through it.
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
 %
 % This software is provided "as is" without warranty of any kind. But
@@ -44,7 +45,10 @@ end;
 
 [X,Y]=m_ll2xy(long,lat,'clip',clp);
 
-
-h=line(X,Y,'tag','m_line',varargin{:});
+if nargout>0,
+  h=line(X,Y,'tag','m_line',varargin{:});
+else
+  line(X,Y,'tag','m_line',varargin{:});
+end;
 
 

@@ -8,6 +8,8 @@ function [long,lat]=m_xy2ll(X,Y);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+
 global MAP_PROJECTION 
 
 if nargin==0 | isstr(X),
@@ -16,4 +18,9 @@ if nargin==0 | isstr(X),
 else
   [long,lat]=feval(MAP_PROJECTION.routine,'xy2ll',X,Y);
 end;
+
+if nargout==0,
+  clear long lat
+end;
+
 

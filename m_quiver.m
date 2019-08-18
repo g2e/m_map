@@ -34,6 +34,8 @@ function h=m_quiver(long,lat,u,v,varargin);
 % it's mine, so you can't sell it.
 %
 
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+
 
 
 global MAP_PROJECTION MAP_VAR_LIST
@@ -57,3 +59,7 @@ mV=u.*(YE-Y)*100 + v.*(YN-Y)*100;
 
 h=quiver(X,Y,mU,mV,varargin{:});
 set(h,'tag','m_quiver');
+
+if nargout==0,,
+ clear h
+end;

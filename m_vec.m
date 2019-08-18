@@ -49,6 +49,8 @@ function [hp, ht] = mvec(s, x, y, varargin)  % and color, etc
 %
 %  Mon  98/02/16 Eric Firing, efiring@soest.hawaii.edu
 %
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% 2/May/01 - small bug fix (thx to Pierre Jaccard)
 
 global MAP_PROJECTION
 
@@ -336,7 +338,7 @@ if ~isempty(i_nonzero)
    if HeadLength == 0,   %% square end; no arrowhead
       W(ii)  = Width;
       HW(ii) = Width;
-      HL(ii) = Zero;
+      HL(ii) = Zero(ii);  % Thanks for Pierre Jaccard for this fix
    else
       % If the arrow length is less than the headlength,
       % omit the arrow shaft and just plot a head scaled
@@ -430,3 +432,7 @@ if ~isempty(key)
 else
    ht = [];
 end
+
+if nargout==0
+  clear hp ht
+end;

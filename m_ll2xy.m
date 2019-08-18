@@ -18,6 +18,8 @@ function [X,Y]=m_ll2xy(varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+% 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+
 global MAP_PROJECTION 
 
 if nargin==0 | isstr(varargin{1}),
@@ -29,4 +31,7 @@ else
   [X,Y]=feval(MAP_PROJECTION.routine,'ll2xy',varargin{:},'clip','on');
 end;
 
+if nargout==0,
+ clear X Y
+end;
 
