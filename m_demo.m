@@ -22,7 +22,7 @@ function m_demo(index);
 % it's mine, so you can't sell it.
 
 
-N_EXAMPLES=11;
+N_EXAMPLES=13;
 
 if nargin==0,
  index=1:N_EXAMPLES;
@@ -196,6 +196,46 @@ switch i,
     m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewi',2);
     xlabel('1000km range rings from Bangkok');
     
+  case 12,
+  
+    % Example showing speckle
+    
+    bndry_lon=[-128.8 -128.8 -128.3 -128 -126.8 -126.6 -128.8];
+    bndry_lat=[49      50.33  50.33  50   49.5   49     49];
+
+    clf;
+    m_proj('lambert','long',[-130 -121.5],'lat',[47 51]);
+    m_gshhs_i('color','k');
+    m_gshhs_i('speckle','color','k');
+    m_line(bndry_lon,bndry_lat,'linewi',2,'color','k');     % Area outline ...
+    m_hatch(bndry_lon,bndry_lat,'single',30,5,'color','k'); % ...with hatching added.
+
+    m_grid('linewi',2,'linest','none');
+    title('Speckled Boundaries for nice B&W presentation (best in postscript format)','fontsize',14);
+    m_text(-128,48,5,{'Pacific','Ocean'},'fontsize',18);
+        
+  case 13,
+  
+    % Colouring the ocean blue
+    
+    clf
+    m_proj('miller','lat',[-75 75]);
+    set(gca,'color',[.9 .99 1]);
+    m_coast('patch',[.7 1 .7],'edgecolor','none');
+    m_grid('box','fancy','linestyle','none');
+       
+    cities={'Cairo','Washington','Buenos Aires'};
+    lons=[ 30+2/60  -77-2/60   -58-22/60];
+    lats=[ 31+21/60  38+53/60  -34-45/60];
+    
+    for k=1:3,
+      [range,ln,lt]=m_lldist([-123-6/60 lons(k)],[49+13/60  lats(k)],40);
+      m_line(ln,lt,'color','r','linewi',2);
+      m_text(ln(end),lt(end),sprintf('%s - %d km',cities{k},round(range)));
+    end;
+      
+    title('Great Circle Routes','fontsize',14,'fontweight','bold');
+       
   end;
   
  if i<length(index), 

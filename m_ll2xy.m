@@ -1,4 +1,4 @@
-function [X,Y]=m_ll2xy(varargin);
+function [X,Y,I]=m_ll2xy(varargin);
 % M_LL2XY Converts long,lat to X,Y coordinates using the current projection
 %         [X,Y]=m_ll2xy(LONGITUDE,LATITUDE);
 %
@@ -12,6 +12,8 @@ function [X,Y]=m_ll2xy(varargin);
 %         arrays. The interpolation can be disabled using the 'point'
 %         option (i.e. data is composed of discrete unrelated points).
 %
+%         [X,Y,I]=m_ll2xy(...) returns an index to tell you which
+%         points have been modified (I=1).
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 2/Apr/1997
 %
@@ -31,21 +33,21 @@ else
   if strcmp(MAP_COORDS.name,MAP_PROJECTION.coordsystem.name),
      % Sneaky way of making default clipping on (sneaky 'cause only the 4th
      % input parameter is checked for the clipping property)
-    [X,Y]=feval(MAP_PROJECTION.routine,'ll2xy',varargin{:},'clip','on');
+     [X,Y,I]=feval(MAP_PROJECTION.routine,'ll2xy',varargin{:},'clip','on');
   elseif strcmp(MAP_COORDS.name,'geographic'),
      [LONG,LAT]=mc_coords('geo2mag',varargin{1:2});
      args={varargin{3:end},'clip','on'};
-     [X,Y]=feval(MAP_PROJECTION.routine,'ll2xy',LONG,LAT,args{:});
+     [X,Y,I]=feval(MAP_PROJECTION.routine,'ll2xy',LONG,LAT,args{:});
   elseif strcmp(MAP_COORDS.name,'IGRF2000-geomagnetic'),
      [LONG,LAT]=mc_coords('mag2geo',varargin{1:2});
      args={varargin{3:end},'clip','on'};
-     [X,Y]=feval(MAP_PROJECTION.routine,'ll2xy',LONG,LAT,args{:});
+     [X,Y,I]=feval(MAP_PROJECTION.routine,'ll2xy',LONG,LAT,args{:});
   else
      error('m_ll2xy: Unrecognized coordinate system');   
   end;  
 end;
 
 if nargout==0,
- clear X Y
+ clear X Y I
 end;
 

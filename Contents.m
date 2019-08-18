@@ -1,5 +1,5 @@
-% M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.4 21/Sep/2001
+% M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
+% Version 1.4c 9 jan.2005
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -52,6 +52,7 @@
 %    m_elev.m      - draws elevation data from 1 degree database
 %
 %    m_tbase.m     - draws elevation data from 5-minute TerrainBase database
+%    m_gshhs.m     - draws coastline from GSHHS with specified resolution
 %    m_gshhs_c.m   - draws coastline from GSHHS crude database
 %    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
 %    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
@@ -69,7 +70,8 @@
 %    m_contourf    - draws filled contours
 %    m_patch       - draws patch data
 %    m_track       - draws annotated tracklines
-%    m_range_ring  - draws range rings
+%    m_hatch.m     - hatched or speckled patches.
+%    m_range_ring  - draws range rings (spherical coords)
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
@@ -77,8 +79,12 @@
 %    m_geo2mag.m     - converts from long/lat to geomagnetic coordinates
 %    m_mag2geo.m     - converts from geomagnetic coordinates to long/lat
 %
-%    m_lldist      - distance between points (long/lat coordinates)
-%    m_xydist      - distance between points (map projection coordinates)
+%    m_lldist      - spherical distance/geodesics between points (long/lat coordinates)
+%    m_xydist      - spherical distance between points (map projection coordinates)
+%
+%    m_fdist       - ellipsoidal geodesic forward calculation 
+%    m_idist       - ellipsoidal geodesic inverse calculation 
+%    m_geodesic    - points along ellipsoidal geodesics
 %
 %    m_tba2b.m     - used in installing high-resolution elevation database.
 %
@@ -117,6 +123,11 @@
 % Oceanography, Dept. of Earth and Ocean Sciences, Univ. of British Columbia, 
 % 6339 Stores Rd., Vancouver, B.C. CANADA V6T 1Z4
 % email: rich@eos.ubc.ca 
+%
+%
+% Dec 15 2005  - added m_hatch, modified all mp_*, mu_coast, m_gshhs_*
+%                to properly use m_hatch for speckled edges.
+%
 
 
     

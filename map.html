@@ -33,7 +33,7 @@ curve)... or not! </p>
 <p></p>
 <hr ,="" width="5">
 <center>
-<h4> Announcing M_Map v1.4!</h4>
+<h4> Announcing M_Map v1.4b! (updated 27/Mar/06)</h4>
 </center>
 <table align="center" border="1" cellpadding="0" cellspacing="0"
  width="100%">
@@ -85,24 +85,43 @@ curve)... or not! </p>
       <td align="center" valign="middle"><a href="#11._Range_rings"><img
  src="private/thumb_rring.gif" alt="" height="64" width="113"> </a><br>
       </td>
-      <td align="center" valign="middle"><a href="#1._Global_SST"><img
- src="private/thumb_ex_sst.gif" alt="" height="94" width="138"> </a><br>
+      <td align="center" valign="middle"><a href="#12._Speckle"><img
+ src="private/thumb_extspeckle.gif" alt="" height="64" width="113"> </a><img
+ src="./private/new.gif"><br>
       </td>
-      <td align="center" valign="middle"><a href="#2._SSMI_Ice_cover"><img
- src="private/thumb_ex_ssmi.gif" alt="" height="103" width="130"> </a><br>
+      <td align="center" valign="middle"><a href="#13._Blueocean"><img
+ src="private/thumb_extblueocean.gif" alt="" height="64" width="113"> </a><img
+ src="./private/new.gif"><br>
       </td>
-      <td align="center" valign="middle"><a href="#3._Aerial_photos"><img
- src="private/thumb_ex_terra.gif" alt="" height="100" width="135"> </a><br>
+      <td align="center" valign="middle"><br>
       </td>
+      <td align="center" valign="middle"><br>
+      </td>
+    </tr>
+    <tr>
       <td align="center" valign="middle"><a
- href="#4._A_subset_of_a_global_dataset"><img
- src="private/thumb_ex_modis.gif" alt="" height="99" width="135"> </a><br>
+ href="map.html#1._Global_SST"><img src="private/thumb_ex_sst.gif"
+ alt="" height="94" width="138"></a><br>
+      <a href="map.html#1._Global_SST"> </a></td>
+      <td align="center" valign="middle"> <a
+ href="map.html#2._SSMI_Ice_cover"><img src="private/thumb_ex_ssmi.gif"
+ alt="" height="103" width="130"></a><br>
+      <a href="map.html#2._SSMI_Ice_cover"> </a></td>
+      <td align="center" valign="middle"><a
+ href="map.html#3._Aerial_photos"><img src="private/thumb_ex_terra.gif"
+ alt="" height="100" width="135"></a><a href="map.html#3._Aerial_photos">
+      </a></td>
+      <td align="center" valign="middle"><a
+ href="map.html#4._A_subset_of_a_global_dataset"><img
+ src="private/thumb_ex_modis.gif" alt="" height="99" width="135"></a><a
+ href="map.html#4._A_subset_of_a_global_dataset"> </a></td>
+      <td align="center" valign="middle"><br>
       </td>
     </tr>
   </tbody>
 </table>
 <hr ,="" width="5">M_Map is a set of mapping tools written for Matlab
-v5. These include:
+v5 and later. These include:
 <ol>
   <li> Routines to project data in 18 different spherical projections
 (and determine inverse mappings)</li>
@@ -114,13 +133,25 @@ in lat/long terms or in planar X/Y terms.</li>
 bathymetry databases</li>
 </ol>
 <center> </center>
+New in release 1.4b are<br>
+<ol>
+  <li>m_hatch for hatched and speckled patches</li>
+  <li>old-fashioned speckled coastlines (good for B&amp;W pics - see <a
+ href="#12._Speckle">Example 13</a>).<br>
+  </li>
+  <li>m_lldist now also returns points on great circle geodesics.</li>
+  <li>m_fdist, m_idist, and m_geodesic for geodesics on an ellipsoidal
+earth.<br>
+  </li>
+</ol>
 New in release 1.4 are<br>
 <ol>
   <li>m_pcolor</li>
-  <li>m_coord (too allow for geographic and geomagnetic coordinate
+  <li>m_coord (to allow for geographic and geomagnetic coordinate
 systems)</li>
   <li>A very few minor bug fixes.</li>
-  <li>Some hints about and examples adding satellite image data to your
+  <li>Some hints about and examples of adding satellite image data to
+your
 maps.<br>
   </li>
 </ol>
@@ -134,7 +165,7 @@ You can download the M_Map toolbox either as a <a
 or as <a href="http://www.eos.ubc.ca/%7Erich/m_map1.4.zip">zip archive
 </a>(Click on these links to download). If you are unpacking the zip
 file MAKE SURE YOU
-ALSO UNPACK SUBDIRECTORIES! Both are around 250k in size. Once you have
+ALSO UNPACK SUBDIRECTORIES! Both are around 650k in size. Once you have
 this
 archive, read the <a href="private/mapug.html#p1">Getting started </a>section
 of the <a href="private/mapug.html">User's guide </a>to correctly
@@ -165,15 +196,13 @@ projections</a></li>
 should I use?</a></li>
     <li> <a href="private/mapug.html#p2.6">Map scales</a></li>
     <li><a href="./private/mapug.html#p2.7">Map coordinate systems
--geographic and geomagnetic</a> <a
- href="file:///ocean/rich/home/matlab/m_map/private/mapug.html#p5.3"><img
- alt="" src="private/new.gif"
- style="border: 0px solid ; width: 23px; height: 12px;"> </a><br>
+-geographic and geomagnetic</a> <br>
     </li>
   </ol>
   <li> <a href="private/mapug.html#p3">Coastlines and Bathymetry</a></li>
   <ol>
-    <li> <a href="private/mapug.html#p3.1">Coastline options</a></li>
+    <li> <a href="private/mapug.html#p3.1">Coastline options</a><img
+ src="./private/new.gif"></li>
     <li> <a href="private/mapug.html#p3.2">Topography/Bathymetry
 options</a></li>
   </ol>
@@ -186,12 +215,13 @@ options</a></li>
   <li> <a href="private/mapug.html#p5">Adding your own data</a></li>
   <ol>
     <li> <a href="private/mapug.html#p5.3">Drawing lines, text,
-arrows, patches and contours</a></li>
+arrows, patches, hatches, speckles, and contours</a><img
+ src="./private/new.gif"></li>
     <li><a href="private/mapug.html#p5.2new">Drawing images and p_color
-      </a><a href="private/mapug.html#p5.3"><img src="./private/new.gif">
-      </a></li>
+      </a> </li>
     <li> <a href="private/mapug.html#p5.4">Drawing tracklines</a></li>
-    <li> <a href="private/mapug.html#p5.5">Drawing range rings</a></li>
+    <li> <a href="private/mapug.html#p5.5">Drawing range rings and
+geodesics</a><img src="./private/new.gif"></li>
     <li> <a href="private/mapug.html#p5.1">Converting
 longitude/latitude to projection coordinates</a></li>
     <li> <a href="private/mapug.html#p5.2">Converting projection
@@ -212,7 +242,7 @@ topography/bathymetry</a></li>
 Bathymetry</a></li>
   </ol>
   <li> <a href="private/mapug.html#p9">Using TerrainBase 5-minute
-global bathymetry/topography</a></li>
+or ETOPO2 2-minute global bathymetry/topography </a></li>
   <li> <a href="private/mapug.html#p9.5">Using the GSHHS
 high-resolution coastline database</a></li>
   <ol>
@@ -223,12 +253,11 @@ high-resolution coastline database</a></li>
 description</a></li>
   <li> <a href="private/mapug.html#p11">Known Problems and Bugs</a></li>
   <li> <a href="private/mapug.html#p12">Changes since last
-release&nbsp;</a><a href="private/mapug.html#p12"><img
- src="./private/new.gif"> </a></li>
+release&nbsp;</a> <img src="./private/new.gif"> </li>
 </ol>
 For information, help, suggestions, or bug reports, contact <a
  href="http://www.eos.ubc.ca/people/faculty/pawlowicz/">Rich Pawlowicz </a>,
-(<a href="mailto:rich@ocgy.ubc.ca"> rich@ocgy.ubc.ca </a>) <br>
+(<a href="mailto:rich@eos.ubc.ca"> rich@eos.ubc.ca </a>) <br>
 <hr> <br>
 &nbsp;
 <h2> Acknowledgements</h2>
@@ -296,9 +325,34 @@ Tracklines and UTM projection</h4>
 <h4><a name="11._Range_rings"></a> <a name="e11"></a>11. Range rings</h4>
 <pre>&nbsp;&nbsp;&nbsp; m_proj('hammer','clong',170);<br>&nbsp;&nbsp;&nbsp; m_grid('xtick',[],'ytick',[],'linestyle','-');<br>&nbsp;&nbsp;&nbsp; m_coast('patch','g');<br>&nbsp;&nbsp;&nbsp; m_line(100.5,13.5,'marker','square','color','r');<br>&nbsp;&nbsp;&nbsp; m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewi',2);<br>&nbsp;&nbsp;&nbsp; xlabel('1000km range rings from Bangkok');</pre>
 <center><img src="./private/rring.gif"><br>
+<br>
 </center>
-<h4><br>
-</h4>
+<h4><a name="12._Speckle"></a> <a name="e12"></a>12. Speckled boundary</h4>
+<pre>
+    bndry_lon=[-128.8 -128.8 -128.3 -128 -126.8 -126.6 -128.8];
+    bndry_lat=[49      50.33  50.33  50   49.5   49     49];
+    
+    clf;
+    m_proj('lambert','long',[-130 -121.5],'lat',[47 51.5],'rectbox','on');
+
+    m_gshhs_i('color','k');              % Coastline...
+    m_gshhs_i('speckle','color','k');    % with speckle added
+
+    m_line(bndry_lon,bndry_lat,'linewi',2,'color','k');     % Area outline ...
+    m_hatch(bndry_lon,bndry_lat,'single',30,5,'color','k'); % ...with hatching added.
+
+    m_grid('linewi',2,'linest','none','tickdir','out','fontsize',12);
+    title('Speckled Boundaries for nice B&amp;W presentation (best in postscript format)','fontsize',14);
+    m_text(-128,48,5,{'Pacific','Ocean'},'fontsize',18);
+</pre>
+<center><img src="./private/extspeckle.gif"><br>
+<br>
+</center>
+<h4><a name="13._Blueocean"></a> <a name="e13"></a>13. Blue Ocean</h4>
+<pre>    m_proj('miller','lat',[-75 75]);<br>    <br>    set(gca,'color',[.9 .99 1]);     % Trick is to set this *before* the patch call.<br>    <br>    m_coast('patch',[.7 1 .7],'edgecolor','none');<br>    m_grid('box','fancy','linestyle','none');<br>       <br>    cities={'Cairo','Washington','Buenos Aires'};<br>    lons=[ 30+2/60  -77-2/60   -58-22/60];<br>    lats=[ 31+21/60  38+53/60  -34-45/60];<br>    <br>    for k=1:3,<br>      [range,ln,lt]=m_lldist([-123-6/60 lons(k)],[49+13/60  lats(k)],40);<br>      m_line(ln,lt,'color','r','linewi',2);<br>      m_text(ln(end),lt(end),sprintf('%s - %d km',cities{k},round(range)));<br>    end;<br>      <br>    title('Great Circle Routes','fontsize',14,'fontweight','bold');<br></pre>
+<center><img src="./private/extblueocean.gif"><br>
+<br>
+</center>
 <h2><a name="satellite_examples"></a>Examples of satellite data
 manipulation</h2>
 <h4><a name="1._Global_SST"></a>1. Global SST (or any variable on a
@@ -513,7 +567,7 @@ datestr(datenum(pin.Period_Start_Year,1,0)+pin.Period_End_Day)],...</tt></font><
  height="396" width="540">
 <br>
 </div>
-<hr><i>Last changed 30/Aug/2004. Questions and comments to <a
+<hr><i>Last changed 30/Dec/2005. Questions and comments to <a
  href="mailto:rich@eos.ubc.ca">rich@eos.ubc.ca</a></i> <br>
 <br>
 </body>

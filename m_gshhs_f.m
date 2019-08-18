@@ -28,7 +28,7 @@ FILNAME='private/gshhs_f.b';
 Currentmap=m_coord('set');
 m_coord('geographic');
 
-if length(varargin)>1 & varargin{1}(1)=='s',
+if length(varargin)>1 & strcmp(varargin{1},'save'),
   [ncst,Area,k]=mu_coast('f',FILNAME);
   eval(['save ' varargin{2} ' ncst k Area']);
 else

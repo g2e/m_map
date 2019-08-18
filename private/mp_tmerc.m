@@ -107,10 +107,13 @@ switch optn,
 
     long=varargin{1};
     lat=varargin{2};
+    vals=zeros(size(long));
 
     % Clip out-of-range values (lat/long boxes)
     
     if  strcmp(MAP_VAR_LIST.rectbox,'off') & ~strcmp(varargin{4},'off'),
+        vals=vals | long<=MAP_VAR_LIST.longs(1)+eps*10 | long>=MAP_VAR_LIST.longs(2)-eps*10 | ...
+	              lat<=MAP_VAR_LIST.lats(1)+eps*10 |   lat>=MAP_VAR_LIST.lats(2)-eps*10;
         [long,lat]=mu_util('clip',varargin{4},long,MAP_VAR_LIST.longs(1),long<MAP_VAR_LIST.longs(1),lat);
         [long,lat]=mu_util('clip',varargin{4},long,MAP_VAR_LIST.longs(2),long>MAP_VAR_LIST.longs(2),lat);
         [lat,long]=mu_util('clip',varargin{4},lat,MAP_VAR_LIST.lats(1),lat<MAP_VAR_LIST.lats(1),long);
@@ -154,6 +157,8 @@ switch optn,
     % Clip out-of-range values (rectboxes)
 
     if strcmp(MAP_VAR_LIST.rectbox,'on')  & ~strcmp(varargin{4},'off'),
+        vals= vals | X<=MAP_VAR_LIST.xlims(1) | X>=MAP_VAR_LIST.xlims(2) | ...
+                     Y<=MAP_VAR_LIST.ylims(1) | Y>=MAP_VAR_LIST.ylims(2);
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(1),X<MAP_VAR_LIST.xlims(1),Y);
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(2),X>MAP_VAR_LIST.xlims(2),Y);
         [Y,X]=mu_util('clip',varargin{4},Y,MAP_VAR_LIST.ylims(1),Y<MAP_VAR_LIST.ylims(1),X);

@@ -7,6 +7,8 @@ function m_usercoast(varargin);
 %         as a simple line.
 %         M_USERCOAST(..., 'patch' ( ,standard patch options,...,...) ) draws the 
 %         coastline as a number of patches. 
+%         M_USERCOAST(..., 'speckle' ( ,standard line options,...,...) ) draws the 
+%         coastline as a speckled line. 
 %
 %    
 %         See also M_PROJ, M_GRID, M_COAST, M_GSHHS_C    

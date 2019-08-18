@@ -26,6 +26,7 @@ end;
 hh=get(gca,'children');
 
 things=get(hh,'tag');
+if length(hh)==1, things={things}; end;
 
 for i=1:length(hh),
   if ~isempty(things{i}) & strmatch(mstr,things{i}),

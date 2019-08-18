@@ -30,6 +30,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %          optional arguments:  <line property/value pairs>, or
 %                               'line',<line property/value pairs>.
 %                               'patch',<patch property/value pairs>.
+%                               'speckle',width,density,<line property/value pairs>.
 %
 %         If no or one output arguments are specified then the coastline is drawn, with
 %         patch handles returned. 
@@ -52,7 +53,11 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %        3/Aug/01   - kludge fix for lines to South Pole in Antarctica (response
 %                     to Matt King).
 %        30/May/02  - fix to get gshhs to work in Antarctica.
+%        15/Dec/05  - speckle additions
+%        21/Mar/06  - handling of gshhs v1.3 (developed from suggestions by
+%                     Martin Borgh)
 %
+
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
@@ -141,6 +146,9 @@ if length(varargin)>0,
   if strcmp(varargin(1),'patch'),
     optn='patch';
   end
+  if strcmp(varargin(1),'speckle'),
+    optn='speckle';
+  end
   if strcmp(varargin(1),'line'),
     optn='line';
     varargin=varargin(2:end); % ensure 'line' does not get passed to line
@@ -152,7 +160,7 @@ end;
 
 
 switch optn,
- case 'patch',
+ case {'patch','speckle'}
 
   switch MAP_VAR_LIST.rectbox,
     case 'on',
@@ -262,15 +270,25 @@ switch optn,
             end;
         end;
         if mi==1, % joined back to start
-          if strcmp(MAP_VAR_LIST.rectbox,'off'), 
-            [xx,yy]=m_ll2xy(xx,yy,'clip','off'); 
-          end;
-%disp(['paused-1 ' int2str(i)]);pause;
-          if Area(i)<0,
-            p_hand(i)=patch(xx,yy,varargin{2:end},'facecolor',get(gca,'color'));
-          else
-            p_hand(i)=patch(xx,yy,varargin{2:end});
-          end;
+	  if strcmp(optn,'patch'),
+            if strcmp(MAP_VAR_LIST.rectbox,'off'), 
+              [xx,yy]=m_ll2xy(xx,yy,'clip','off'); 
+            end;
+             if Area(i)<0,
+              p_hand(i)=patch(xx,yy,varargin{2:end},'facecolor',get(gca,'color'));
+            else
+              p_hand(i)=patch(xx,yy,varargin{2:end});
+            end;
+	  else  % speckle
+            if ~strcmp(MAP_VAR_LIST.rectbox,'off'),  % If we were clipping in
+	       [xx,yy]=m_xy2ll(xx,yy);                % screen coords go back
+	    end;  
+            if Area(i)>0,
+               p_hand(i)=m_hatch(xx,yy,'speckle',varargin{2:end});
+	    else   
+	       p_hand(i)=m_hatch(xx,yy,'outspeckle',varargin{2:end});
+            end;
+	  end;  
           ed(1)=[];st(1)=[];edge2(1)=[];edge1(1)=[];
         else
           xx=[xx;x(st(mi):ed(mi))];
@@ -377,21 +395,22 @@ mtlim=MAP_VAR_LIST.lats(2);
 mblim=MAP_VAR_LIST.lats(1);
 
 % decfac is for decimation of areas outside the lat/long bdys.
+% Sizes updated for gshhs v1.3
 switch optn(1),
   case 'f',   % 'full' (undecimated) database
-    ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    ncst=NaN+zeros(2063513,2);Area=zeros(153545,1);k=ones(153546,1);
     decfac=12500;
   case 'h',
-    ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    ncst=NaN+zeros(2063513,2);Area=zeros(153545,1);k=ones(153546,1);
     decfac=2500;
   case 'i',
-    ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    ncst=NaN+zeros(493096,2);Area=zeros(41529,1);k=ones(41530,1);
     decfac=500;
   case 'l',
-    ncst=NaN+zeros(101023,2);Area=zeros(10768,1);k=ones(10769,1);
+    ncst=NaN+zeros(101207,2);Area=zeros(10775,1);k=ones(10776,1);
     decfac=100;
   case 'c',
-    ncst=NaN+zeros(14872,2);Area=zeros(1868,1);k=ones(1869,1);
+    ncst=NaN+zeros(14884,2);Area=zeros(1870,1);k=ones(1871,1);
     decfac=20;
 end;
 fid=fopen(file,'r','ieee-be');
@@ -407,7 +426,11 @@ end;
 
 Area2=Area;
 
-[A,cnt]=fread(fid,9,'int32');
+% Read the File header
+%%[A,cnt]=fread(fid,9,'int32');
+ [A,cnt]=get_gheader(fid);
+
+
 
 l=0;
 while cnt>0,
@@ -545,8 +568,9 @@ while cnt>0,
  end;
  
  
- [A,cnt]=fread(fid,9,'int32');
-
+ %%[A,cnt]=fread(fid,9,'int32');
+ [A,cnt]=get_gheader(fid);
+ 
 end;
 
 fclose(fid);
@@ -560,6 +584,32 @@ fclose(fid);
 ncst((k(l+1)+1):end,:)=[];  % get rid of unused part of data matrices
 Area((l+1):end)=[];
 k((l+2):end)=[];
+ 
+%%%
+function [A,cnt]=get_gheader(fid);
+% Reads the gshhs file header
+% 
+% A bit of code added because header format changed with version 1.3.
+
+% This works for version 1.2, but not 1.3.
+
+[A,cnt]=fread(fid,9,'int32');
+
+if cnt==9 & A(9)==3,  % we have version 1.3, this would be one of 0,1,65535,65536 in v 1.2
+  % Read one more byte
+  A2=fread(fid,1,'int32');
+  % This is the easiest way not to break existing code.
+  A(9)=A2;
+end;
+
+
+
+
+
+
+
+
+
 
 
 

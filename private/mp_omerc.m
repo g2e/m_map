@@ -108,6 +108,7 @@ switch optn,
     l_0=MAP_VAR_LIST.rpolelong+pi/2;
     long=varargin{1}*pi180-l_0;
     lat=varargin{2}*pi180;
+    vals=zeros(size(long));
 
     A=sin(MAP_VAR_LIST.rpolelat)*sin(lat)- ...
       cos(MAP_VAR_LIST.rpolelat)*cos(lat).*sin(long);
@@ -124,6 +125,8 @@ switch optn,
     end;
 
     if ~strcmp(varargin{4},'off'),
+        vals= vals | X<=MAP_VAR_LIST.xlims(1)+eps*10 | X>=MAP_VAR_LIST.xlims(2)-eps*10 | ...
+                     Y<=MAP_VAR_LIST.ylims(1)+eps*10 | Y>=MAP_VAR_LIST.ylims(2)-eps*10;
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(1),X<MAP_VAR_LIST.xlims(1),Y);
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(2),X>MAP_VAR_LIST.xlims(2),Y);
         [Y,X]=mu_util('clip',varargin{4},Y,MAP_VAR_LIST.ylims(1),Y<MAP_VAR_LIST.ylims(1),X);

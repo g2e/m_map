@@ -19,6 +19,7 @@ function [cs,h]=m_contourf(long,lat,data,varargin);
 % 19/02/98 - type - should have been 'clip','patch', rather than 'off'.
 %  9/12/98 - handle all-NaN plots without letting contour crash.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% Apr/06  - workaround for v7 bug in contourf.
 
 
 global MAP_PROJECTION 
@@ -47,7 +48,16 @@ data(i)=NaN;
 if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','patch'); end;  
 
 if any(~i(:)),
- [cs,h]=contourf(X,Y,data,varargin{:});
+
+ % Bug in contourf call - Solution Number: 1-1W36E8
+  if any(strfind(version,'(R14) Service Pack 3')) | ...
+     any(strfind(version,'7.2.0.294 (R2006a)')) | ....
+     any(strfind(version,'7.2.0.232 (R2006a)')),
+   [cs,h]=contourf('v6',X,Y,data,varargin{:});
+  else
+   [cs,h]=contourf(X,Y,data,varargin{:});
+  end;
+   
  set(h,'tag','m_contourf');
 else
   cs=[];h=[];

@@ -154,6 +154,7 @@ switch optn,
 
     long=varargin{1}*pi180-MAP_VAR_LIST.rlong;
     lat=varargin{2}*pi180;
+    vals=zeros(size(long));
 
     pi180=pi/180;     
     cosc     =sin(MAP_VAR_LIST.rlat)*sin(lat)+cos(MAP_VAR_LIST.rlat)*(cos(lat).*cos(long));
@@ -190,6 +191,7 @@ switch optn,
     % Also, we clip on rho even if we later clip on X/Y because in some projections (e.g. the 
     % orthographic) the X/Y locations wrap back. 
     if ~strcmp(varargin{4},'off'),
+        vals = vals | cosc<=MAP_VAR_LIST.cosradius+eps*10;
         [rho,Az]=mu_util('clip',varargin{4},rho,MAP_VAR_LIST.rhomax,cosc<MAP_VAR_LIST.cosradius,Az);
         Az=Az./abs(Az);
     end;
@@ -198,6 +200,8 @@ switch optn,
      Y=rho.*imag(Az*exp(i*pi180*MAP_VAR_LIST.rotang));
 
     if strcmp(MAP_VAR_LIST.rectbox,'on')  & ~strcmp(varargin{4},'off'),
+        vals= vals | X<=MAP_VAR_LIST.xlims(1)+eps*10 | X>=MAP_VAR_LIST.xlims(2)-eps*10 | ...
+                     Y<=MAP_VAR_LIST.ylims(1)+eps*10 | Y>=MAP_VAR_LIST.ylims(2)-eps*10;
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(1),X<MAP_VAR_LIST.xlims(1) | isnan(X),Y);
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(2),X>MAP_VAR_LIST.xlims(2) | isnan(X),Y);
         [Y,X]=mu_util('clip',varargin{4},Y,MAP_VAR_LIST.ylims(1),Y<MAP_VAR_LIST.ylims(1) | isnan(Y),X);
