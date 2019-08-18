@@ -128,7 +128,7 @@ while k<=length(varargin)
                     sublevels=true;
             end
             varargin([k k+1])=[];
-        case 'edg'
+        case {'edg','lin'}
             edgeargs=varargin([k k+1]);
             varargin([k k+1])=[];
         otherwise
@@ -247,12 +247,18 @@ else
      'xlim',[0 2],'xcolor','w');
     if posx>0.5, set(ax,'yaxislocation','right'); end
 end
-  
+
 set(ax,'tickdir','out','box','off','layer','bottom',...
     'ticklength',[.03 .03],'tag','m_contfbar',varargin{:});
 
 % Inherit the colormap. - fix Dec/28/2017
 %if inheritcolormap
+   drawnow;  % Update all properties - if this is missing
+             % then we might be loading a default colormap
+             % simply because the correct one is in  a'pending'
+             % stack of graphics requests.  For colorbars there
+             % appears to be 'peer' property that is perhaps
+             % associated with handling this property.
    colormap(ax,colormap(savax));
 %end
 

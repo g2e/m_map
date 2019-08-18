@@ -108,8 +108,10 @@ switch optn(1)
     varargin(1)=[];
     k=[find(isnan(ncst(:,1)))];  % Get k
     Area=ones(size(k));          % Make dummy Area vector (all positive).
-  otherwise
-    load m_coasts
+    otherwise
+    currloc=mfilename('fullpath');  % Octave has problems finding the file 
+    load([currloc(1:end-8) 'm_coasts.mat']);
+    
 end
 
  

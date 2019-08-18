@@ -114,6 +114,7 @@ switch optn
     end
     MAP_VAR_LIST.clong=NaN;
     MAP_VAR_LIST.rectbox='off';
+    MAP_VAR_LIST.ellipsoid='normal';
     MAP_VAR_LIST.aussiemode=false;
     k=2;longs_def=0;
     while k<length(varargin)

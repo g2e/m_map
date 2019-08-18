@@ -73,8 +73,8 @@ FILNAME='private/';
 
 %-------------don't change below here----------------------------
 
-res_list = char('c','l','i','h','f') ;
-typ_list=char('c','b','r');
+res_list = {'c','l','i','h','f'};
+typ_list={'c','b','r'};
 typ_names={'gshhs_','wdb_borders_','wdb_rivers_'};
 
 typ=1;
@@ -82,12 +82,12 @@ flaglim='9';
 
 if ischar(resolution)
  if length(resolution)>=2
-   typ = strmatch(lower(resolution(2)),typ_list);
+   typ = find(strcmpi(resolution(2),typ_list));
  end
  if length(resolution)>=3
    flaglim = resolution(3);
  end  
- resolution = strmatch(lower(resolution(1)),res_list);
+ resolution =  find(strcmpi(resolution(1),res_list));
 end
  
  
@@ -98,7 +98,7 @@ if isempty(typ) || typ<1 || typ> length(res_list)
   error('**Don''t recognize the specified type');
 end
   
-res_char = res_list(resolution) ;
+res_char = res_list{resolution} ;
 file     = [FILNAME,sprintf('%s%s.b',typ_names{typ},res_char)] ;
 tag_name = sprintf('m_%s%s',typ_names{typ},res_char) ;
 
