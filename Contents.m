@@ -14,11 +14,11 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3! 
+%                            Announcing M_Map v1.3b! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
-%    1. Routines to project data in 14 different spherical 
+%    1. Routines to project data in 16 different spherical 
 %       projections (and determine inverse mappings) 
 %    2. A grid generation routine to make nice axes with 
 %       limits either in long/lat terms or in planar
