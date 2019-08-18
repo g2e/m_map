@@ -728,16 +728,21 @@ to be explicitly set to 'on'; this is now done within m_grid).
 <h2> <a name="p5">5.  Adding your own data  </a> </h2> <p>
 
 The purpose of this package is to allow you to map your own data! Once a suitable
-grid and (possibly) a coastline have been chosen, raw longitude/latitude coordinates
-must be converted to projection coordinates before being plotted. Similarly, an
-program using, say, <code>ginput</code> to select points will have to convert projection coordinates
-back to longitude/latitude. 
+grid and (possibly) a coastline have been chosen, you can add your own lines, text,
+or contour plots using built-in M_Map drawing functions which handle the conversion from
+longitude/latitude coordinates to projection coordinates. These drawing functions are
+very similar to the standard Matlab plotting functions, and are described in the 
+<a href="#p5.3">next section</a>.
 
 <p>
-Once the conversion of coordinates has taken place, plotting of data using
-any of the standard Matlab functions (line, patch, pcolor, etc.) proceeds as usual. In v1.2,
-a number of primitive functions have been added to take care of the coordinate conversion
-invisibly.
+Sometimes you may want to convert between longitude/latitude and projection coordinates
+without immediately plotting the data. This might happen if you want to interactively
+select points using <code>ginput</code>, or if you want to draw labels tied to a
+specific point on the screen rather than a particular longitude/latitude. Projection
+conversion routines are described in sections <a href="#p5.1">5.2</a> and
+<a href="#p5.2">5.3</a>. Once raw longitude/latitude coordinates are converted into
+projection coordinates, standard Matlab plotting functions can be used.
+
 
 <p>
 Maps are drawn to fit within the boundaries of the plot axes. Thus their scale
@@ -761,9 +766,57 @@ adding points (rather than just moving them) and is therefore incompatible with
 various other requirements (such as keeping input and output matrices the same size
 in the conversion routines described below).  
 
-<h3> <a name="p5.1"> 5.1 Converting  longitude/latitude to projection coordinates </h3>
+<h3> <a name="p5.3"> 5.1 Drawing lines, text, arrows, and contours </h3>
 
-The following command converts longitude/latitude coordinates to projection coordinates. 
+For most purposes you do not need to know what the projection coordinates actually
+are - you just want to plot something at a specified longitude/latitude. 
+
+Most of the time you when you want to plot something on a map you want to do so
+by specifying longitude/latitude coordinates, instead of the usual X/Y locations. 
+To do so in M_Map, replace  
+calls 
+to <code> line, text, quiver,
+contour, and contourf </code> with M_Map equivalents that recognize
+lontgitude/latitude coordinates by prepending "m_" to the function name. For example,
+
+<pre>
+m_line(LONG,LAT,...line properties)   % draw a line on a map
+m_quiver(LONG,LAT,U,V,S)              % A quiver plot
+m_text(LONG,LAT,'string')             % Text
+</pre>
+
+
+Each of these functions will handle the coordinate conversion internally, and will 
+return a vector of handles to the graphic objects if desired. The
+only difference between these functions and the standard Matlab functions is that the first two
+arguments MUST be longitude and latitude. 
+
+<p>
+Data gridded in longitude and latitude can also be contoured:
+
+<pre>
+m_contour(LONG,LAT,VALUES)
+m_contourf(LONG,LAT,VALUES)
+</pre>
+
+Again, these functions will return handles to graphics objects, allowing (for example) the drawing of
+labelled contours:
+
+<pre>
+[cs,h]=m_contour(LONG,LAT,VALUES)
+clabel(cs,h,'fontsize',6);
+</pre>
+
+<p>
+Fancy arrows (i.e. with width, head shape, and colour specifications) can be generated using
+<code> m_vec.m </code>. See the on-line help for more details about the use of <code>m_vec</code>.
+
+<h3> <a name="p5.1"> 5.2 Converting  longitude/latitude to projection coordinates </h3>
+
+If you want to use projection coordinates (perhaps you want to compute map areas, or
+distances, or you want to make a legend in the upper left corner), the following 
+command converts longitude/latitude coordinates to 
+projection coordinates. 
 
 <pre>
 [X,Y]=m_ll2xy(LONG,LAT, ...optional clipping arguments )
@@ -800,7 +853,7 @@ Points are tested against the map limits. Those outside the limits changed into 
 on the limits. Those inside are converted to projection coordinates. This option
 may be useful when trying to draw patches, however it probably won't work well.
 
-<h3> <a name="p5.2"> 5.2 Converting projection coordinates to longitude/latitude </h3>
+<h3> <a name="p5.2"> 5.3 Converting projection coordinates to longitude/latitude </h3>
 
 Conversion from projection coordinates to longitude/latitude is straightforward:
 
@@ -810,46 +863,6 @@ Conversion from projection coordinates to longitude/latitude is straightforward:
 
 There are no options.
 
-<h3> <a name="p5.3"> 5.3 Drawing lines, text, arrows, and contours </h3>
-
-If you do not need to reuse the map coordinates produced by <code> m_ll2xy </code>
-as decribed above,  
-calls 
-to <code> line, text, quiver,
-contour, and contourf </code> can be replaced with M_Map equivalents that recognize
-lontgitude/latitude coordinates by prepending "m_" to the function name. For example,
-
-<pre>
-m_line(LONG,LAT,...line properties)
-m_quiver(LONG,LAT,U,V,S)
-m_text(LONG,LAT,'string')
-</pre>
-
-
-Each of these functions will handle the coordinate conversion internally, and will 
-return a vector of handles to the graphic objects if desired. The
-only difference between these functions and the standard Matlab functions is that the first two
-arguments MUST be longitude and latitude. 
-
-<p>
-Data gridded in longitude and latitude can also be contoured:
-
-<pre>
-m_contour(LONG,LAT,VALUES)
-m_contourf(LONG,LAT,VALUES)
-</pre>
-
-Again, these functions will return handles to graphics objects, allowing (for example) the drawing of
-labelled contours:
-
-<pre>
-[cs,h]=m_contour(LONG,LAT,VALUES)
-clabel(cs,h,'fontsize',6);
-</pre>
-
-<p>
-Fancy arrows (i.e. with width, head shape, and colour specifications) can be generated using
-<code> m_vec.m </code>. See the on-line help for more details about the use of <code>m_vec</code>.
 
 <hr>
 
@@ -1018,10 +1031,15 @@ href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html"> GSHHS </a>
 
 <p> 
 As distributed, GSHHS consists of a hierarchical set of databases at different
-resolutions. The lowest or "crude" resolution is of not as good as the M_Map
+resolutions. The lowest or "crude" resolution is not as good as the M_Map
 database, although it contains many more inland lakes. The "high" resolution
-consists of points about 200m apart. you can install part or all of the
-database (depending on how much disk space you have available).
+consists of points about 200m apart. There is
+also an even finer "full" resolution. You can install part or all of the
+database (depending on how much disk space you have available). The "full" resolution 
+occupies 90Mb of disk space, and successively coarser resolutions are smaller by about 1/4.
+Thus "high" resolution occupies 21Mb,  "intermediate" uses 6Mb, and "low" uses 1.1Mb (one
+reason for not always using "high" resolution is that the entire 90Mb database must be read
+and processed each call, which may take some time).
 
 <p>
 How to install GSHHS:
@@ -1035,7 +1053,7 @@ convenient directory. One useful place is in <code>m_map/private</code>.
 
 <li> If the database files are not in subdirectory <code> m_map/private </code>,
 you must edit the <code>FILNAME</code> settings in <code>m_gshhs_c.m,
-m_gshhs_l.m, m_gshhs_i.m</code> and/or <code>m_gshhs_h.m</code>
+m_gshhs_l.m, m_gshhs_i.m, m_gshhs_h.m</code> and/or <code>m_gshhs_f.m</code>
 </code>
 to point to the appropriate files.
 </ol>
@@ -1115,6 +1133,7 @@ etc.
 <li>    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
 <li>    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
 <li>    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
+<li>    m_gshhs_f.m   - draws coastline from GSHHS full resolution database
 <li>    m_usercoast.m - draws a coastline using a user-specified subset database.
 <p>
 
@@ -1208,6 +1227,6 @@ set(gcf,'color','white')
 
 <hr>
 
-<I> Last changed 17/Aug/1998. Questions and comments to 
+<I> Last changed 1/Sept/1998. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

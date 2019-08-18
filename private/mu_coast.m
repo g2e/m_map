@@ -1,19 +1,19 @@
 function [ncst,Area,k]=mu_coast(optn,varargin);
 % MU_COAST Add a coastline to a given map.
-%         M_COAST draw a coastline as either filled patches (slow) or
+%         MU_COAST draw a coastline as either filled patches (slow) or
 %         lines (fast) on a given coastline. It uses a coastline database with
 %         a resolution of about 1/4 degree. 
 %
-%         M_COAST( (standard line option,...,...) ) draws the coastline
+%         MU_COAST( (standard line option,...,...) ) draws the coastline
 %         as a simple line.
-%         M_COAST('patch' ( ,standard patch options,...,...) ) draws the 
+%         MU_COAST('patch' ( ,standard patch options,...,...) ) draws the 
 %         coastline as a number of patches. 
 %
 %         There are a number of options relating to the use of different
 %         coastline datasets. If you have coastline data in the M_Map format
 %         stored in the .mat file FILENAME (default ./private/m_coasts.mat) 
 %         then
-%              M_COAST('file',FILENAME,...) 
+%              MU_COAST('user',FILENAME,...) 
 %         uses this data in your map. This is not particularly useful unless
 %         you make your own coastlines! The primary purpose of this feature is 
 %         to enable use of subsampled high-resolution coastline databases
@@ -22,16 +22,16 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %         High-resolution coastlines in the GSHHS format, stored in FILNAME can 
 %         be used through the 'gshhs' property:
 %
-%             M_COAST(SIZE,FILENAME,...
+%             MU_COAST(SIZE,FILENAME,...
 %
 %         However, be warned that the loading this data can be very 
 %         timeconsuming. It is perhaps better to subsample the desired data
 %         once using
 %
-%             [ncst,Area,k]=M_COAST('gshhs','FILENAME);
+%             [ncst,Area,k]=MU_COAST('f','FILENAME);
 %             save MMAPFILE ncst Area k
 %            
-%             M_COAST('coast',MMAPFILE,...)
+%             MU_COAST('user',MMAPFILE,...)
 %
 %
 %    
@@ -42,6 +42,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 % Notes: 15/June/98 - fixed some obscure problems that occured sometimes
 %                     when using conic projections with large extents that
 %                     crossed the 180-deg longitude line.
+%        31/Aug/98  - added "f" gshhs support (Thanks to RMO)
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -76,10 +77,10 @@ end;
 %     Area should be >0 for land, and <0 for lakes and inland seas.
 
 switch optn(1),
-  case {'c','l','i','h'},
+  case {'c','l','i','h','f'},  
     [ncst,k,Area]=get_coasts(optn,varargin{1});
     varargin(1)=[];
-  case  'f',
+  case  'u',                   
     eval(['load ' varargin{1} ' -mat']);
     varargin(1)=[];
   otherwise
@@ -344,19 +345,18 @@ mtlim=MAP_VAR_LIST.lats(2);
 mblim=MAP_VAR_LIST.lats(1);
 
 switch optn(1),
+  case 'f',   % 'full' (undecimated) database
+    ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
   case 'h',
     ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
-    fid=fopen(file,'r','ieee-be');
   case 'i',
     ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
-    fid=fopen(file,'r','ieee-be');
   case 'l',
     ncst=NaN+zeros(101023,2);Area=zeros(10768,1);k=ones(10769,1);
-    fid=fopen(file,'r','ieee-be');
   case 'c',
     ncst=NaN+zeros(14872,2);Area=zeros(1868,1);k=ones(1869,1);
-    fid=fopen(file,'r','ieee-be');
 end;
+fid=fopen(file,'r','ieee-be');
 
 if fid==-1,
   warning(sprintf(['Coastline file ' file ...

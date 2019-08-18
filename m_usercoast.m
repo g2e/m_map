@@ -17,5 +17,5 @@ function m_usercoast(varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
-mu_coast('file',varargin{:});
+mu_coast('user',varargin{:});
 

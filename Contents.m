@@ -14,7 +14,7 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3b! 
+%                            Announcing M_Map v1.3c! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
@@ -53,6 +53,7 @@
 %    m_gshhs_l.m   - draws coastline from GSHHS low-resolution database
 %    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
 %    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
+%    m_gshhs_f.m   - draws coastline from GSHHS full database
 %    m_usercoast.m - draws a coastline using a user-specified subset database.
 %
 %    m_line.m      - draws line data in map coords
