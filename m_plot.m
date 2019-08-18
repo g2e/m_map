@@ -1,11 +1,11 @@
-function h = m_plot(varargin)
+function han = m_plot(varargin)
 
 % M_PLOT Plot objects on an M_MAP plot.   All of the normal
 % Matlab plot options are available.  
 
 % USAGE: M_PLOT(LON,LAT,[OPTIONS]) 
 
-% Deirdre Byrne, dbyrne@umeoce.maine.edu 00/06/23
+% Deirdre Byrne, dbyrne@umeoce.maine.edu 00/07/27 (v1.1)
 %
 % This software is provided "as is" without warranty of any kind.
 
@@ -26,7 +26,8 @@ varargin = varargin(:);
 s = size(varargin,1);
 h=plot(x,y,varargin{3:s});
 
-if nargout == 0
-  clear h
+if nargout == 1
+  han = h;
 end
 
+return

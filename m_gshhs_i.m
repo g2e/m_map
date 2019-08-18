@@ -24,6 +24,10 @@ function m_gshhs_i(varargin);
 
 FILNAME='private/gshhs_i.b';
 
+% Set current projection to geographic
+Currentmap=m_coord('set');
+m_coord('geographic');
+
 
 if length(varargin)>1 & varargin{1}(1)=='s',
   [ncst,Area,k]=mu_coast('i',FILNAME);
@@ -32,4 +36,5 @@ else
   mu_coast('i',FILNAME,varargin{:},'tag','m_gshhs_i');
 end;
 
+m_coord(Currentmap.name);
 

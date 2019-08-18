@@ -19,5 +19,12 @@ function m_coast(varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+
+% Set current projection to geographic
+Currentmap=m_coord('set');
+m_coord('geographic');
+
+
 mu_coast('default',varargin{:},'tag','m_coast');
 
+m_coord(Currentmap.name);

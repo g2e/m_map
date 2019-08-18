@@ -25,7 +25,7 @@ function [values,longs,lats]=m_elev(varargin);
 % 23/1/98 - redid everything to allow for raw bathymetry output option.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
-global MAP_PROJECTION MAP_VAR_LIST
+global MAP_PROJECTION MAP_VAR_LIST 
 
 % Have to have initialized a map first
 
@@ -39,6 +39,10 @@ if draw_map==1 & isempty(MAP_PROJECTION),
   disp('No Map Projection initialized - call M_PROJ first!');
   return;
 end;
+
+% Set current projection to geographic
+Currentmap=m_coord('set');
+m_coord('geographic');
 
 if draw_map,
 
@@ -100,12 +104,15 @@ if draw_map,
   [lg,lt]=meshgrid(lgs,lts);
   [X,Y]=m_ll2xy(lg,lt,'clip','on');
 
+
   hold on;
   switch optn,
    case 'contour',
       [values,longs]=m_contour(lg,lt,topo,levels);
    case 'contourf',
       [values,longs]=m_contourf(lg,lt,topo,levels);
+   case 'pcolor',
+      [longs]=m_pcolor(lg,lt,topo);
   end;  
 
   set(longs,'tag','m_elev');  
@@ -117,6 +124,9 @@ else
   values=topo;
 
 end;
+
+% Reset map coords
+m_coord(Currentmap.name);
 
 if nargout==0,
  clear values lats longs

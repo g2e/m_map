@@ -101,7 +101,7 @@ switch optn,
       elseif strcmp(MAP_PROJECTION.name,name{5})
         MAP_VAR_LIST.radius=min(80,MAP_VAR_LIST.uradius);
       elseif strcmp(MAP_PROJECTION.name,name{6})
-        MAP_VAR_LIST.radius=acos(1/(1+MAP_VAR_LIST.uradius))/pi180*.995; % uradius is the height fraction here
+        MAP_VAR_LIST.radius=acos(1/(1+MAP_VAR_LIST.uradius))/pi180*.98; % uradius is the height fraction here
       else
         MAP_VAR_LIST.radius=MAP_VAR_LIST.uradius;
       end;

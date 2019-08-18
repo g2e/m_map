@@ -51,6 +51,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %        17/June/99 - 'line' option as per manual (thanks to Brian Farrelly)
 %        3/Aug/01   - kludge fix for lines to South Pole in Antarctica (response
 %                     to Matt King).
+%        30/May/02  - fix to get gshhs to work in Antarctica.
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -415,6 +416,10 @@ while cnt>0,
  
  C=fread(fid,A(2)*2,'int32'); % Read all points in the current segment.
 
+ %For Antarctica the lime limits are 0 to 360 (exactly), thus c==0 and the
+ %line is not chosen for (e.g. a conic projection of part of Antarctica)
+ % Fix 30may/02
+ if A(5)==360e6, A(5)=A(5)-1; end;
  
  a=rlim>llim;  % Map limits cross longitude jump? (a==1 is no)
  b=A(9)<65536; % Cross boundary? (b==1 if no).
@@ -432,7 +437,8 @@ while cnt>0,
    l=l+1;
  
    x=C(1:2:end)*1e-6;y=C(2:2:end)*1e-6;
-
+ %%  plot(x,y);pause;
+   
    %  make things continuous (join edges that cut across 0-meridian)
 
    dx=diff(x);
@@ -481,9 +487,10 @@ while cnt>0,
   
    % Do y limits, then x so we can keep corner points.
    
-   nn=y>mtlim+tol | y<mblim-tol;
+   nn=(y>mtlim+tol) | (y<mblim-tol);
      % keep one extra point when crossing limits, also the beginning/end point.
-   nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
+   nn=logical(nn-min(1,([0;diff(nn)]>0)+([diff(nn);0]<0)));
+   nn([1 end])=0;
      % decimate vigorously
    nn=nn & rem(1:length(nn),decfac)'~=0;
    x(nn)=[];y(nn)=[];
@@ -494,7 +501,7 @@ while cnt>0,
     else            % wraparound case
      nn=(x>mrlim+tol & x<mllim-tol ) & y<mtlim & y>mblim;
    end;
-   nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
+   nn=logical(nn-min(1,([0;diff(nn)]>0)+([diff(nn);0]<0)));nn([1 end])=0;
    nn=nn & rem(1:length(nn),decfac)'~=0;
    x(nn)=[];y(nn)=[];
    

@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.3 6/Nov/2000
+% Version 1.4 21/Sep/2001
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -14,7 +14,7 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3f! 
+%                            Announcing M_Map v1.4! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
@@ -28,9 +28,9 @@
 %    5. Hooks into freely available high-resolution coastlines and
 %       bathymetry/topography.
 %
-% M_Map v1.3 is available via the web at 
+% M_Map v1.4 is available via the web at 
 %
-%       http://www.ocgy.ubc.ca/~rich/
+%       http://www.eos.ubc.ca/~rich/
 %
 %
 % Toolbox contents
@@ -41,6 +41,7 @@
 %  User-callable functions
 %
 %    m_proj.m      - initializes projections
+%    m_coord.m     - converts between geomagnetic and geographic coords.
 %
 %    m_grid.m      - draws grids 
 %    m_scale       - forces map to a given scale.
@@ -73,6 +74,9 @@
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
 %
+%    m_geo2mag.m     - converts from long/lat to geomagnetic coordinates
+%    m_mag2geo.m     - converts from geomagnetic coordinates to long/lat
+%
 %    m_lldist      - distance between points (long/lat coordinates)
 %    m_xydist      - distance between points (map projection coordinates)
 %
@@ -92,6 +96,8 @@
 %    private/mu_util.m   - various utility routines
 %    private/mu_coast.m  - routines to handle coastlines.
 %
+%    private/mc_coords.m - coordinate systems based on different poles.
+%
 %    private/clabel.m    - patched version of clabel 
 %                         (matlab v5.1 version does not contain
 %                         capabilities for different text properties).    
@@ -105,12 +111,12 @@
 %    private/*gif       - examples.
 %  
 %
-% Questions or problems; email me - rich@ocgy.ubc.ca.
+% Questions or problems; email me - rich@eos.ubc.ca.
 %
 % Rich Pawlowicz
 % Oceanography, Dept. of Earth and Ocean Sciences, Univ. of British Columbia, 
-% 6270 University Blvd., Vancouver, B.C. CANADA V6T 1Z4
-% email: rich@ocgy.ubc.ca 
+% 6339 Stores Rd., Vancouver, B.C. CANADA V6T 1Z4
+% email: rich@eos.ubc.ca 
 
 
     

@@ -18,6 +18,9 @@ function varargout=mu_util(optn,varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
+% 31/Mar/04 - added a fix in m_rectgrid that caused problems when a map
+% boundary coincided with a grid line.
+
 switch optn,
   case 'clip',
     [varargout{1},varargout{2}]=m_clip(varargin{:});
@@ -196,6 +199,12 @@ if strcmp(MAP_VAR_LIST.rectbox,'on') |  strcmp(MAP_VAR_LIST.rectbox,'circle'),
  istart=sum(cumsum(finite(X))==0)+1+[0:size(X,2)-1]*size(X,1);
  iend=size(X,1)-sum(cumsum(finite(flipud(X)))==0)+[0:size(X,2)-1]*size(X,1);
 
+ % Now, in the case where map boundaries coincide with limits it is just possible
+ % that an entire column might be NaN...so in this case make up something just
+ % slight non-zero. (31/Mar/04)
+ 
+ i3=find(iend==0); 
+ if any(i3), istart(i3)=1; iend(i3)=1; end; 
   
  % Now go back and find the lat/longs corresponding to those points; these are our new
  % starting points for the lines (Note that the linear interpolation for clipping at boundaries

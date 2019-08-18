@@ -19,7 +19,7 @@ function [X,Y,vals,labI]=mp_conic(optn,varargin);
 %    Lambert conformal - is conformal
 %
 %  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
-
+%  3/4/02 - added error if parallels are equidistant from equator (i.e. not conic projection really)
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -93,6 +93,7 @@ switch optn,
     switch MAP_PROJECTION.name
       case name(1),   
         MAP_VAR_LIST.n=sum(sin(MAP_VAR_LIST.rparallels))/2;
+	if MAP_VAR_LIST.n==0, error('Your parallels are equidistant from the equator - use a cylindrical projection!'); end;
         MAP_VAR_LIST.C=cos(MAP_VAR_LIST.rparallels(1)).^2+2*MAP_VAR_LIST.n*sin(MAP_VAR_LIST.rparallels(1));
         MAP_VAR_LIST.rho0=sqrt(MAP_VAR_LIST.C-2*MAP_VAR_LIST.n*sin(mean(MAP_VAR_LIST.rlats)))/MAP_VAR_LIST.n;
       case name(2),

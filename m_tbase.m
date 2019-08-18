@@ -23,11 +23,11 @@ function [values,longs,lats]=m_tbase(varargin);
 % 17/1/98 - Allowed output of raw data, fixed small bug in selection that left
 %           some things off by 1/12 deg lat.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
-
+% 28/Mar/04 - defaulted to m_elev database (prevents problems with m-demo)
 
 %%% This will have to be set by YOU the USER!
 
-PATHNAME='/users/rich/clim/elev/';   % Be sure to end the path with a "/" or
+PATHNAME='/ocean/rich/more/mmapbase/tbase_5/';   % Be sure to end the path with a "/" or
                                      % whatever your separator is.
 
 %%% You probably won't want to change this...
@@ -42,9 +42,23 @@ decmax=500;
 
 
 
-%%% Don't change anything below this...
+%%% Don't change anything below this... 
 
+efid=fopen([PATHNAME 'tbase.int'],'r');
 
+if efid==-1,
+ warning(sprintf(['Cannot open ' PATHNAME 'tbase.int !! \n   Have you installed the TerrainBase database correctly?' ...
+        '\n   This (optional) database must be installed separately - see the M_Map user''s guide for instructions' ...
+	'\n   ----Using default elevation database instead']));
+ if nargout==0,
+   m_elev(varargin{:});
+  elseif nargout==2,
+   [values,longs]=m_elev(varargin{:});
+  elseif nargout==3,	
+   [values,longs,lats]=m_elev(varargin{:});
+  end;	
+  return;
+end;
 
 
 global MAP_PROJECTION MAP_VAR_LIST
@@ -60,6 +74,11 @@ if draw_map==1 & isempty(MAP_PROJECTION),
   disp('No Map Projection initialized - call M_PROJ first!');
   return;
 end;
+
+% Set current projection to geographic
+Currentmap=m_coord('set');
+m_coord('geographic');
+
 
 if draw_map,
 
@@ -91,12 +110,6 @@ if llong<0, rlong=rlong+360*12; llong=llong+360*12; end;
 
 eaxes=[llong rlong 90*12-blat 90*12-tlat];
 
-efid=fopen([PATHNAME 'tbase.int'],'r');
-
-if efid==-1,
- error(sprintf(['Cannot open ' PATHNAME 'tbase.int !! \nHave you installed the TerrainBase database correctly?' ...
-        '\n   This (optional) database must be installed separately - see the M_Map user''s guide for instructions']));
-end;
 
 if (eaxes(2)>4319 ),   % Read it in in 2 pieces!
 
@@ -176,6 +189,8 @@ else
   [longs,lats]=meshgrid(lgs,lts);
 
 end;
+
+m_coord(Currentmap.name);
 
 if nargout==0
  clear values longs lats

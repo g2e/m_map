@@ -51,8 +51,8 @@ end;
 
 [X,Y]=m_ll2xy(long,lat,'clip','point');
 
-[XN,YN]=m_ll2xy(long,lat+.01,'clip','point');
-[XE,YE]=m_ll2xy(long+(.01)./cos(lat*pi/180),lat,'clip','point');
+[XN,YN]=m_ll2xy(long,lat+.001,'clip','point');
+[XE,YE]=m_ll2xy(long+(.001)./cos(lat*pi/180),lat,'clip','point');
 
 mU=u.*(XE-X)*100 + v.*(XN-X)*100;
 mV=u.*(YE-Y)*100 + v.*(YN-Y)*100;

@@ -33,6 +33,11 @@ function m_grid(varargin);
 %  7/05/98 - Added 'fancy' outline box.
 % 14/11/98 - Changed tag names from m_* to m_grid_*.
 % 11/07/99 - Apparently fontname changing didn't work (thanks to Dave McCollum)
+% 28/04/04 - Changed m_grid_color code so it works right under unix; old
+%            way retained for windows (ugh).
+% 16/10/05 - Kirk Ireson discovered that the way to fix those annoying 'cut-throughs'
+%            in fancy_box was to add a 'large' zdata...so I've adapted his fix in
+%            fancybox and fancybox2.
 
 
 % Note that much of the work in generating line data 
@@ -53,6 +58,10 @@ end;
 
 
 % Otherwise we are drawing a grid!
+
+% Set current projection to geographic
+Currentmap=m_coord('set');
+m_coord(MAP_PROJECTION.coordsystem.name);
 
 % Default parameters for grid
 
@@ -181,24 +190,39 @@ end;
 
 % Axes background - to defeat the inverthardcopy, I need a non-white border (the edgecolor),
 % but sneakily I can set it's width to (effectively) 0 so it doesn't actually show!
-%
-% Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
-% so now I just draw a patch
-patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
-      'edgecolor','k','linest','none','tag','m_grid_color');
 
-% Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
-% cover anything)
- show=get(0, 'ShowHiddenHandles');
- set(0, 'ShowHiddenHandles', 'on');
- hh=get(gca,'children');
- htags = get(hh,'tag');
- k = strmatch('m_grid_color',htags);
- hht = hh;
- hh(k) = [];
- hh = [hh;hht(k)];
- set(gca,'children',hh);
- set(0, 'ShowHiddenHandles', show);
+
+% Now, putting in a white background works under linux (at least) and
+% NOT under windows...I don't know about macs.
+%%a=ver('matlab');  % Ver doesn't return stuff under v5!
+a=version;
+%%if  sscanf(a.Version,'%f') >6.0 & ~ispc,
+if  sscanf(a(1:3),'%f') >6.0 & ~ispc,
+  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',get(gca,'color'),...
+	'edgecolor','k','linest','none','tag','m_grid_color');
+
+else
+% Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
+% so now I just draw a patch...but I have decided to go back to the old
+% way (above) with higher versions. Maybe the PC version works now?
+% Unfortunately this kludge has some strange side-effects.
+
+  patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
+	'edgecolor','k','linest','none','tag','m_grid_color');
+
+  % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
+  % cover anything)
+   show=get(0, 'ShowHiddenHandles');
+   set(0, 'ShowHiddenHandles', 'on');
+   hh=get(gca,'children');
+   htags = get(hh,'tag');
+   k = strmatch('m_grid_color',htags);
+   hht = hh;
+   hh(k) = [];
+   hh = [hh;hht(k)];
+   set(gca,'children',hh);
+   set(0, 'ShowHiddenHandles', show);
+end;
 
 
 % X-axis labels and grid
@@ -373,6 +397,11 @@ set(gca,'visible','off',...
 set(get(gca,'title'),'visible','on');
 set(get(gca,'xlabel'),'visible','on');
 set(get(gca,'ylabel'),'visible','on');
+
+% Set coordinate system back
+
+m_coord(Currentmap.name);
+
 
 %-------------------------------------------------------------
 % upright simply turns tick labels right-side up while leaving
@@ -560,16 +589,27 @@ u2x(2,id)=u2x(2,id)-diff(u2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
 u2y(2,id)=u2y(2,id)+dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
 
 % Now actually draw the patches.
+
+% Added the z-values 16/Oct/05.
  
 px=prod(size(l2x));
 kk=[0:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
- patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_grid_fancybox1');
- patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
+      reshape(u2y(kk),size(kk,1),size(kk,2))',...
+      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
+      reshape(l2y(kk),size(kk,1),size(kk,2))',...
+      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clip','off','tag','m_grid_fancybox1');
+
 kk=[dpatch*2:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
-patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
-patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_grid_fancybox1');
+patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
+      reshape(l2y(kk),size(kk,1),size(kk,2))',...
+      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
+      reshape(u2y(kk),size(kk,1),size(kk,2))',...
+      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clip','off','tag','m_grid_fancybox1');
 
 
 %---------------------------------------------------------
@@ -606,24 +646,32 @@ u2x(2,id)=u2x(2,id)-diff(u2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
 u2y(2,id)=u2y(2,id)+dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
 
 % Now actually draw the patches.
+
+% Added large z-values 16/Oct/05
  
 px=prod(size(l2x));
 kk=[0:(dpatch*2):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
- patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w',...
-        'edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
- patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w',...
-        'edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
+ patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
+       reshape(l2y(kk),size(kk,1),size(kk,2))',...
+       repmat(bitmax-1,size(kk,2),size(kk,1)),...
+       'w','edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
+ patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
+       reshape(u2y(kk),size(kk,1),size(kk,2))',...
+       repmat(bitmax-1,size(kk,2),size(kk,1)),...
+       'w','edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
 
 kk=[0:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
-line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
+line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),...
+     repmat(bitmax,k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
 
 kk=[dpatch:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
-line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
+line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),...
+     repmat(bitmax,k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
 
 
 

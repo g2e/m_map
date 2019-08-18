@@ -28,6 +28,7 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 % 8/8/98 - Hammer-Aitoff
 % 17/8/98 - Mollweide projection.
 %  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
+% Mar/26/04 - 'varagin' to 'varargin' bug fixed (thanks to John Douglas)
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -170,7 +171,7 @@ switch optn,
         Y=varargin{2}/pi180;
         X=MAP_VAR_LIST.clong+(varargin{1}-MAP_VAR_LIST.clong*pi180)./cos(varargin{2})/pi180;
       case name(3),
-        X=varagin{1}/cos(45*pi180)/pi180 + MAP_VAR_LIST.clong;
+        X=varargin{1}/cos(45*pi180)/pi180 + MAP_VAR_LIST.clong;
         Y=asin(varargin{2}*cos(45*pi180))/pi180; 
       case name(4),
         z=sqrt(1-(varargin{1}/4).^2-(varargin{2}/2).^2);

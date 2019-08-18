@@ -7,15 +7,17 @@ function m_proj(proj,varargin)
 %                                   'get' list.
 %         M_PROJ('proj name','property',value,...) initializes a projection.
 %
+%
 %         see also M_GRID, M_LL2XY, M_XY2LL.
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 2/Apr/1997
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
+%
+% 20/Sep/01 - Added support for other coordinate systems.
 
-
-global MAP_PROJECTION MAP_VAR_LIST
+global MAP_PROJECTION MAP_VAR_LIST MAP_COORDS
 
 % Get all the projections
 projections=m_getproj;
@@ -68,8 +70,15 @@ switch proj,
  otherwise                % If a valid name, give the usage.
     k=m_match(proj,projections(:).name);
     MAP_PROJECTION=projections(k);
+        
     eval([ projections(k).routine '(''initialize'',projections(k).name,varargin{:});']);
 
+    % With the projection store what coordinate system we are using to define it.
+    if isempty(MAP_COORDS),
+      m_coord('geographic');
+    end;  
+    MAP_PROJECTION.coordsystem=MAP_COORDS;
+    
 end;
 
 %---------------------------------------------------------
@@ -104,6 +113,16 @@ end;
 
 w=dir([lpath 'mp_*.m']);
 
+if isempty(w), % Not installed correctly
+  disp('**********************************************************');
+  disp('* ERROR - Can''t find anything in a /private subdirectory *');
+  disp('*         m_map probably unzipped incorrectly - please   *');
+  disp('*         unpack again, preserving directory structure   *');
+  disp('*                                                        *');
+  disp('*         ...Abandoning m_proj now.                      *');
+  error('**********************************************************');
+end;  
+	
 l=1;
 projections=[];
 for k=1:length(w),

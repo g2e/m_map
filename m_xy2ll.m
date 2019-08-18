@@ -10,13 +10,20 @@ function [long,lat]=m_xy2ll(X,Y);
 
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 
-global MAP_PROJECTION 
+global MAP_PROJECTION MAP_COORDS
 
 if nargin==0 | isstr(X),
   disp(' Usage:');
   disp(' [LONGITUDE,LATITUDE]=m_xy2ll(X,Y);');
 else
   [long,lat]=feval(MAP_PROJECTION.routine,'xy2ll',X,Y);
+  if ~strcmp(MAP_COORDS.name,MAP_PROJECTION.coordsystem.name),
+    if strcmp(MAP_COORDS.name,'geographic'),
+      [long,lat]=mc_coords('mag2geo',long,lat);
+    else
+      [long,lat]=mc_coords('geo2mag',long,lat);      
+    end; 
+  end;
 end;
 
 if nargout==0,
