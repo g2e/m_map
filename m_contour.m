@@ -42,6 +42,7 @@ if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','off'); end;
 
 if any(~i(:)),
  [cs,h]=contour(X,Y,data,varargin{:});
+ set(h,'tag','m_contour');
 else
   cs=[];h=[];
 end;

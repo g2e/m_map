@@ -18,6 +18,8 @@ function h=m_text(long,lat,varargin);
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 17/Jan/1998
 %
+% 31/Jul/99 - changed to allow for X/Y vectors.
+%
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
@@ -31,4 +33,9 @@ if isempty(MAP_PROJECTION),
 end;
 
 [X,Y]=m_ll2xy(long,lat,'clip','off');
-h=text(X,Y,varargin{:});
+%h=text('position',[X(:) Y(:)],'tag','m_text','string',varargin{:});
+% Fix to allow vectors of X/Y to work
+h=text(X(:),Y(:),varargin{:});
+if length(h)>0 & isempty(get(h(1),'tag')),
+ set(h,'tag','m_text');
+end;

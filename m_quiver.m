@@ -49,10 +49,11 @@ end;
 
 [X,Y]=m_ll2xy(long,lat,'clip','point');
 
-[XN,YN]=m_ll2xy(long,lat+.1,'clip','point');
-[XE,YE]=m_ll2xy(long+(.1)./cos(lat*pi/180),lat,'clip','point');
+[XN,YN]=m_ll2xy(long,lat+.01,'clip','point');
+[XE,YE]=m_ll2xy(long+(.01)./cos(lat*pi/180),lat,'clip','point');
 
-mU=u.*(XE-X)*10 + v.*(XN-X)*10;
-mV=u.*(YE-Y)*10 + v.*(YN-Y)*10;
+mU=u.*(XE-X)*100 + v.*(XN-X)*100;
+mV=u.*(YE-Y)*100 + v.*(YN-Y)*100;
 
 h=quiver(X,Y,mU,mV,varargin{:});
+set(h,'tag','m_quiver');

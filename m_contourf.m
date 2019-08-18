@@ -47,6 +47,7 @@ if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','patch'); end;
 
 if any(~i(:)),
  [cs,h]=contourf(X,Y,data,varargin{:});
+ set(h,'tag','m_contourf');
 else
   cs=[];h=[];
 end;

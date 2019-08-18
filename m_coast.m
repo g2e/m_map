@@ -4,7 +4,8 @@ function m_coast(varargin);
 %         lines (fast) on a given projection. It uses a coastline database with
 %         a resolution of about 1/4 degree. 
 %
-%         M_COAST( (standard line option,...,...) ) draws the coastline
+%         M_COAST( (standard line option,...,...) )  or
+%         M_COAST('line', (standard line option,...,...) ) draws the coastline
 %         as a simple line.
 %         M_COAST('patch' ( ,standard patch options,...,...) ) draws the 
 %         coastline as a number of patches. 
@@ -18,5 +19,5 @@ function m_coast(varargin);
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
-mu_coast('default',varargin{:});
+mu_coast('default',varargin{:},'tag','m_coast');
 

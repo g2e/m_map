@@ -6,7 +6,7 @@ function m_grid(varargin);
 %
 %        The optional parameters allow the user
 %        to control the look of the grid. These parameters are listed
-%        by MGRID_('get'), with defualt parameters in M_GRID('set');
+%        by M_GRID('get'), with defualt parameters in M_GRID('set');
 %
 %        see also M_PROJ
 
@@ -32,6 +32,7 @@ function m_grid(varargin);
 %            (as requested by EF)
 %  7/05/98 - Added 'fancy' outline box.
 % 14/11/98 - Changed tag names from m_* to m_grid_*.
+% 11/07/99 - Apparently fontname changing didn't work (thanks to Dave McCollum)
 
 
 % Note that much of the work in generating line data 
@@ -283,7 +284,7 @@ if ~isempty(xtick),
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
    text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk, ...
         'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
-        'tag','m_grid_xticklabel');
+        'tag','m_grid_xticklabel','fontname',gfontname);
  end;
 
  if fudge_north=='y',
@@ -356,7 +357,8 @@ if ~isempty(ytick),
  for k=ik,
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
    text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk,...
-        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,'tag','m_grid_yticklabels');
+        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
+	'tag','m_grid_yticklabels','fontname',gfontname);
  end;
 
 end;
@@ -533,7 +535,7 @@ function fancybox(vals,lims,gridarg1,gridarg2,dpatch,gticklen);
 global MAP_PROJECTION
 
 % Get xlocations including endpoints
-xval=[lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)];
+xval=sort([lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)]);
 % Add all half-way points as well.
 xval=sort([xval,xval(1:end-1)+diff(xval)/2]);
 	
@@ -579,7 +581,7 @@ function fancybox2(vals,lims,gridarg1,gridarg2,dpatch,gticklen);
 global MAP_PROJECTION
 
 % Get xlocations including endpoints
-xval=[lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)];
+xval=sort([lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)]);
 % Add all half-way points as well.
 xval=sort([xval,xval(1:end-1)+diff(xval)/2]);
 	

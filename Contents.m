@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.3 21/Nov/1998
+% Version 1.3 20/Dec/1998
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -14,7 +14,7 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3d! 
+%                            Announcing M_Map v1.3e! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
@@ -43,8 +43,9 @@
 %    m_proj.m      - initializes projections
 %
 %    m_grid.m      - draws grids 
-%    m_ungrid.m    - erases grids and stuff (if you want to change grid parameters)
 %    m_scale       - forces map to a given scale.
+%
+%    m_ungrid.m    - erases map elements (if you want to change parameters)
 %
 %    m_coast.m     - draws a coastline
 %    m_elev.m      - draws elevation data from 1 degree database
@@ -65,6 +66,7 @@
 %    m_contourf    - draws filled contours
 %    m_patch       - draws patch data
 %    m_track       - draws annotated tracklines
+%    m_range_ring  - draws range rings
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat

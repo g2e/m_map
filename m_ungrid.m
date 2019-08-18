@@ -7,8 +7,8 @@ function m_ungrid(goptn);
 %          or
 %          M_UNGRID('XXX')
 %
-%          can be used to remove other parameters (currently only
-%          TRACKs can be removed this way).
+%          can be used to remove other parameters plotted using an
+%          M_XXX command (e.g. M_UNGRID COAST).
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 4/Apr/97 
 %

@@ -34,7 +34,7 @@ targetpath = dir(targetfile);
 
 if ( length(targetpath)~=0 ) %then load file.
    load(targetfile);
-   m_line(bndry_lon,bndry_lat,varargin{:});
+   m_line(bndry_lon,bndry_lat,'tag','m_plotbndry',varargin{:});
    
 else %Can't find binary file, load and process text file.
    %  Create .mat file from data read.
@@ -65,7 +65,7 @@ else %Can't find binary file, load and process text file.
       %read in polygon index
       line = fgetl(fid);
       field = sscanf(line,'%3c');
-      if ( strcmpi(field,'END') ) %then found EOF
+      if ( strcmp(upper(field),'END') ) %then found EOF
          done = 1;
       else %start reading in polygon
          polynum = polynum + 1;
@@ -78,7 +78,7 @@ else %Can't find binary file, load and process text file.
          line = fgetl(fid); %skip polygon centroid
          line = fgetl(fid); %first point
          ptcount = 0;
-         while ( ~strcmpi(line(1:3),'end') )
+         while ( ~strcmp(upper(line(1:3)),'END') )
             ptcount = ptcount + 1;
             line = fgetl(fid);
          end %while
@@ -112,7 +112,7 @@ else %Can't find binary file, load and process text file.
    
    fclose(fid);
    
-   m_line(bndry_lon,bndry_lat,varargin{:});
+   m_line(bndry_lon,bndry_lat,'tag','m_plotbndry',varargin{:});
    nchar = length(targetpath);
    matfile = [targetfile(1:(nchar-4)),'.mat'];
    save(matfile,'bndry_lat','bndry_lon');

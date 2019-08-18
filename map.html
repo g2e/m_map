@@ -24,7 +24,7 @@ But you can't.
 <p>
 
 Instead you have to figure out how to save all your data, and then read it into
-another program (like, for example <a href="http://www.soest.hawaii.edu/soest/gmt.html"> GMT </a>),
+another program (like, for example <a href="http://imina.soest.hawaii.edu/gmt/"> GMT </a>),
 and then spend all that extra time
 figuring out why it doesn't give you what
 you expected it would... 
@@ -37,7 +37,7 @@ No more!
 
 <hr, width=.5>
 
-<center> <h4> Announcing M_Map v1.3d! </h4> </center>
+<center> <h4> Announcing M_Map v1.3e! </h4> </center>
 
 <hr, width=.5>
 
@@ -55,7 +55,7 @@ or in planar X/Y terms.
 
 </ol>
 
-<center> <h4> M_Map is now use at more than 800 locations around the world! </h4> </center>
+<center> <h4> M_Map is now use at almost 1800 locations around the world! </h4> </center>
 <p>
 <IMG SRC="./private/usermap.gif">  
 <p>
@@ -65,7 +65,7 @@ New in release 1.2 are
 <li> Built-in functions for drawing lines, text, and quiver plots in long/lat coords
 <li> Built-in functions for contouring data (filled and line contours) in long/lat coords
 <li> Hooks into a 5-minute global bathymetry (<a href="http://www.scd.ucar.edu/dss/datasets/ds759.2.html"> TerrainBase </a>) available from the net.
-<li> Fancy quiver plots, thanks to E. Firing (see <a href="./map.html#e8">last example</a>)
+<li> Fancy quiver plots, thanks to E. Firing (see <a href="./map.html#e8">example 8</a>)
 <li> Gall-Peters projection (handy for large tropical areas)
 <li> Fancy outline boxes! (see <a href="./map.html#e2">example 2</a> and <a href="./map.html#e6">example 6</a>)
 </ol>
@@ -78,7 +78,7 @@ High-resolution Shoreline Database (GSHHS) </a> used by GMT (see <a href="./map.
 <li> Instructions on how to use the new <a href="http://topex.ucsd.edu/marine_topo/text/topo.html">
 Sandwell and Smith </a> bathymetry
 
-<li> Hammer-Aitoff and Mollweide projections (<a href="#e4">example 4</a>)
+<li> Hammer-Aitoff (<a href="#e11">example 11</a>) and Mollweide projections (<a href="#e4">example 4</a>)
 
 </ol>
 New in release 1.3d are
@@ -90,13 +90,22 @@ New in release 1.3d are
 <li> m_plotbndry - hooks into an online database of political boundaries (Thanks to M. Mann)
 </ol>
 
+</ol>
+New in release 1.3e are
+<ol>
+<li> m_range_rings primitive to draw range rings (just great for nuclear weapon destruction
+radii and seismic travel-time data - see <a href="#e11">example 11</a>).
+<li> Extended usefullness of m_ungrid to allow removal of any specific plot element by
+a command line option.
+</ol>
+
 <hr>
 <h2> <a name=download> How to get M_Map </h2>
 
 <p>
 You can download the M_Map toolbox either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.tar.gz">
 gzipped tar-file </a>, or as <a href="http://www.ocgy.ubc.ca/~rich/m_map1.3.zip"> zip archive </a> (Click on these links to download). Both are
-around 200k in size. Once you have this archive, read the  <a href="./private/mapug.html#p1">  Getting started </a> section of the <a href="./private/mapug.html"> User's guide  </a> to
+around 250k in size. Once you have this archive, read the  <a href="./private/mapug.html#p1">  Getting started </a> section of the <a href="./private/mapug.html"> User's guide  </a> to
 correctly install this toolbox, and sections <a href="./private/mapug.html#p9">9</a>
 and <a href="./private/mapug.html#p9.6">10.1</a> to install TerrainBase and GSHHS
 respectively.
@@ -135,20 +144,22 @@ various capabilities of M_Map.
 <ol>
 <li> <a href="./private/mapug.html#p5.3"> Drawing lines, text, arrows, patches and contours </a> 
 <li> <a href="./private/mapug.html#p5.4"> Drawing tracklines </a> <img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p5.5"> Drawing range rings </a> <img src="./private/new.gif">
 <li> <a href="./private/mapug.html#p5.1"> Converting  longitude/latitude to projection coordinates </a>
 <li> <a href="./private/mapug.html#p5.2"> Converting  projection coordinates to longitude/latitude </a>
 </ol>
 <li> <a href="./private/mapug.html#p6"> More complex plots </a>
+<li> <a href="./private/mapug.html#p13"> Removing data from a plot</a></a><img src="./private/new.gif">
 <li> <a href="./private/mapug.html#p7"> Adding your own coastlines </a>
 <ol>
 <li> <a href="./private/mapug.html#p7.1"> DCW political boundaries  </a><img src="./private/new.gif">
 </ol>
 <li> <a href="./private/mapug.html#p8"> Adding your own topography/bathymetry </a>
 <ol>
-<li> <a href="./private/mapug.html#p8.1"> Sandwell and Smith Bathymetry  </a><img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p8.1"> Sandwell and Smith Bathymetry  
 </ol>
 <li> <a href="./private/mapug.html#p9"> Using TerrainBase 5-minute global bathymetry/topography </a> 
-<li> <a href="./private/mapug.html#p9.5"> Using the GSHHS high-resolution coastline database </a> <img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p9.5"> Using the GSHHS high-resolution coastline database </a> 
 <ol>
 <li><a href="./private/mapug.html#p9.6"> Installing GSHHS </a>
 <li><a href="./private/mapug.html#p9.7"> Using GSHHS effectively </a>
@@ -350,6 +361,17 @@ m_track(lons,lats,dates,'ticks',0,'times',4,'dates',8,...
         'clip','off','color','r','orient','upright');  
 </pre>
 <center> <img src="./private/track1.gif">  </center> <br>
+
+<h4>  <a name = "e11">11. Range rings </h4>
+<pre>
+    m_proj('hammer','clong',170);
+    m_grid('xtick',[],'ytick',[],'linestyle','-');
+    m_coast('patch','g');
+    m_line(100.5,13.5,'marker','square','color','r');
+    m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewi',2);
+    xlabel('1000km range rings from Bangkok');
+</pre>
+<center> <img src="./private/rring.gif">  </center> <br>
 
 <hr>
 

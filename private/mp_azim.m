@@ -8,6 +8,7 @@ function [X,Y,vals,labI]=mp_azim(optn,varargin);
 %
 %         13/5/97 - Added satellite perspective
 %          1/6/97 - Another stab at removing some /0 errors.
+%         10/8/00 - Rotation for projections?
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -44,7 +45,8 @@ switch optn,
               '     <,''lon<gitude>'',center_long>',...
               '     <,''lat<itude>'', center_lat>',...
               '     <,''rad<ius>'', ( degrees | [longitude latitude] ) | ''alt<itude>'', alt_frac >',...
-              '     <,''rec<tbox>'', ( ''on'' | ''off'' | ''circle'' )>'});
+              '     <,''rec<tbox>'', ( ''on'' | ''off'' | ''circle'' )>',...
+	      '     <,''rot<angle>'', degrees CCW>'});
 
   case 'get',
 
@@ -52,7 +54,8 @@ switch optn,
             [' center longitude: ' num2str(MAP_VAR_LIST.ulong) ],...
             [' center latitude: ' num2str(MAP_VAR_LIST.ulat) ],...
             [' radius/altitude : ' num2str(MAP_VAR_LIST.uradius) ],...
-            [' Rectangular border: ' MAP_VAR_LIST.rectbox ]);
+            [' Rectangular border: ' MAP_VAR_LIST.rectbox ],...
+	    [' Rotation angle: ' num2str(MAP_VAR_LIST.rotang) ]);
 
   case 'initialize',
 
@@ -62,6 +65,7 @@ switch optn,
     MAP_VAR_LIST.ulat=60;
     MAP_VAR_LIST.rectbox='circle';
     MAP_VAR_LIST.uradius=90;
+    MAP_VAR_LIST.rotang=0;
     k=2;
     while k<length(varargin),
       switch varargin{k}(1:3),
@@ -73,6 +77,8 @@ switch optn,
            MAP_VAR_LIST.uradius=varargin{k+1};
          case 'rec',
            MAP_VAR_LIST.rectbox=varargin{k+1};
+	 case 'rot',
+	   MAP_VAR_LIST.rotang=varargin{k+1};
          otherwise
            disp(['Unknown option: ' varargin{k}]);
        end;
@@ -188,8 +194,8 @@ switch optn,
         Az=Az./abs(Az);
     end;
 
-     X=rho.*real(Az);
-     Y=rho.*imag(Az);
+     X=rho.*real(Az*exp(i*pi180*MAP_VAR_LIST.rotang));
+     Y=rho.*imag(Az*exp(i*pi180*MAP_VAR_LIST.rotang));
 
     if strcmp(MAP_VAR_LIST.rectbox,'on')  & ~strcmp(varargin{4},'off'),
         [X,Y]=mu_util('clip',varargin{4},X,MAP_VAR_LIST.xlims(1),X<MAP_VAR_LIST.xlims(1) | isnan(X),Y);
@@ -202,7 +208,10 @@ switch optn,
 
 
     rho=sqrt(varargin{1}.^2+varargin{2}.^2);
-
+    Z=exp(i*(atan2(varargin{2},varargin{1})-MAP_VAR_LIST.rotang*pi180));
+    V1=rho.*real(Z);
+    V2=rho.*imag(Z);
+    
     ir=rho==0;  % To prevent /0 warnings when rho is 0
     rho(ir)=eps;
 
@@ -223,17 +232,30 @@ switch optn,
     c(ir)=eps; % we offset this slightly so that the correct limit is achieved in the
                % division below:
 
+%    Y=(asin(cos(c)*sin(MAP_VAR_LIST.rlat) + ...
+%            cos(MAP_VAR_LIST.rlat)*sin(c).*varargin{2}./rho))/pi180;
+%
+%    switch MAP_VAR_LIST.ulat,
+%      case 90,
+%        X=(MAP_VAR_LIST.rlong+atan2(varargin{1},-varargin{2}))/pi180;
+%      case -90,
+%        X=(MAP_VAR_LIST.rlong+atan2(varargin{1},varargin{2}))/pi180;
+%      otherwise
+%        X=(MAP_VAR_LIST.rlong+atan2( varargin{1}.*sin(c), ...
+%          cos(MAP_VAR_LIST.rlat)*cos(c).*rho - sin(MAP_VAR_LIST.rlat)*varargin{2}.*sin(c) ) )/pi180; 
+%     end;
+
     Y=(asin(cos(c)*sin(MAP_VAR_LIST.rlat) + ...
-            cos(MAP_VAR_LIST.rlat)*sin(c).*varargin{2}./rho))/pi180;
+            cos(MAP_VAR_LIST.rlat)*sin(c).*V2./rho))/pi180;
 
     switch MAP_VAR_LIST.ulat,
       case 90,
-        X=(MAP_VAR_LIST.rlong+atan2(varargin{1},-varargin{2}))/pi180;
+        X=(MAP_VAR_LIST.rlong+atan2(V1,-V2))/pi180;
       case -90,
-        X=(MAP_VAR_LIST.rlong+atan2(varargin{1},varargin{2}))/pi180;
+        X=(MAP_VAR_LIST.rlong+atan2(V1,V2))/pi180;
       otherwise
-        X=(MAP_VAR_LIST.rlong+atan2( varargin{1}.*sin(c), ...
-          cos(MAP_VAR_LIST.rlat)*cos(c).*rho - sin(MAP_VAR_LIST.rlat)*varargin{2}.*sin(c) ) )/pi180; 
+        X=(MAP_VAR_LIST.rlong+atan2( V1.*sin(c), ...
+          cos(MAP_VAR_LIST.rlat)*cos(c).*rho - sin(MAP_VAR_LIST.rlat)*V2.*sin(c) ) )/pi180; 
      end;
 
   case 'xgrid',

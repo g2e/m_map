@@ -107,6 +107,7 @@ if draw_map,
       [values,longs]=m_contourf(lg,lt,topo,levels);
   end;  
 
+  set(longs,'tag','m_elev');  
   if n_opt<length(varargin), for l=1:length(longs), set(longs(l),varargin{n_opt:end}); end; end;
 
 else

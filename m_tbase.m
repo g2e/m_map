@@ -165,7 +165,7 @@ if draw_map,
    case 'contourf',
       [values,longs]=m_contourf(lgs,lts,topo,levels);
   end;  
-
+  set(longs,'tag','m_tbase');
   if n_opt<length(varargin), 
     for l=1:length(longs), set(longs(l),varargin{n_opt:end}); end; 
   end;

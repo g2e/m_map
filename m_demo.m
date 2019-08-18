@@ -15,13 +15,14 @@ function m_demo(index);
 % 27/July/98 - more examples.
 % 17/Aug/98     "
 % 15/Nov/98  - another example, better interface.
+% 23/Dec/98  - another example.
 
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
 
 
-N_EXAMPLES=10;
+N_EXAMPLES=11;
 
 if nargin==0,
  index=1:N_EXAMPLES;
@@ -125,7 +126,7 @@ switch i,
   
     m_proj('lambert','lon',[-10 20],'lat',[33 48]);
     m_tbase('contourf');
-    m_grid('linestyle','none');
+    m_grid('linestyle','none','tickdir','out','linewidth',3);
     colormap(jet);
 
   case 8,
@@ -180,9 +181,21 @@ switch i,
     lats=60*cos((lons+115)*pi/180);
     dates=datenum(1997,10,23,15,1:41,zeros(1,41));
 
-    m_track(lons,lats,dates,'ticks',0,'times',4,'dates',8/60,...
-            'clip','off','color','r');  
-
+    m_track(lons,lats,dates,'ticks',0,'times',4,'dates',8,...
+           'clip','off','color','r','orient','upright');  
+           
+  case 11,
+  
+    % example showing range rings
+    
+    clf
+    m_proj('hammer','clong',170);
+    m_grid('xtick',[],'ytick',[],'linestyle','-');
+    m_coast('patch','g');
+    m_line(100.5,13.5,'marker','square','color','r');
+    m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewi',2);
+    xlabel('1000km range rings from Bangkok');
+    
   end;
   
  if i<length(index), 

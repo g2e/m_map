@@ -17,6 +17,8 @@ function [X,Y,vals,labI]=mp_conic(optn,varargin);
 % for showing limited areas at mid-latitudes.
 %    Albers equal-area - has an equal-area property
 %    Lambert conformal - is conformal
+%
+%  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
 
 
 global MAP_PROJECTION MAP_VAR_LIST
@@ -57,11 +59,11 @@ switch optn,
     MAP_VAR_LIST.parallels=NaN;
     MAP_VAR_LIST.clong=NaN;
     MAP_VAR_LIST.rectbox='off';
-    k=2;
+    k=2;longs_def=0;
     while k<length(varargin),  
       switch varargin{k}(1:3),
          case 'lon', 
-           MAP_VAR_LIST.ulongs=varargin{k+1};
+           MAP_VAR_LIST.ulongs=varargin{k+1};longs_def=1;
            if MAP_VAR_LIST.ulongs(1)>MAP_VAR_LIST.ulongs(2),
              MAP_VAR_LIST.ulongs=MAP_VAR_LIST.ulongs([2 1]);
            end;
@@ -78,7 +80,8 @@ switch optn,
          end;
        k=k+2;
      end;
-    if isnan(MAP_VAR_LIST.clong), MAP_VAR_LIST.clong=mean(MAP_VAR_LIST.ulongs); end;
+    if isnan(MAP_VAR_LIST.clong), MAP_VAR_LIST.clong=mean(MAP_VAR_LIST.ulongs); 
+    elseif ~longs_def, MAP_VAR_LIST.ulongs=MAP_VAR_LIST.clong+[-180 180];  end;
     if isnan(MAP_VAR_LIST.parallels), MAP_VAR_LIST.parallels=mean(MAP_VAR_LIST.ulats)*[1 1]; end;
 
     MAP_VAR_LIST.rlongs=MAP_VAR_LIST.ulongs*pi180;

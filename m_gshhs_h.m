@@ -29,7 +29,7 @@ if length(varargin)>1 & varargin{1}(1)=='s',
   [ncst,Area,k]=mu_coast('h',FILNAME);
   eval(['save ' varargin{2} ' ncst k Area']);
 else
-  mu_coast('h',FILNAME,varargin{:});
+  mu_coast('h',FILNAME,varargin{:},'tag','m_gshhs_h');
 end;
 
 

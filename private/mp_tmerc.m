@@ -27,6 +27,7 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 % 15/4/98 - Gall-Peters projection
 % 8/8/98 - Hammer-Aitoff
 % 17/8/98 - Mollweide projection.
+%  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -69,17 +70,17 @@ switch optn,
       case name(3),
         MAP_VAR_LIST.ulongs=[30 390];
         MAP_VAR_LIST.ulats=[-65 65];
-      case {name(4),name{5}}
+      case {name{4},name{5}}
         MAP_VAR_LIST.ulongs=[-300 60];
         MAP_VAR_LIST.ulats=[-90 90];
     end;
     MAP_VAR_LIST.clong=NaN;
     MAP_VAR_LIST.rectbox='off';
-    k=2;
+    k=2;longs_def=0;
     while k<length(varargin),   
       switch varargin{k}(1:3),
          case 'lon',
-           MAP_VAR_LIST.ulongs=varargin{k+1};
+           MAP_VAR_LIST.ulongs=varargin{k+1};longs_def=1;
          case 'clo',
            MAP_VAR_LIST.clong=varargin{k+1};
          case 'lat',
@@ -91,7 +92,9 @@ switch optn,
          end;
        k=k+2;
      end;
-    if isnan(MAP_VAR_LIST.clong),  MAP_VAR_LIST.clong=mean(MAP_VAR_LIST.ulongs); end;
+    if isnan(MAP_VAR_LIST.clong),  MAP_VAR_LIST.clong=mean(MAP_VAR_LIST.ulongs); 
+    elseif ~longs_def, MAP_VAR_LIST.ulongs=MAP_VAR_LIST.clong+[-180 180];   end;
+    
     MAP_VAR_LIST.clat=mean(MAP_VAR_LIST.ulats);
    
     % Get X/Y and (if rectboxs are desired) recompute lat/long limits.

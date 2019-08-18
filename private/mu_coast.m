@@ -28,6 +28,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %         specifying lines or patches, in the form:
 %
 %          optional arguments:  <line property/value pairs>, or
+%                               'line',<line property/value pairs>.
 %                               'patch',<patch property/value pairs>.
 %
 %         If no or one output arguments are specified then the coastline is drawn, with
@@ -47,6 +48,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %                     when using conic projections with large extents that
 %                     crossed the 180-deg longitude line.
 %        31/Aug/98  - added "f" gshhs support (Thanks to RAMO)
+%        17/June/99 - 'line' option as per manual (thanks to Brian Farrelly)
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -131,11 +133,19 @@ switch MAP_PROJECTION.routine,
   end;
 end;
 
-if length(varargin)>0 & strcmp(varargin(1),'patch'),
-  optn='patch';
+
+if length(varargin)>0,
+  if strcmp(varargin(1),'patch'),
+    optn='patch';
+  end
+  if strcmp(varargin(1),'line'),
+    optn='line';
+    varargin=varargin(2:end); % ensure 'line' does not get passed to line
+  end
 else
   optn='line';
 end;
+
 
 
 switch optn,
@@ -336,7 +346,6 @@ switch MAP_VAR_LIST.rectbox,
 end;
 
 
-
 %%
 function [ncst,k,Area]=get_coasts(optn,file);
 %
@@ -409,7 +418,8 @@ while cnt>0,
  % the map. There are various cases to consider, depending on whether map limits
  % and/or the line limits cross the longitude jump or not.
  
- if e & (  a&(b&c&d | ~b&(c|d)) | ~a&(~b | (b&(c|d))) ),
+%% if e & (  a&( b&c&d | ~b&(c|d)) | ~a&(~b | (b&(c|d))) ),
+ if e & (  (a&( (b&c&d) | (~b&(c|d)) )) | (~a&(~b | (b&(c|d))) ) ),
  
    l=l+1;
  
