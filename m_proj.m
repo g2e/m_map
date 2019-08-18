@@ -82,6 +82,8 @@ function projections=m_getproj;
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 9/May/1997
 %
 % 9/May/97 - fixed paths for Macs (thanks to Dave Enfield)
+%
+% 7/05/98 - VMS pathnames (thanks to Helmut Eggers)
 
 % Get all the projections
 
@@ -89,10 +91,13 @@ lpath=which('m_proj');
 fslashes=findstr(lpath,'/');
 bslashes=findstr(lpath,'\');
 colons=findstr(lpath,':');
+closparantheses=findstr(lpath,']');
 if ~isempty(fslashes),
   lpath=[ lpath(1:max(fslashes)) 'private/'];
 elseif ~isempty(bslashes),
   lpath=[ lpath(1:max(bslashes)) 'private\'];
+elseif ~isempty(closparantheses),       % for VMS computers only, others don't use ']' in filenames
+  lpath=[ lpath(1:max(closparantheses)-1) '.private]'];
 else,
   lpath=[ lpath(1:max(colons)) 'private:'];
 end;

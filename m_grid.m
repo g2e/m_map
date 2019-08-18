@@ -30,6 +30,8 @@ function m_grid(varargin);
 %            a fix.
 %  7/04/98 - Another fix to grid locations to not automatically add edge points
 %            (as requested by EF)
+%  7/05/98 - Added 'fancy' outline box.
+
 
 % Note that much of the work in generating line data 
 % is done by calls to the individual projections - 
@@ -59,7 +61,7 @@ ylabels=NaN;
 gcolor='k';
 glinestyle=':';
 glinewidth=get(gca,'linewidth');
-gbox='on';
+gbox='on'; 
 gfontsize=get(gca,'fontsize');
 gfontname=get(gca,'fontname');
 gxaxisloc=get(gca,'xaxislocation'); 
@@ -68,6 +70,8 @@ gtickdir=get(gca,'tickdir');
 gticklen=get(gca,'ticklen'); gticklen=gticklen(1); 
 gxticklabeldir='middle';
 gyticklabeldir='end';
+
+dpatch=5; % interpolation factor for fancy grids
 
 % Parse parameter list for options. I really should do some
 % error checking here, but...
@@ -121,7 +125,7 @@ while k<=length(varargin),
            gtickdir=varargin{k+1};
         end;
     case {'get','usa'},
-      disp('      ''box'',( ''on'' | ''off'' )');
+      disp('      ''box'',( ''on'' | ''fancy'' | ''off'' )');
       disp('      ''xtick'',( num | [value1 value2 ...])');
       disp('      ''ytick'',( num | [value1 value2 ...])');
       disp('      ''xticklabels'',[label1;label2 ...]');
@@ -158,6 +162,12 @@ while k<=length(varargin),
   k=k+2;
 end;     
 
+if strcmp(gbox,'fancy'),
+  if strcmp(MAP_VAR_LIST.rectbox,'on') | strcmp(MAP_VAR_LIST.rectbox,'circle'),
+   gbox='on';
+   warning([' No fancy outline with ''rectbox'' set to ''' MAP_VAR_LIST.rectbox '''']);
+  end;
+end;
 
 % Draw the plot box
 
@@ -248,6 +258,14 @@ if ~isempty(xtick),
   end;
  end;
 
+ if strcmp(gbox,'fancy'),
+    if gtickdir(1)=='i',
+      fancybox(lg,MAP_VAR_LIST.longs,'xgrid','bottom',dpatch,gticklen); 
+      drawticks=0;
+    else    
+      fancybox2(lg,MAP_VAR_LIST.longs,'xgrid','bottom',dpatch,gticklen); 
+    end;
+ end;    
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
@@ -315,6 +333,14 @@ if ~isempty(ytick),
   end;
  end;
 
+ if strcmp(gbox,'fancy'),
+    if gtickdir(1)=='i',
+      fancybox(lt,MAP_VAR_LIST.lats,'ygrid','left',dpatch,gticklen); 
+      drawticks=0;
+    else    
+      fancybox2(lt,MAP_VAR_LIST.lats,'ygrid','left',dpatch,gticklen); 
+    end;
+ end;    
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
@@ -495,6 +521,107 @@ else
   utx=[X(end,:);X(end,:)+tlen*(X(end-1,:)-X(end,:))./lx];
   uty=[Y(end,:);Y(end,:)+tlen*(Y(end-1,:)-Y(end,:))./lx];
 end;
+
+
+%---------------------------------------------------------
+function fancybox(vals,lims,gridarg1,gridarg2,dpatch,gticklen);
+%
+%  FANCYBOX  - draws fancy outlines for either top/bottom or left/right sides,
+%              depending on calling parameters.
+
+global MAP_PROJECTION
+
+% Get xlocations including endpoints
+xval=[lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)];
+% Add all half-way points as well.
+xval=sort([xval,xval(1:end-1)+diff(xval)/2]);
+	
+% Interpolate extra points to handle curved boundary conditions.
+	
+xval=(xval(1:end-1)'*ones(1,dpatch)+diff(xval)'*[0:dpatch-1]/dpatch)';
+xval=[xval(:);lims(2)];
+	
+% Get lat/long positions for everything
+	
+[X2,Y2,lg2,lgI2]=feval(MAP_PROJECTION.routine,gridarg1,xval,gridarg2);
+[l2x,l2y,u2x,u2y]=maketicks(X2,Y2,gticklen,'in');
+
+if gridarg1(1)=='x', sig=1; else sig=-1; end;
+
+id=[1:dpatch size(l2x,2)+[-dpatch+1:0]];
+dx=diff(l2x(:,id));
+l2x(2,id)=l2x(2,id)+diff(l2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+l2y(2,id)=l2y(2,id)-dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+dx=diff(u2x(:,id));
+u2x(2,id)=u2x(2,id)-diff(u2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+u2y(2,id)=u2y(2,id)+dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+
+% Now actually draw the patches.
+ 
+px=prod(size(l2x));
+kk=[0:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
+kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
+ patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_fancybox1');
+ patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_fancybox1');
+kk=[dpatch*2:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
+kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
+patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_fancybox1');
+patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_fancybox1');
+
+
+%---------------------------------------------------------
+function fancybox2(vals,lims,gridarg1,gridarg2,dpatch,gticklen);
+%
+%  FANCYBOX  - draws fancy outlines for either top/bottom or left/right sides,
+%              depending on calling parameters.
+
+global MAP_PROJECTION
+
+% Get xlocations including endpoints
+xval=[lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)];
+% Add all half-way points as well.
+xval=sort([xval,xval(1:end-1)+diff(xval)/2]);
+	
+% Interpolate extra points to handle curved boundary conditions.
+	
+xval=(xval(1:end-1)'*ones(1,dpatch)+diff(xval)'*[0:dpatch-1]/dpatch)';
+xval=[xval(:);lims(2)];
+	
+% Get lat/long positions for everything
+	
+[X2,Y2,lg2,lgI2]=feval(MAP_PROJECTION.routine,gridarg1,xval,gridarg2);
+[l2x,l2y,u2x,u2y]=maketicks(X2,Y2,gticklen,'in');
+	
+if gridarg1(1)=='x', sig=1; else sig=-1; end;
+
+id=[1:dpatch size(l2x,2)+[-dpatch+1:0]];
+dx=diff(l2x(:,id));
+l2x(2,id)=l2x(2,id)+diff(l2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+l2y(2,id)=l2y(2,id)-dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+dx=diff(u2x(:,id));
+u2x(2,id)=u2x(2,id)-diff(u2y(:,id)).*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+u2y(2,id)=u2y(2,id)+dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
+
+% Now actually draw the patches.
+ 
+px=prod(size(l2x));
+kk=[0:(dpatch*2):px-3]'*ones(1,dpatch*2+2);
+kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
+ patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w',...
+        'edgecolor','k','clip','off','linewi',.2,'tag','m_fancybox2');
+ patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w',...
+        'edgecolor','k','clip','off','linewi',.2,'tag','m_fancybox2');
+
+kk=[0:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
+kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
+[k1,k2]=size(kk);
+line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_fancybox2');
+
+kk=[dpatch:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
+kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
+[k1,k2]=size(kk);
+line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_fancybox2');
+
 
 
 

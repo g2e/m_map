@@ -25,7 +25,7 @@ clf;
 m_proj('lambert','long',[-160 -40],'lat',[30 80]);
 m_coast('patch',[1 .85 .7]);
 m_elev('contourf',[500:500:6000]);
-m_grid;
+m_grid('box','fancy','tickdir','in');
 colormap(flipud(copper));
 xlabel('Conic Projection of North America with elevations','visible','on');
 
@@ -116,9 +116,9 @@ lat=atan(tan(60*pi/180)*cos((lon-30)*pi/180))*180/pi;
 
 m_proj('miller','lat',82);
 m_coast('color',[0 .6 0]);
-m_grid('linest','none');
-
 m_line(lon,lat,'linewi',3,'color','r');
+m_grid('linest','none','box','fancy','tickdir','out');
+
 
 
 

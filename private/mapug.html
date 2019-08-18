@@ -172,6 +172,7 @@ Available projections are:
      Oblique Mercator
      Transverse Mercator
      Sinusoidal
+     Gall-Peters
 </pre>
 
 If you want details about the possible options for any of these projections, add its name
@@ -234,14 +235,15 @@ The following parameters are needed to define an azimuthal projection:
 These parameters define the center point of the map. Maps are aligned so that the specified
 longitude is vertical at the map center, with its northern end at the top. 
                   
-<h4> <code>      <,'rad&lt;ius>', ( degrees | [longitude latitutde] )> </code> </h4> 
+<h4> <code>      <,'rad&lt;ius>', ( degrees | [longitude latitude] )> </code> </h4> 
 
 This defines the extent of the map. Either an angular distance in degrees can be given (e.g. 90 for
 a hemisphere), or the coordinates of a point on the boundary can be specified.
 
-<h4> <code>      <,'rec&lt;tbox>', ( 'on' | 'off' )>     </code> </h4>              
+<h4> <code>      <,'rec&lt;tbox>', ( 'on' | 'off' | 'circle' )>     </code> </h4>              
 
-The default is to enclose the map in a circular boundary, but a rectangular one can also be
+The default is to enclose the map in a circular boundary (chosen using either of the latter
+two options), but a rectangular one can also be
 specified. However, rectangular maps are usually better drawn using a cylindrical or
 conic projection of some sort.
  
@@ -292,8 +294,9 @@ altitude of 2.
 Cylindrical projections are formed by projecting points onto a plane wrapped around the
 globe, touching only along some great circle. These  are very useful projections for
 showing regions of great lateral extent, and are also commonly used for global maps
-of mid-latitude regions only. Also included here is a pseudo-cylindrical projection,
-the sinusoidal, which has some similarities to the cylindrical projections (see below).
+of mid-latitude regions only. Also included here are two pseudo-cylindrical projections,
+the sinusoidal and Gall-Peters, which have some 
+similarities to the cylindrical projections (see below).
 
 <p>
 These maps are usually drawn with rectangular boundaries (with the exception of the
@@ -385,10 +388,18 @@ the latter is actually ellipsoidal in nature.
 
  <h4><li> Sinusoidal </h4>
 
-This projection is usually called "pseudo-cylindrical" since parallels of latitude appear
+This projection is usually called "pseudo-cylindrical" since parallels of latitude
+appear
 as straight lines, similar to their appearance in cylindrical projections tangent to the
 equator. However, meridians curve together in this projection in a sinusoidal way (hence
 the name), making this map equal-area.
+
+ <h4><li> Gall-Peters </h4>
+
+Parallels of latitude and meridians both appear as straight lines, but the vertical scale
+is distorted so that area is preserved. This is useful for tropical areas, but
+the distortion in polar areas is extreme.
+
 
 </ol>
 
@@ -605,9 +616,18 @@ m_grid('xtick',10,'tickdir','out','yaxislocation','right','fontsize',7);
 
 The various options that can be changed are:
 
-<h4> <code> 'box',( 'on' | 'off' ) </code> </h4>
+<h4> <code> 'box',( 'on' | 'off' | 'fancy' ) </code> </h4>
 
-This specifies whether or not an outline box is drawn.
+This specifies whether or not an outline box is drawn. Three types of outline
+boxes are available: <code>'on'</code>, the default, is a a simple line. Two
+types of fancy outline boxes are available. If <code>'tickdir'</code> is <code>'in'</code>,
+then alternating black and white patches are made (see <a href="../map.html#e2">example 2</a>).
+If <code>'tickdir'</code> is set to <code>'out'</code>, then a more complex line pattern
+is drawn (see <a href="../map.html#e6">example 6</a>).
+Fancy boxes are in general only available for maps bounded
+by lat/long limits (i.e. not for azimuthal projections), but if this option is
+chosen inappropriately a warning message is issued.
+
 
 <h4> <code>      'xtick',( num | [value1 value2 ...])</code> </h4>
 
@@ -636,7 +656,8 @@ Specifies the length of tickmarks (as a fraction of plot width)
 
 <h4> <code>      'tickdir',( 'in' | 'out' )</code> </h4>
 
-Specifies whether ticksmarks point inwards or outwards.
+Specifies whether tickmarks point inwards or outwards. If <code>'box'</code> is
+set to <code>'fancy'</code>, this specifies the form of the fancy outline box.
 
  <h4> <code>     'color',colorspec <br>
       'linewidth', value <br>
@@ -887,7 +908,7 @@ That's it! Test things out with this map of the western mediterranean:
 <pre>
 m_proj('lambert','lon',[-10 20],'lat',[33 48]);
 m_tbase('contourf');
-m_grid('linestyle','none');
+m_grid('linestyle','none','tickdir','out','linewidth',3);
 </pre>
 <center> <img src="./extbase.gif">  </center> <br>
 
@@ -973,6 +994,14 @@ messages. This is due to a bug in Matlab (actually due to the compiler TMW used)
 results in an incorrect warning flag being set
 when dividing some numbers by NaN. You can safely ignore these errors and
 wait for v5.2
+<p>
+<li> If plotted data is coloured white, this will be changed to black in the postscript
+output. This is due to the workings of the <code>print</code> command. 
+In order to avoid this, set the figure background to white, i.e.
+
+<pre>
+set(gcf,'color','white')
+</pre>
 
 
 
@@ -999,6 +1028,9 @@ fixed.
 <li> Small changes in the auto-gridding so that edge limits are not automatically
 labelled (this makes things look a little cleaner).
 
+<p>
+<li> Fancy box outline code added for really spiffy maps.
+
 </ol>
 
 <hr>
@@ -1008,6 +1040,6 @@ labelled (this makes things look a little cleaner).
 
 <hr>
 
-<I> Last changed 9/April/1998. Questions and comments to 
+<I> Last changed 20/May/1998. Questions and comments to 
   <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
  </I>

@@ -18,14 +18,12 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 % so-called "pseudo-cylindrical" sinusoidal projection here. 
 % Transverse Mercator - cylindrical conformal
 % Sinusoidal - cylindrical equal-area
-% Gall-Peters - an area-conserving rectangular projection.
 
 % 7/2/98 - Added defaults for Sinusoidal projection
-% 15/4/98 - Gall-Peters projection
 
 global MAP_PROJECTION MAP_VAR_LIST
 
-name={'Transverse Mercator','Sinusoidal','Gall-Peters'};
+name={'Transverse Mercator','Sinusoidal'};
 
 pi180=pi/180;
 
@@ -60,9 +58,6 @@ switch optn,
         MAP_VAR_LIST.ulats=[47 51];
       case name(2),
         MAP_VAR_LIST.ulongs=[-90 30];
-        MAP_VAR_LIST.ulats=[-65 65];
-      case name(3),
-        MAP_VAR_LIST.ulongs=[30 390];
         MAP_VAR_LIST.ulats=[-65 65];
     end;
     MAP_VAR_LIST.clong=NaN;
@@ -113,9 +108,6 @@ switch optn,
       case name(2),
         Y=lat*pi180;
         X=pi180*(long-MAP_VAR_LIST.clong).*cos(Y)+MAP_VAR_LIST.clong*pi180;
-      case name(3),
-        X=pi180*(long-MAP_VAR_LIST.clong)*cos(45*pi180);
-        Y=sin(lat*pi180)/cos(45*pi180);
     end;
 
     % Clip out-of-range values (rectboxes)
@@ -137,9 +129,6 @@ switch optn,
       case name(2),
         Y=varargin{2}/pi180;
         X=MAP_VAR_LIST.clong+(varargin{1}-MAP_VAR_LIST.clong*pi180)./cos(varargin{2})/pi180;
-      case name(3),
-        X=varagin{1}/cos(45*pi180)/pi180 + MAP_VAR_LIST.clong;
-        Y=asin(varargin{2}*cos(45*pi180))/pi180; 
     end;
         
   case 'xgrid',
