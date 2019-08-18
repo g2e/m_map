@@ -3,7 +3,8 @@ function h=m_quiver(long,lat,u,v,varargin);
 %    M_QUIVER(LONG,LAT,U,V) plots velocity vectors as arrows with components 
 %    (U,V) at the points (LONG,LAT) on the currently defined map.  The 
 %    matrices LONG,LAT,U,V must all be the same size. U and V contain the 
-%    eastward and northward components of velocity. Arrow scaling is automatic.
+%    eastward and northward components of velocity (in m/s or equivalent, NOT
+%    degrees lat/long  per sec or equivalent). Arrow scaling is automatic.
 % 
 %    M_QUIVER(X,Y,U,V,S) automatically scales the arrows to fit within the 
 %    grid and then stretches them by S.  Use S=0 to plot the arrows without 

@@ -1,9 +1,9 @@
 function m_proj(proj,varargin)
 % M_PROJ  Initializes map projections info, putting the result into a structure
 %
-%         M_PROJ('set') tells you the current state
-%         M_PROJ('get') gives you a list of all possibilities
-%         M_PROJ('get','proj name') gives info about a projection in the 
+%         M_PROJ('get') tells you the current state
+%         M_PROJ('set') gives you a list of all possibilities
+%         M_PROJ('set','proj name') gives info about a projection in the 
 %                                   'get' list.
 %         M_PROJ('proj name','property',value,...) initializes a projection.
 %

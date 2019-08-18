@@ -41,6 +41,8 @@ function m_grid(varargin);
 % 21/11/06 - added 'backcolor'
 % 16/4/07  - sorted ticklabels when user-specified (prevents an odd problem near in
 %            azimuthal projections).
+% 4/DEc/11 - isstr to ischar
+% 7/Dec/11 - Octave 3.2.3 compatibility
 
 % Note that much of the work in generating line data 
 % is done by calls to the individual projections - 
@@ -58,6 +60,14 @@ if isempty(MAP_PROJECTION),
   return;
 end;
 
+% Recognize Octave
+a=ver;
+if strcmp(a(1).Name,'Octave'),
+ IsOctave=logical(1);
+else
+ IsOctave=logical(0);
+end;
+  
 
 % Otherwise we are drawing a grid!
 
@@ -81,7 +91,7 @@ gfontname=get(gca,'fontname');
 gxaxisloc=get(gca,'xaxislocation'); 
 gyaxisloc=get(gca,'yaxislocation');
 gtickdir=get(gca,'tickdir'); 
-gticklen=get(gca,'ticklen'); gticklen=gticklen(1); 
+gticklen=get(gca,'ticklength'); gticklen=gticklen(1); 
 gxticklabeldir='middle';
 gyticklabeldir='end';
 
@@ -148,7 +158,7 @@ while k<=length(varargin),
       disp('      ''yticklabels'',[label1;label2 ...]');
       disp('      ''xlabeldir'', ( ''middle'' | ''end'' )');
       disp('      ''ylabeldir'', ( ''end'' | ''middle'' )');
-      disp('      ''ticklen'',value');
+      disp('      ''ticklength'',value');
       disp('      ''tickdir'',( ''in'' | ''out'' )');
       disp('      ''color'',colorspec');
       disp('      ''backcolor'',colorspec');
@@ -163,7 +173,7 @@ while k<=length(varargin),
       disp(['      box = ' gbox]);
       disp(['      xtick = ' num2str(xtick)]);
       disp(['      ytick = ' num2str(ytick)]);
-      disp(['      ticklen = ' num2str(gticklen)]);
+      disp(['      ticklength = ' num2str(gticklen)]);
       disp(['      tickdir = ' gtickdir]);
       disp(['      xlabeldir = ' gxticklabeldir]);
       disp(['      ylabeldir = ' gyticklabeldir]);
@@ -179,6 +189,12 @@ while k<=length(varargin),
   k=k+2;
 end;     
 
+if IsOctave & strcmp(gbox,'fancy'),
+  warning('No fancy box outlines with Octave');
+  gbox='on';
+end;
+
+  
 if strcmp(gbox,'fancy'),
   if strcmp(MAP_VAR_LIST.rectbox,'on') | strcmp(MAP_VAR_LIST.rectbox,'circle'),
    gbox='on';
@@ -191,63 +207,65 @@ end;
 [X,Y]=feval(MAP_PROJECTION.routine,'box');
 
 if strcmp(gbox,'on');
-  line(X(:),Y(:),'linest','-','linewi',glinewidth,'color',gcolor,'tag','m_grid_box','clip','off');
+  line(X(:),Y(:),'linestyle','-','linewidth',glinewidth,'color',gcolor,'tag','m_grid_box','clipping','off');
 end;
 
 % Axes background - to defeat the inverthardcopy, I need a non-white border (the edgecolor),
 % but sneakily I can set it's width to (effectively) 0 so it doesn't actually show!
 
+ 
+if ~IsOctave,
+ 
+   % This is a very problematic part of the code. It turns out the the interaction between
+   % PATCH objects and CONTOURF objects does not work correctly in the Painters renderer -
+   % this is true in all versions up to 7.7 at least. Patches with large negative Z just
+   % don't get drawn under contourgroup patches.
+   % 
+   % There are several possible workarounds:
+   %
+   %  1) Make sure you use the 'v6' option in contourf calls (see m_contourf.m to see
+   %     how I have tried to do that for some versions of matlab)
+   %      - problem: the 'v6' option is going away soon, also you may want the
+   %                contourgroup object that the v6 option destroys.
+   %
+   %  2) Change the renderer to something else:
+   %        set(gcf,'renderer','opengl') or
+   %        set(gcf,'renderer','zbuffer')
+   %      - problem: These other renderers are not available on all systems, they may also
+   %                give less-precise results.
+   %
+   %  3) Use the painters renderer, but reorder the children so that the patch is at the
+   %     bottom of the list (painters cares about child order)
+   %      - problem: sometimes the child order is rearranged if you click on the figure,
+   %                 also (at least in some versions of matlab) this causes labels to
+   %                 disappear.
+   %
+   % With version 7.4 onwards I have discovered that reordering the children apparently
+   % is Mathworks-blessed (c.f. the UISTACK function).  So I am going to try to implement
+   % the latter as a default.
 
-% This is a very problematic part of the code. It turns out the the interaction between
-% PATCH objects and CONTOURF objects does not work correctly in the Painters renderer -
-% this is true in all versions up to 7.7 at least. Patches with large negative Z just
-% don't get drawn under contourgroup patches.
-% 
-% There are several possible workarounds:
-%
-%  1) Make sure you use the 'v6' option in contourf calls (see m_contourf.m to see
-%     how I have tried to do that for some versions of matlab)
-%      - problem: the 'v6' option is going away soon, also you may want the
-%                contourgroup object that the v6 option destroys.
-%
-%  2) Change the renderer to something else:
-%        set(gcf,'renderer','opengl') or
-%        set(gcf,'renderer','zbuffer')
-%      - problem: These other renderers are not available on all systems, they may also
-%                give less-precise results.
-%
-%  3) Use the painters renderer, but reorder the children so that the patch is at the
-%     bottom of the list (painters cares about child order)
-%      - problem: sometimes the child order is rearranged if you click on the figure,
-%                 also (at least in some versions of matlab) this causes labels to
-%                 disappear.
-%
-% With version 7.4 onwards I have discovered that reordering the children apparently
-% is Mathworks-blessed (c.f. the UISTACK function).  So I am going to try to implement
-% the latter as a default.
 
+   % Now, putting in a white background works under linux (at least) and
+   % NOT under windows...I don't know about macs.
+   %%a=ver('matlab');  % Ver doesn't return stuff under v5!
+   a=version;
+   %if  (sscanf(a(1:3),'%f') >6.0 & sscanf(a(1:3),'%f') <7.4)  & ~ispc,
+     patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
+	   'edgecolor','k','linestyle','none','tag','m_grid_color');
+   %
+   %else
+   % Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
+   % so now I just draw a patch...but I have decided to go back to the old
+   % way (above) with higher versions. Maybe the PC version works now?
+   % Unfortunately this kludge has some strange side-effects.
 
-% Now, putting in a white background works under linux (at least) and
-% NOT under windows...I don't know about macs.
-%%a=ver('matlab');  % Ver doesn't return stuff under v5!
-a=version;
-%if  (sscanf(a(1:3),'%f') >6.0 & sscanf(a(1:3),'%f') <7.4)  & ~ispc,
-%  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
-%	'edgecolor','k','linest','none','tag','m_grid_color');
-%
-%else
-% Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
-% so now I just draw a patch...but I have decided to go back to the old
-% way (above) with higher versions. Maybe the PC version works now?
-% Unfortunately this kludge has some strange side-effects.
+   %  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
+   %	'edgecolor','k','linestyle','none','tag','m_grid_color');
+    % patch('xdata',X(:),'ydata',Y(:),'facecolor',gbackcolor,...
+    %	'edgecolor','k','linestyle','none','tag','m_grid_color');
 
-  patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
-	'edgecolor','k','linest','none','tag','m_grid_color');
- % patch('xdata',X(:),'ydata',Y(:),'facecolor',gbackcolor,...
- %	'edgecolor','k','linest','none','tag','m_grid_color');
-
-  % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
-  % cover anything)
+     % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
+     % cover anything)
    show=get(0, 'ShowHiddenHandles');
    set(0, 'ShowHiddenHandles', 'on');
    hh=get(gca,'children');
@@ -258,7 +276,8 @@ a=version;
    hh = [hh;hht(k)];
    set(gca,'children',hh);
    set(0, 'ShowHiddenHandles', show);
-%end;
+
+end;
 
 
 % X-axis labels and grid
@@ -289,7 +308,7 @@ if ~isempty(xtick),
 
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_xgrid');
+      'linestyle',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_xgrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -331,9 +350,9 @@ if ~isempty(xtick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-lower','clip','off');
+        'linestyle','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-lower','clipping','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-upper','clip','off');
+        'linestyle','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-upper','clipping','off');
  end;
 
  % Add the labels! (whew)
@@ -342,8 +361,8 @@ if ~isempty(xtick),
 
  for k=ik,
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
-   text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk, ...
-        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
+   text(xx(k),yy(k),labs{k},'horizontalalignment',horizk,'verticalalignment',vertk, ...
+        'rotation',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
         'tag','m_grid_xticklabel','fontname',gfontname);
  end;
 
@@ -365,7 +384,7 @@ if ~isempty(ytick),
  % Draw the grid
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_ygrid');
+      'linestyle',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_ygrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -406,9 +425,9 @@ if ~isempty(ytick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-left','clip','off');
+        'linestyle','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-left','clipping','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-right','clip','off');
+        'linestyle','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-right','clipping','off');
  end;
 
  % Finally - the labels!
@@ -416,8 +435,8 @@ if ~isempty(ytick),
 
  for k=ik,
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
-   text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk,...
-        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
+   text(xx(k),yy(k),labs{k},'horizontalalignment',horizk,'verticalalignment',vertk,...
+        'rotation',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
 	'tag','m_grid_yticklabel','fontname',gfontname);
  end;
 
@@ -492,7 +511,7 @@ end;
 % If the user has specified strings, we merely need to make
 % sure that there are enough to cover all ticks.
 
-if any(isstr(uservals)), 
+if any(ischar(uservals)), 
   L=cellstr( uservals((rem([0:length(vals)-1],length(uservals))+1),:) );
   fs=1.0*ones(length(L),1);
   return;
@@ -633,19 +652,19 @@ kk=[0:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
 patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
       reshape(u2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
 patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
       reshape(l2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clip','off','tag','m_grid_fancybox1');
+      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
 
 kk=[dpatch*2:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
 patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
       reshape(l2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
 patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
       reshape(u2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clip','off','tag','m_grid_fancybox1');
+      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
 
 
 %---------------------------------------------------------
@@ -691,23 +710,23 @@ kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
  patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
        reshape(l2y(kk),size(kk,1),size(kk,2))',...
        repmat(bitmax-1,size(kk,2),size(kk,1)),...
-       'w','edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
+       'w','edgecolor','k','clipping','off','linewidth',.2,'tag','m_grid_fancybox2');
  patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
        reshape(u2y(kk),size(kk,1),size(kk,2))',...
        repmat(bitmax-1,size(kk,2),size(kk,1)),...
-       'w','edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
+       'w','edgecolor','k','clipping','off','linewidth',.2,'tag','m_grid_fancybox2');
 
 kk=[0:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
 line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),...
-     repmat(bitmax,k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
+     repmat(bitmax,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
 
 kk=[dpatch:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
 line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),...
-     repmat(bitmax,k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
+     repmat(bitmax,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
 
 
 

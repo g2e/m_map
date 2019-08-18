@@ -24,6 +24,7 @@ function scale_factor=m_scale(scale_factor),
 
 %     1/Feb/99 - added scale calculations for return value.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% 4/DEc/11 - isstr to ischar
 %
 
 % Need earth radius, in centimeters.
@@ -47,7 +48,7 @@ if nargin==0,
  end;
 
 else
-  if isstr(scale_factor),
+  if ischar(scale_factor),
    gca_pos=get(gca,'userdata');
    if ~isempty(gca_pos),
      set(gca,'position',gca_pos);

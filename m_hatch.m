@@ -26,34 +26,84 @@ function [xi,yi,x,y]=m_hatch(lon,lat,varargin);
 %
 %     Note that inside and outside speckling are done quite differently
 %     and 'outside' speckling on large coastlines can be very slow.
+%
+%     If you get weird results - try putting an M_LINE(LON,LAT) call *before*
+%     (or otherwise set the plot axis xlim/ylim parameters - this is necessary
+%     because otherwise M_HATCH can't properly determine the 'points' units).
+%
 
 %
 % Hatch Algorithm originally by K. Pankratov, with a bit stolen from 
 % Iram Weinsteins 'fancification'. Speckle modifications by R. Pawlowicz.
 %
 % R Pawlowicz 15/Dec/2005
-  
+%% 4/DEc/11 - isstr to ischar
+%  Apr/12  - handle NaN-separated coastlines
+
+ 
 styl='speckle';
 angle=7;
 step=1/2;
 
-if length(varargin)>0 & isstr(varargin{1}),
+if length(varargin)>0 & ischar(varargin{1}),
   styl=varargin{1};
   varargin(1)=[];  
 end;
-if length(varargin)>0 & ~isstr(varargin{1}),
+if length(varargin)>0 & ~ischar(varargin{1}),
   angle=varargin{1};
   varargin(1)=[];  
 end;
-if length(varargin)>0 & ~isstr(varargin{1}),
+if length(varargin)>0 & ~ischar(varargin{1}),
   step=varargin{1};
   varargin(1)=[];
 end;
+
+
+
+% If we have a naN-separated multi-line input vector:
+
+ii=find(isnan(lon));
+
+if any(ii),
+
+  % if there isn't a NaN to mark the first or last segments
+  if ii(1)>1, ii=[1;ii(:)]; end;
+  if ii(end)<length(lon), ii=[ii(:);length(lon)]; end;
   
+  % Compute the info, but don't draw - otherwise we end up with
+  % lots of 'childred' to the plot and it is SLOWWWWW
+  
+  xi=[];yi=[];x=[];y=[];
+  for k=1:length(ii)-1,
+    [xiT,yiT,xT,yT]=m_hatch(lon(ii(k)+1:ii(k+1)-1),lat(ii(k)+1:ii(k+1)-1),styl,angle,step,varargin{:});
+    xi=[xi,NaN,xiT];
+    yi=[yi,NaN,yiT];
+    x=[x,NaN,xT];
+    y=[y,NaN,yT];
+  end;
+  
+  % OK, so now plot it all.
+  if nargout<2,
+    switch lower(styl),
+      case {'single','cross'},
+         xi=line(xi,yi,varargin{:});
+      case {'speckle','outspeckle'},
+         xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
+    end;
+  end;  
+  
+  return;
+end;
+      
+%----------------------
+% otherwise, handle a single line without NaN
+
+   
 [x,y,I]=m_ll2xy(lon,lat,'clip','patch');
  
+%% plot(x,y,'color','r');%%pause;
   
-if x(end)~=x(1) & y(end)~=y(1),
+if x(end)~=x(1) | y(end)~=y(1),  % & to |
   x=x([1:end 1]);
   y=y([1:end 1]);
   I=I([1:end 1]);
@@ -75,7 +125,7 @@ end;
 % Code stolen from Weinstein hatch
 oldu = get(gca,'units');
 set(gca,'units','points');
-sza = get(gca,'pos'); sza = sza(3:4);
+sza = get(gca,'position'); sza = sza(3:4);
 set(gca,'units',oldu)   % Set axes units back
 
 xlim = get(gca,'xlim');
@@ -104,9 +154,9 @@ switch lower(styl),
   yi=[yi,yi2];
   if nargout<2,
     if any(xi),
-      xi=line(xi,yi,'marker','.','linest','none','markersize',2,varargin{:});
+      xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;
+      xi=NaN;yi=NaN;
     end;    
   end; 
  case 'outspeckle',
@@ -114,13 +164,14 @@ switch lower(styl),
   [xi2,yi2 ]=drawhatch(x,y,45+90,step,xsc,ysc,-angle);
   xi=[xi,xi2];
   yi=[yi,yi2];
+%  disp([size(xi) size(yi)])
   inside=logical(inpolygon(xi,yi,x,y)); % logical needed for v6!
   xi(inside)=[];yi(inside)=[];
   if nargout<2,
     if any(xi),
-      xi=line(xi,yi,'marker','.','linest','none','markersize',2,varargin{:});
+      xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;
+      xi=NaN;yi=NaN;
     end;    
   end; 
     
@@ -135,6 +186,7 @@ function [xi,yi]=drawhatch(x,y,angle,step,xsc,ysc,speckle);
 %
 % This is the guts. 
 %
+ 
 
 angle=angle*pi/180;
 
@@ -150,6 +202,7 @@ y = -x*sa+y*ca;
 x = yi;
 y = y/step;    % Make steps equal to one
 
+ 
 % Compute the coordinates of the hatch line ...............
 yi = ceil(y);
 yd = [diff(yi) 0]; % when diff~=0 we are crossing an integer
@@ -179,11 +232,16 @@ xi = xi(fnd1);
 % Sort them in raster order (i.e. by x, then by y)
 % Add '2' to make sure we don't have problems going from a max(xi)
 % to a min(xi) on the next line (yi incremented by one)
-xi0 = min(xi); xi1 = max(xi);
-ci = 2*yi*(xi1-xi0)+xi;
-[ci,num] = sort(ci);
-xi = xi(num); yi = yi(num);
-
+if length(xi)>0,
+  xi0 = min(xi); xi1 = max(xi);
+  ci = 2*yi*(xi1-xi0)+xi;
+  [ci,num] = sort(ci);
+  xi = xi(num); yi = yi(num);
+else
+ 
+  xi=NaN;yi=NaN;
+  return;
+end;
 
 % if this happens an error has occurred somewhere (we have an odd
 % # of points), and the "fix" is not correct, but for speckling anyway

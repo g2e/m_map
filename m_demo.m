@@ -37,7 +37,7 @@ switch i,
 
     m_proj('ortho','lat',48','long',-123');
     m_coast('patch','r');
-    m_grid('linest','-','xticklabels',[],'yticklabels',[],'ytick',[-80:40:80]);
+    m_grid('linestyle','-','xticklabels',[],'yticklabels',[],'ytick',[-80:40:80]);
     xlabel('Orthographic Projection','visible','on');
 
   case 2,
@@ -53,7 +53,7 @@ switch i,
 
     m_proj('stereographic','lat',90,'long',30,'radius',25);
     m_elev('contour',[-3500:1000:-500],'edgecolor','b');
-    m_grid('xtick',12,'tickdir','out','ytick',[70 80],'linest','-');
+    m_grid('xtick',12,'tickdir','out','ytick',[70 80],'linestyle','-');
     m_coast('patch',[.7 .7 .7],'edgecolor','r');
     xlabel('Polar Stereographic Projection with bathymetry','visible','on');
 
@@ -65,7 +65,7 @@ switch i,
     for l=1:7,
      m_proj('sinusoidal','long',Slongs(l,:),'lat',Slats(l,:));
      m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
-            'ytick',[-80:20:80],'yticklabels',[],'linest','-','color',[.9 .9 .9]);
+            'ytick',[-80:20:80],'yticklabels',[],'linestyle','-','color',[.9 .9 .9]);
      m_coast('patch','g');
     end;
     xlabel('Interrupted Sinusoidal Projection of World Oceans');
@@ -78,7 +78,7 @@ switch i,
     for l=1:6,
      m_proj('mollweide','long',Slongs(l,:),'lat',Slats(l,:));
      m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
-            'ytick',[-80:20:80],'yticklabels',[],'linest','-','color','k');
+            'ytick',[-80:20:80],'yticklabels',[],'linestyle','-','color','k');
      m_coast('patch',[.6 .6 .6]);
     end;
     xlabel('Interrupted Mollweide Projection of World Oceans');
@@ -96,7 +96,7 @@ switch i,
     subplot(121);
     m_coast('patch',[.9 .9 .9],'edgecolor','none');
     m_grid('tickdir','out','yaxislocation','right',...
-	   'xaxislocation','top','xlabeldir','end','ticklen',.02);
+	   'xaxislocation','top','xlabeldir','end','ticklength',.02);
     hold on;
     m_quiver(lon,lat,u,v);
     xlabel('Simulated surface winds');
@@ -104,7 +104,7 @@ switch i,
     subplot(122);
     m_coast('patch',[.9 .9 .9],'edgecolor','none');
     m_grid('tickdir','out','yticklabels',[],...
-	   'xticklabels',[],'linestyle','none','ticklen',.02);
+	   'xticklabels',[],'linestyle','none','ticklength',.02);
     hold on;
     [cs,h]=m_contour(lon,lat,sqrt(u.*u+v.*v));
     clabel(cs,h,'fontsize',8);
@@ -118,8 +118,8 @@ switch i,
 
     m_proj('miller','lat',82);
     m_coast('color',[0 .6 0]);
-    m_line(lon,lat,'linewi',3,'color','r');
-    m_grid('linest','none','box','fancy','tickdir','out');
+    m_line(lon,lat,'linewidth',3,'color','r');
+    m_grid('linestyle','none','box','fancy','tickdir','out');
 
 
   case 7,
@@ -140,31 +140,31 @@ switch i,
     axes('position',[.35 .6 .37 .37]);
     m_proj('albers equal-area','lat',[40 60],'long',[-90 -50],'rect','on');
     m_coast('patch',[0 1 0]);
-    m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+    m_grid('linestyle','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
     m_text(-69,41,'Standard coastline','color','r','fontweight','bold');
 
     axes('position',[.09 .5 .37 .37]);
     m_proj('albers equal-area','lat',[40 54],'long',[-80 -55],'rect','on');
     m_gshhs_c('patch',[.2 .8 .2]);
-    m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top');
+    m_grid('linestyle','none','linewidth',2,'tickdir','out','xaxisloc','top');
     m_text(-80,52.5,'GSHHS\_C (crude)','color','m','fontweight','bold','fontsize',14);
 
     axes('position',[.13 .2 .37 .37]);
     m_proj('albers equal-area','lat',[43 48],'long',[-67 -59],'rect','on');
     m_gshhs_l('patch',[.4 .6 .4]);
-    m_grid('linest','none','linewidth',2,'tickdir','out');
+    m_grid('linestyle','none','linewidth',2,'tickdir','out');
     m_text(-66.5,43.5,'GSHHS\_L (low)','color','m','fontweight','bold','fontsize',14);
 
     axes('position',[.35 .05 .37 .37]);
     m_proj('albers equal-area','lat',[45.8 47.2],'long',[-64.5 -62],'rect','on');
     m_gshhs_i('patch',[.5 .6 .5]);
-    m_grid('linest','none','linewidth',2,'tickdir','out','yaxisloc','right');
+    m_grid('linestyle','none','linewidth',2,'tickdir','out','yaxisloc','right');
     m_text(-64.4,45.9,'GSHHS\_I (intermediate)','color','m','fontweight','bold','fontsize',14);
 
     axes('position',[.55 .23 .37 .37]);
     m_proj('albers equal-area','lat',[46.375 46.6],'long',[-64.2 -63.7],'rect','on');
     m_gshhs_h('patch',[.6 .6 .6]);
-    m_grid('linest','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
+    m_grid('linestyle','none','linewidth',2,'tickdir','out','xaxisloc','top','yaxisloc','right');
     m_text(-64.18,46.58,'GSHHS\_H (high)','color','m','fontweight','bold','fontsize',14);
 
   case 10,
@@ -192,8 +192,8 @@ switch i,
     m_proj('hammer','clong',170);
     m_grid('xtick',[],'ytick',[],'linestyle','-');
     m_coast('patch','g');
-    m_line(100.5,13.5,'marker','square','color','r');
-    m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewi',2);
+    m_line(100.5,13.5,'marker','s','color','r');
+    m_range_ring(100.5,13.5,[1000:1000:15000],'color','b','linewidth',2);
     xlabel('1000km range rings from Bangkok');
     
   case 12,
@@ -207,10 +207,10 @@ switch i,
     m_proj('lambert','long',[-130 -121.5],'lat',[47 51]);
     m_gshhs_i('color','k');
     m_gshhs_i('speckle','color','k');
-    m_line(bndry_lon,bndry_lat,'linewi',2,'color','k');     % Area outline ...
+    m_line(bndry_lon,bndry_lat,'linewidth',2,'color','k');     % Area outline ...
     m_hatch(bndry_lon,bndry_lat,'single',30,5,'color','k'); % ...with hatching added.
 
-    m_grid('linewi',2,'linest','none');
+    m_grid('linewidth',2,'linestyle','none');
     title('Speckled Boundaries for nice B&W presentation (best in postscript format)','fontsize',14);
     m_text(-128,48,5,{'Pacific','Ocean'},'fontsize',18);
         
@@ -230,7 +230,7 @@ switch i,
     
     for k=1:3,
       [range,ln,lt]=m_lldist([-123-6/60 lons(k)],[49+13/60  lats(k)],40);
-      m_line(ln,lt,'color','r','linewi',2);
+      m_line(ln,lt,'color','r','linewidth',2);
       m_text(ln(end),lt(end),sprintf('%s - %d km',cities{k},round(range)));
     end;
       

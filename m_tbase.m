@@ -24,6 +24,7 @@ function [values,longs,lats]=m_tbase(varargin);
 %           some things off by 1/12 deg lat.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 % 28/Mar/04 - defaulted to m_elev database (prevents problems with m-demo)
+% 4/DEc/11 - isstr to ischar
 
 %%% This will have to be set by YOU the USER!
 
@@ -66,7 +67,7 @@ global MAP_PROJECTION MAP_VAR_LIST
 % Have to have initialized a map first
 
 draw_map=1;
-if nargin==1 & ~isstr(varargin{1}) & length(varargin{1})==4,
+if nargin==1 & ~ischar(varargin{1}) & length(varargin{1})==4,
   draw_map=0;
 end;
 
@@ -147,14 +148,14 @@ if draw_map,
    optn='contour';
    n_opt=1;
   else
-   if isstr(varargin{1}),
+   if ischar(varargin{1}),
      optn=varargin{1};
    end;
    if nargin==1,
      levels=[-7000:1000:-1000 000:1000:5000];
      n_opt=2;
    else
-     if isstr(varargin{2}),
+     if ischar(varargin{2}),
        levels=[-7000:1000:-1000 000:1000:5000];
        n_opt=2;
     else

@@ -9,10 +9,11 @@ function [long,lat]=m_xy2ll(X,Y);
 % it's mine, so you can't sell it.
 
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% 4/DEc/11 - isstr to ischar
 
 global MAP_PROJECTION MAP_COORDS
 
-if nargin==0 | isstr(X),
+if nargin==0 | ischar(X),
   disp(' Usage:');
   disp(' [LONGITUDE,LATITUDE]=m_xy2ll(X,Y);');
 else

@@ -204,10 +204,9 @@ example, a satellite in an orbit of radius 3 earth radii would have an
 altitude of
 2. </a>
   </ol>
-  <a name="p2.1"> </a>
-  <h3><a name="p2.1"> <li><br>
-  </li>
-  </a><a name="p2.2"> Cylindrical and Pseudo-cylindrical Projections </a></h3>
+   
+  <h3>  <li><a name="p2.2"> Cylindrical and Pseudo-cylindrical Projections </a><br>
+  </li> </h3>
   <a name="p2.2">Cylindrical projections are formed by projecting
 points onto a plane wrapped around the globe, touching only along some
 great
@@ -324,7 +323,7 @@ radius 1 unit, but other options can also be chosen using the following
 property: </a>
     <h4><a name="p2.2"> <code> &lt;,'ell&lt;ipsoid&gt;', ellipsoid&gt;
     </code> </a></h4>
-    <a name="p2.2"> For a list of available ellipsoids try <code>m_proj('get','utm')</code>.
+    <a name="p2.2"> For a list of available ellipsoids try <code>m_proj('set','utm')</code>.
     </a>
     <p> <a name="p2.2">The big difference between UTM and all the
 other projections is that for ellipsoids other than <code>'normal'</code>
@@ -349,9 +348,9 @@ straight lines, but the vertical scale is distorted so that area is
 preserved. This is useful for tropical areas, but the distortion in
 polar areas is extreme. </a>
   </ol>
-  <h3><a name="p2.2"> <li> <br>
+  <h3> <li> <a name="p2.3"> Conic Projections<br>
   </li>
-  </a><a name="p2.3"> Conic Projections </a></h3>
+   </h3>
   <a name="p2.3">Conic projections result from projecting onto a cone
 wrapped around the sphere. The vertex of the cone lies on the
 rotational axis of the sphere. The cone is either tangent at a single
@@ -379,6 +378,18 @@ exact rectangle which
 contain the given limits. Unless the region being mapped is small, it
 is
 best to leave this <code> 'off' </code>. </a>
+
+<p>The default is to use a spherical earth model for the mapping transformations. However, ellipsoidal coordinates can
+also be specified. This tends to be useful only for doing coordinate transformations (e.g., if a particular
+gridded database in in this kind of projection, and you want to find lat/long data), since
+the difference would be impossible to see by eye on a plot.
+The particular ellipsoid used can be chosen using the following
+property: </a>
+    <h4><a name="p2.2"> <code> &lt;,'ell&lt;ipsoid&gt;', ellipsoid&gt;
+    </code> </a></h4>
+    <a name="p2.2"> For a list of available ellipsoids try <code>m_proj('set','albers')</code>.
+    </a>
+
   <ol>
     <a name="p2.3"> </a>
     <h4><li><a name="p2.3"> Albers Equal-Area Conic </a></li>
@@ -388,9 +399,8 @@ best to leave this <code> 'off' </code>. </a>
     </h4>
     <a name="p2.3">This projection is conformal, but not equal-area. </a>
   </ol>
-  <h3><a name="p2.3"> <li> <br>
-  </li>
-  </a><a name="p2.4"> Miscellaneous global projections </a></h3>
+  <h3>  <li> <a name="p2.4"> Miscellaneous global projections </a><br>
+  </li> </h3>
   <a name="p2.4">There are a number of projections which don't really
 fit into any of the above categories. Mostly these are global
 projections (i.e. they show the whole world), and they have been
@@ -686,15 +696,27 @@ and <code>x/ylabel</code> functions in the usual
 way (this is a change from v1.0 in which the 'visible' property had to
 be
 explicitly set to 'on'; this is now done within m_grid). </a>
-  <h3><a name="p4.2"> </a><a name="p4.3"><li> Legend Boxes </li>
+  <h3> <a name="p4.3"><li> Legend Boxes </li>
   </a></h3>
   <a name="p4.3">A legend box can be added to the map using <code>m_legend</code>.
 Only some of the functionality of <code>legend</code> is currently
 included. The legend box can be dragged and dropped using the mouse
 button. </a>
+  <h3> <a name="p4.4"><li> Scale Bars </li>
+  </a></h3>
+  <a name="p4.4">A scale bar can be added to the map using <code>m_ruler</code>. The
+  bar is drawn horizontally or vertically, and will create a 'nice' number of ticks
+  (although this can be changed with another calling parameter). The location is
+  specified in normalized coordinates (i.e. between 0 and 1) so you can adjust
+  placement on the map. It is probably best to call this AFTER calling <code>m_grid</code>
+  since <code>m_grid</code> resets the normalization. 
+  <p> WARNING - the scalebar is probably not useful for any global
+          (i.e. whole-world) or even a significant-part-of-the-globe
+          map, but I won't stop you using it. Caveat user!
+</a>
 </ol>
 <hr>
-<h2><a name="p4.3"> </a><a name="p5">5. Adding your own data </a> </h2>
+<h2> </a><a name="p5">5. Adding your own data </a> </h2>
 <p> The purpose of this package is to allow you to map your own data!
 Once a suitable grid and (possibly) a coastline have been chosen, you
 can add your own lines, text, or contour plots using built-in M_Map
@@ -948,6 +970,32 @@ selected by the mouse: </a>
 inaccuracies
 implicit in a spherical earth approximation the true geodesic distances
 may differ by 1% or so from the computed distances. </a>
+
+<p> If you want greater accuracy, then you must calculate geodesics on an
+ellipsoidal earth. There is a very accurate numerical algorithm for
+doing so (<a href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf"> Vincenty's
+algorithm</a>), which is implemented in the functions 
+<code> m_idist</code>, <code>m_fdist</code>, and <code> m_geodesic</code>. For example,
+
+<pre>
+ [distance,a12,a21] = m_idist(lon1,lat1,lon2,lat2,spheroid)
+</pre>
+
+computes the <code>distance </code> in meters between two points <code>(lon1,lat1)</code>
+and <code>(lon2,lat2)</code> on the specified spheroid (<code>'wgs84'</code> is the
+default, for other options see the code or use on of the options shown 
+by <code>m_proj('get','utm')</code>). Forward and reverse azimuths <code>a12</code>
+and <code>a21</code> in degrees are also computed.
+
+<p> <code>m_fdist</code> is used to get the location of a point at a given bearing and
+distance from a specified point.
+
+<p> Finally, if you want to plot a geodesic on a map, then <code> m_geodesic</code>
+can be used to generate a vector of points along the elliptical geodesic between two specified
+points. If you ever find yourself needing this, I'd be interested in knowing about it!
+
+
+
 </ol>
 <hr>
 <h2><a name="p5.6"> </a><a name="p6">6. More complex plots </a> </h2>
@@ -1003,9 +1051,14 @@ If this does not work, read the comments in <code>private/mu_coast</code>,
 orient the curves in the desired fashion, and use <code>m_usercoast</code>
 to load your own data.
 <ol>
-  <h3> <a name="p7.1"><li><br>
-  </li>
-  </a> DCW political boundaries </h3>
+  <h3> <li> <a name="p7.1">
+  
+  DCW political boundaries </a> </li></h3>
+  
+  <h4> As of 2011 the DCW web site has been decommissioned. The following
+  information is retained for historical reasons only. New users see the next
+  section on shapefiles </h4>
+  
   <p> Files containing political boundaries for various countries and
 US
 states can be downloaded from <a href="http://www.maproom.psu.edu/dcw">
@@ -1019,6 +1072,38 @@ example, if you downloaded various US states into a subdirectory
 "states:, </p>
   <pre>m_plotbndry('states/arizona','color,'r')<br></pre>
 would plot arizona on the current map.
+
+  <h3> <a name="p7.2"><li>
+ 
+  </a> ESRI Shapefiles </li></h3>
+<p> A de facto standard for the interchange of vector data are ESRI shapefiles. A dataset
+comes in (at minimum) 3 files, each with the same root name but 
+with <code>.dbf</code>, <code>.shp</code>, and <code>.shx</code> extensions. Files
+can contain point, line or polygon information, as well as other fields in a self-describing
+way. For more information see <a href="http://en.wikipedia.org/wiki/Shapefile"> this
+description </a>.
+
+<p> Many (all?) shapefiles can be read in using <code>m_shaperead</code>, which returns
+a data structure containing the information in the files. However,
+figuring out what to do with the contents requires you to examine the contents of the
+data structure. It may also be useful to examine projection information in the
+<code>.prj</code> text file, which contains information about map projections, especially
+if you are overlaying data from different sources.
+
+
+<p> You can usually at least create a simple plot of the data stored in files
+<code>datafile.shp</code>, <code>datafile.shx</code> and <code>datafile.dbf</code>
+using<br>
+<pre>
+M=m_shaperead('datafile'); 
+clf; 
+for k=1:length(M.ncst), 
+  line(M.ncst{k}(:,1),M.ncst{k}(:,2)); 
+end; 
+</pre>
+
+
+
 </ol>
 <hr>
 <h2> <a name="p8">9. Adding your own topography/bathymetry </a> </h2>
@@ -1033,10 +1118,10 @@ matrix
 in longitude/latitude, then <code>m_contour</code> or <code>m_contourf</code>
 can be used to plot that data. </p>
 <ol>
-  <h3> <a name="p8.1"> <li> <br>
-  </li>
+  <h3> <a name="p8.1"> <li>  
+  
   </a> <a href="http://topex.ucsd.edu/marine_topo/text/topo.html">Sandwell
-and Smith Bathymetry </a> </h3>
+and Smith Bathymetry </a> </li></h3>
   <p> A recent new bathymetry with approximately 1km resolution in
 lower latitude areas is being used by many people. This dataset is
 described
@@ -1111,8 +1196,8 @@ That's it! Test things out with this map of the western mediterranean:
 </li>
 <li> As of Apr 2006, there is a corrected higher-resolution (2 minute) database <a
  href="http://dss.ucar.edu/datasets/ds759.3/"> ETOPO2</a>. Download 
- <a href="http://dss.ucar.edu/datasets/ds759.3/data/etopo2_2006apr/etopo2_2006apr.raw.gz"> 
- http://dss.ucar.edu/datasets/ds759.3/data/etopo2_2006apr/etopo2_2006apr.raw.gz</a> (a gzipped binary),
+ <a href="http://dss.ucar.edu/dsszone/ds759.3/etopo2_2006apr/etopo2_2006apr.raw.gz"> 
+ http://dss.ucar.edu/dsszone/ds759.3/etopo2_2006apr/etopo2_2006apr.raw.gz</a> (a gzipped binary),
  gunzip it into a 116Mb file, edit the <code>PATHNAME</code> setting in <code>m_etopo2</code>
 to point to the location of this file, and then use it in the same way as <code>m_tbase</code>
 and <code>m_elev</code>. UCAR requires users to register and the second link won't work without you doing
@@ -1167,15 +1252,14 @@ http://www.ngdc.noaa.gov/mgg/shorelines/data/gshhs/</a>. </li>
     <li> Get and uncompress any or all of the files <code>
 gshhs_c.b.gz, gshhs_l.b.gz, gshhs_i.b.gz</code> and/or <code>gshhs_h.b.gz</code>
 in a convenient directory. One useful place is in <code>m_map/private</code>.
-GSHHS data format has changed between v1.2 and 1.3, but m_map
+GSHHS data format has changed between v1.2 and 1.3, and again for v2.0, but m_map
 should be able to figure this out.</li>
     <li> If the database files are not in subdirectory <code>
 m_map/private </code>, you must edit the <code>FILNAME</code>
 settings in <code>m_gshhs_c.m, m_gshhs_l.m, m_gshhs_i.m, m_gshhs_h.m</code>
 and/or <code>m_gshhs_f.m</code> to point to the appropriate files. </li>
-<li> NOTE - as of May 2010 only the version 1.X gshhs files are supported (format
-was changed for 2.X; I have not yet added code to recognize this)
-  </ol>
+
+
   <h3> <a name="p9.7"> <li> Using GSHHS effectively </li>
   </a></h3>
   <a name="p9.7"> </a> The simplest calling mechanism is identical
@@ -1208,9 +1292,10 @@ User-callable functions
     <br>
   </li>
   <li>m_grid.m - draws grids </li>
-  <li> m_scale.m - forces map to a given scale
-    <p> </p>
-  </li>
+  <li> m_scale.m - forces map to a given scale </li>
+   <li> m_ruler - draws a scale bar </li>
+   <p> </p>
+ 
   <li> m_ungrid.m - erases map elements (if you want to change
 parameters)
     <p> </p>
@@ -1232,6 +1317,7 @@ database </li>
   <li> m_plotbndry.m - draws a political boundary from the DCW </li>
   <li> m_usercoast.m - draws a coastline using a user-specified
 subset database.
+  <li> m_shaperead.m - reads ESRI shapefiles </li>
     <p> </p>
   </li>
   <li> m_plot.m - draws line data in map coords </li>
@@ -1245,10 +1331,9 @@ subset database.
   <li> m_contour - draws contour lines for gridded data </li>
   <li> m_contourf - draws filled contours </li>
   <li> m_track - draws annotated tracklines </li>
-  <li> m_range_ring - draws range rings
+  <li> m_range_ring - draws range rings </li>
     <p> </p>
-  </li>
-  <li> m_ll2xy.m - converts from long/lat to map coordinates </li>
+   <li> m_ll2xy.m - converts from long/lat to map coordinates </li>
   <li> m_xy2ll.m - converts from map coordinates to long/lat</li>
   <li>m_geo2mag - converts from magnetic to geographic coords</li>
   <li>m_mag2geo - the reverse<br clear="all">
@@ -1355,7 +1440,49 @@ conversion
     <p> </p>
   </li>
 </ol>
-<h2> <a name="p11">14. Changes since last release </a> </h2>
+
+
+<h2> <a name="p11a">14. OCTAVE Compatibility Issues </a> </h2>
+<p> </p>
+From their website: "<a href="http://www.gnu.org/software/octave/"> GNU Octave</a> is a high-level interpreted language, 
+primarily intended for numerical computations. [...] The Octave language is quite similar 
+to Matlab so that most programs are easily portable."
+
+<p> M_Map currently runs under Octave, sort of. In M_Map 1.4f a number of small incompatibilities have
+been addressed (mostly by spelling out the full names of graphics objects properties, rather than by using
+the shortened but unique versions allowable in MATLAB) and so it doesn't immediately bomb. However,
+there are still features that either don't work, or don't work properly.
+
+<p> Note: since  "private" subdirectories
+are not implemented (as of Octave 3.2.3), you must add the <code>m_map/private</code> 
+subdirectory explicitly to the path:
+<pre>
+addpath [whatever]/m_map 
+addpath [whatever]/m_map/private
+</pre>
+
+<p> Features that don't work, or don't work well, include:
+<ol>
+<li> Octave <code>line</code> commands do not accept MATRIX x/y parameters. This means your code
+might need to be changed when <code>m_line</code> is called. </li><br>
+<li> 3D patch functionality is not completely implemented in Octave. This means that
+fancy box outlines will not work, and so these have been disabled in M_Map if it recognizes that Octave is
+being used. </li><br>
+<li> 2D Patch functionality is still imperfect. Filled patches are not always correctly filled. This
+means filled coastlines, or filled contours, sometimes just look wrong. Stick with line plots.</li><br>
+<li> Clipping functionality for line objects in Octave is imperfect. Sometimes lines outside the plot 
+boundaries are not drawn even when <code>'clipping'</code> is set to `<code>'off'</code>. Live with it.</li><br>
+<li> The simple bathymetry called by <code>m_elev</code> comes from a built-in Matlab
+demo .mat file and this is not available in Octave. </li><br>
+<li> Things 'in front' or 'behind' other things in plots are not always correctly rendered as being
+in front or behind.</li><br>
+<li> Text label alignment (especially for the lat/long grid) can be a bit odd sometimes. Live with it.</li><br>
+<li> Hatching and speckled outlines require units of 'points' for the axis, and although you can change
+the units property to 'points' it doesn't seem to change the numbers returned for the position. So
+avoid hatching or speckles.
+</ol>
+
+<h2> <a name="p12">15. Changes since last release </a> </h2>
 <p> </p>
 <ol>
   <p> </p>
@@ -1373,9 +1500,17 @@ use this. It was an interesting thing to add but perhaps a waste of
 time...
     <p> </p>
   </li>
+  <li> Super-accurate geodesics on the ellipsoidal earth! </li>
+      <p> </p>
+
+  <li> Speckled coastlines for the old-fashioned hand-drawn look</li>
+      <p> </p>
+
+  <li> A SHAPEFILE reader. </li>
+  
 </ol>
 <hr> <a href="../map.html"> Back to home page </a>
-<hr> <i> Last changed 3/Mar/2009. Questions and comments to <a
+<hr> <i> Last changed 4/Dec/2011. Questions and comments to <a
  href="mailto:rich@eos.ubc.ca">rich@eos.ubc.ca</a> </i><br>
 <br>
 </body>

@@ -22,6 +22,15 @@ function h=m_ruler(posx,posy,varargin);
 %           map, but I won't stop you using it. Caveat user!
 
 % R. Pawlowicz rich@eos.ubc.ca  8/Nov/2006
+% 7/Dec/11 - Octave 3.2.3 compatibility
+
+% Recognize Octave
+a=ver;
+if strcmp(a(1).Name,'Octave'),
+ IsOctave=logical(1);
+else
+ IsOctave=logical(0);
+end;
 
 
 nints=4;
@@ -41,7 +50,7 @@ glinestyle='-';
 glinewidth=3;
 gfontsize=get(gca,'fontsize');
 gfontname=get(gca,'fontname');
-gticklen=get(gca,'ticklen'); gticklen=gticklen(1); 
+gticklen=get(gca,'ticklength'); gticklen=gticklen(1); 
 gtickdir=get(gca,'tickdir'); 
  
  
@@ -75,7 +84,7 @@ while k<=length(varargin),
            gtickdir=varargin{k+1};
        end;
     case {'get','usa'},
-      disp('      ''ticklen'',value');
+      disp('      ''ticklength'',value');
       disp('      ''tickdir'',( ''in'' | ''out'' )');
       disp('      ''color'',colorspec');
       disp('      ''linewidth'', value');
@@ -84,7 +93,7 @@ while k<=length(varargin),
       disp('      ''fontname'',name');
        return;
     case 'set',
-      disp(['      ticklen = ' num2str(gticklen)]);
+      disp(['      ticklength = ' num2str(gticklen)]);
       disp(['      tickdir = ' gtickdir]);
        disp(['      color = ' gcolor]);
       disp(['      linewidth = ' num2str(glinewidth)]);
@@ -166,19 +175,30 @@ if horiz,
  
   if strcmp(gtickdir,'in'),
 
-    line(posx(1)+[0 dist(end)/scfac],posy(1)+[0 0],'color',gcolor,'linewi',glinewidth,'linest',glinestyle,...
-	 'clip','off','tag','m_ruler_x');
-    line(posx(1)+[dist;dist]/scfac,posy(1)+diff(ylm)*gticklen*[-1;1]*ones(1,nints+1),...
-	 'color',gcolor,'linewi',glinewidth/3,'linest',glinestyle,...
-	 'clip','off','tag','m_ruler_y');
+    line(posx(1)+[0 dist(end)/scfac],posy(1)+[0 0],'color',gcolor,'linewidth',glinewidth,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_ruler_x');
+	 
+    XX=posx(1)+[dist;dist]/scfac;
+    YY=posy(1)+diff(ylm)*gticklen*[-1;1]*ones(1,nints+1);
+    if IsOctave,
+      for k=1:size(XX,2),
+        line(XX(:,k),YY(:,k),...
+	 'color',gcolor,'linewidth',glinewidth/3,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_ruler_y');
+      end;
+    else  
+      line(XX,YY,...
+	 'color',gcolor,'linewidth',glinewidth/3,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_ruler_y');
+    end;	 
   else
    
     patch(posx(1)+[dist(1:end-1);dist(1:end-1);dist(2:end);dist(2:end)]/scfac,...
            posy(1)+diff(ylm)*gticklen*[-1;1;1;-1]*ones(1,nints),...
 	   repmat(bitmax  ,4,nints),...
            reshape(rem(rem(0:nints*3-1,nints),2)==0,1,nints,3),...
-	 'linewi',glinewidth/3,'linest',glinestyle,...
-         'clip','off','tag','m_ruler');
+	 'linewidth',glinewidth/3,'linestyle',glinestyle,...
+         'clipping','off','tag','m_ruler');
 
   end;
    
@@ -186,34 +206,46 @@ if horiz,
     for k=1:nints,
       text(posx(1)+dist(k)/scfac,posy(1)-diff(ylm)*gticklen*2,sprintf('%d',dist(k)/numfac), ...
           'fontsize',gfontsize,'fontname',gfontname,...
-         'vertical','top','horiz','center','tag','m_ruler_label');
+         'verticalalignment','top','horizontalalignment','center','tag','m_ruler_label');
     end;
     text(posx(1)+dist(nints+1)/scfac,posy(1)-diff(ylm)*gticklen*2,sprintf('%d km',dist(end)/numfac),...
           'fontsize',gfontsize,'fontname',gfontname,...
-          'vertical','top','horiz','center','tag','m_ruler_label');
+          'verticalalignment','top','horizontalalignment','center','tag','m_ruler_label');
   else 
     text(posx(1)+mean(dist)/scfac,posy(1)-diff(ylm)*gticklen*2,sprintf('%d km',dist(end)/numfac),...
           'fontsize',gfontsize,'fontname',gfontname,...
-          'vertical','top','horiz','center','tag','m_ruler_label');
+          'verticalalignment','top','horizontalalignment','center','tag','m_ruler_label');
   end;
   
 else,
 
   if strcmp(gtickdir,'in'),
 
-    line(posx(1)+[0 0],posy(1)+[0 dist(end)/scfac],'color',gcolor,'linewi',glinewidth,'linest',glinestyle,...
-	 'clip','off','tag','m_scalebar_x');
-    line(posx(1)+diff(xlm)*gticklen*[-1;1]*ones(1,nints+1),posy(1)+[dist;dist]/scfac,...
-	 'color',gcolor,'linewi',glinewidth/3,'linest',glinestyle,...
-	 'clip','off','tag','m_ruler_y');
+    line(posx(1)+[0 0],posy(1)+[0 dist(end)/scfac],'color',gcolor,'linewidth',glinewidth,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_scalebar_x');
+	 
+    XX=posx(1)+diff(xlm)*gticklen*[-1;1]*ones(1,nints+1);
+    YY=posy(1)+[dist;dist]/scfac;
+    
+    if IsOctave,
+      for k=1:size(XX,2),
+       line(XX(:,k),YY(:,k),...
+	 'color',gcolor,'linewidth',glinewidth/3,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_ruler_y');
+      end;
+    else  
+       line(XX,YY,...
+	 'color',gcolor,'linewidth',glinewidth/3,'linestyle',glinestyle,...
+	 'clipping','off','tag','m_ruler_y');
+    end;	 
   else
    
     patch(posx(1)+diff(xlm)*gticklen*[-1;1;1;-1]*ones(1,nints),...
           posy(1)+[dist(1:end-1);dist(1:end-1);dist(2:end);dist(2:end)]/scfac,...
 	   repmat(bitmax  ,4,nints),...
            reshape(rem(rem(0:nints*3-1,nints),2)==0,1,nints,3),...
-	 'linewi',glinewidth/3,'linest',glinestyle,...
-         'clip','off','tag','m_ruler');
+	 'linewidth',glinewidth/3,'linestyle',glinestyle,...
+         'clipping','off','tag','m_ruler');
 
   end;
 
@@ -221,15 +253,15 @@ else,
     for k=1:nints,
       text(posx(1)+diff(xlm)*gticklen*2,posy(1)+dist(k)/scfac,sprintf('%d',dist(k)/numfac), ...
           'fontsize',gfontsize,'fontname',gfontname,...
-         'vertical','middle','horiz','left','tag','m_ruler_label');
+         'verticalalignment','middle','horizontalalignment','left','tag','m_ruler_label');
     end;
     text(posx(1)+diff(xlm)*gticklen*2,posy(1)+dist(nints+1)/scfac,sprintf('%d km',dist(end)/numfac),...
           'fontsize',gfontsize,'fontname',gfontname,...
-          'vertical','middle','horiz','left','tag','m_ruler_label');
+          'verticalalignment','middle','horizontalalignment','left','tag','m_ruler_label');
   else  
     text(posx(1)+diff(xlm)*gticklen*2,posy(1)+mean(dist)/scfac,sprintf('%d km',dist(end)/numfac),...
           'fontsize',gfontsize,'fontname',gfontname,...
-          'vertical','middle','horiz','left','tag','m_ruler_label');
+          'verticalalignment','middle','horizontalalignment','left','tag','m_ruler_label');
   end;
        
 end;

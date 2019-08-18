@@ -43,7 +43,7 @@ while k<length(varargin),
   end;
 end;
 
-[X,Y]=m_ll2xy(long,lat,'clip',clp);
+[X,Y]=m_ll2xy(long,lat,'clipping',clp);
 
 if nargout>0,
   h=line(X,Y,'tag','m_line',varargin{:});

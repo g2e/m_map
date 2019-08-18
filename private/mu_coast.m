@@ -230,9 +230,9 @@ switch optn,
       k2=(ed-st)<3;
       ed(k2)=[]; st(k2)=[];
 %%[XX,YY]=m_ll2xy(x(st),y(st),'clip','off');
-%line(x,y,'color','r','linest','-');
-%line(x(st),y(st),'marker','o','color','r','linest','none');
-%line(x(ed),y(ed),'marker','o','color','g','linest','none');
+%line(x,y,'color','r','linestyle','-');
+%line(x(st),y(st),'marker','o','color','r','linestyle','none');
+%line(x(ed),y(ed),'marker','o','color','g','linestyle','none');
       edge1=c_edge(x(st),y(st));
       edge2=c_edge(x(ed),y(ed));
 %-edge1*180/pi
@@ -651,6 +651,23 @@ function [A,cnt]=get_gheader(fid);
 %greenwich:	1 if Greenwich is crossed
 %source:		0 = CIA WDBII, 1 = WVS
 %
+% For version 2.0 it all changed again, we have (11*4 = 44 bytes)
+%
+%	int id;		/* Unique polygon id number, starting at 0 */
+%	int n;		/* Number of points in this polygon */
+%	int flag;	/* = level + version << 8 + greenwich << 16 + source << 24 + river << 25 */
+%	/* flag contains 5 items, as follows:
+%	 * low byte:	level = flag & 255: Values: 1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
+%	 * 2nd byte:	version = (flag >> 8) & 255: Values: Should be 7 for GSHHS release 7 (i.e., version 2.0)
+%	 * 3rd byte:	greenwich = (flag >> 16) & 1: Values: Greenwich is 1 if Greenwich is crossed
+%	 * 4th byte:	source = (flag >> 24) & 1: Values: 0 = CIA WDBII, 1 = WVS
+%	 * 4th byte:	river = (flag >> 25) & 1: Values: 0 = not set, 1 = river-lake and level = 2
+%	 */
+%	int west, east, south, north;	/* min/max extent in micro-degrees */
+%	int area;	/* Area of polygon in 1/10 km^2 */
+%	int area_full;	/* Area of original full-resolution polygon in 1/10 km^2 */
+%	int container;	/* Id of container polygon that encloses this polygon (-1 if none) */
+%	int ancestor;	/* Id of ancestor polygon in the full resolution set that was the source of this polygon (-1 if none) 
 
 
 % Now, in the calling code I have to use A(2),A(3),A(5-7), A(8), A(9) from original.
@@ -687,6 +704,10 @@ else  % a newest versions
  
  A(9)=greenwich*65536;
  
+ if ver>=7,  % After v2.0 some more bytes around
+   A2=fread(fid,3,'int32');
+
+ end;  
 end;
  
 

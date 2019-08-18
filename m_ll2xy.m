@@ -21,12 +21,13 @@ function [X,Y,I]=m_ll2xy(varargin);
 % it's mine, so you can't sell it.
 
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% 4/DEc/11 - isstr to ischar
 
 global MAP_PROJECTION MAP_COORDS
 
 
 
-if nargin==0 | isstr(varargin{1}),
+if nargin==0 | ischar(varargin{1}),
   disp(' Usage');
   disp(' [X,Y]=m_ll2xy(LONGITUDES,LATITUDES <,''clip'',( ''on''|''off''|''patch'' | ''point'' ) >)');
 else

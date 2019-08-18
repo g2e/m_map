@@ -33,7 +33,7 @@ curve)... or not! </p>
 <p></p>
 <hr ,="" width="5">
 <center>
-<h4> Announcing M_Map v1.4e! (updated Oct/09)</h4>
+<h4> Announcing M_Map v1.4f! (updated Dec/2011)</h4>
 </center>
 <table align="center" border="1" cellpadding="0" cellspacing="0"
  width="100%">
@@ -133,6 +133,13 @@ in lat/long terms or in planar X/Y terms.</li>
 bathymetry databases</li>
 </ol>
 <center> </center>
+New in release 1.4f are<br>
+<ol>
+  <li>m_shaperead.m to read SHAPEFILES! (so <a href="http://www.naturalearthdata.com/">Natural Earth</a> can be
+  used for political boundaries instead of DCW, among other opportunities) </li>
+  <li>gshhs version 2 support</li>
+  <li> partial OCTAVE compatibility </li>
+ </ol>
 New in release 1.4e are<br>
 <ol>
   <li>GSHHS Now comes with the WDB rivers and borders database, and
@@ -214,8 +221,7 @@ should I use?</a></li>
   </ol>
   <li> <a href="private/mapug.html#p3">Coastlines and Bathymetry</a></li>
   <ol>
-    <li> <a href="private/mapug.html#p3.1">Coastline options</a><img
- src="./private/new.gif"></li>
+    <li> <a href="private/mapug.html#p3.1">Coastline options</a> </li>
     <li> <a href="private/mapug.html#p3.2">Topography/Bathymetry
 options</a></li>
   </ol>
@@ -224,17 +230,17 @@ options</a></li>
     <li> <a href="private/mapug.html#p4.1">Grid lines and labels</a></li>
     <li> <a href="private/mapug.html#p4.2">Titles and x/ylabels</a></li>
     <li> <a href="private/mapug.html#p4.3">Legend Boxes&nbsp;</a></li>
+    <li> <a href="private/mapug.html#p4.4">Scale bar&nbsp;</a><img src="./private/new.gif"></li>
   </ol>
   <li> <a href="private/mapug.html#p5">Adding your own data</a></li>
   <ol>
     <li> <a href="private/mapug.html#p5.3">Drawing lines, text,
-arrows, patches, hatches, speckles, and contours</a><img
- src="./private/new.gif"></li>
+arrows, patches, hatches, speckles, and contours</a> </li>
     <li><a href="private/mapug.html#p5.2new">Drawing images and p_color
       </a> </li>
     <li> <a href="private/mapug.html#p5.4">Drawing tracklines</a></li>
     <li> <a href="private/mapug.html#p5.5">Drawing range rings and
-geodesics</a><img src="./private/new.gif"></li>
+geodesics</a></li>
     <li> <a href="private/mapug.html#p5.1">Converting
 longitude/latitude to projection coordinates</a></li>
     <li> <a href="private/mapug.html#p5.2">Converting projection
@@ -247,6 +253,7 @@ points&nbsp;</a></li>
   <li> <a href="private/mapug.html#p7">Adding your own coastlines</a></li>
   <ol>
     <li> <a href="private/mapug.html#p7.1">DCW political boundaries</a></li>
+    <li> <a href="private/mapug.html#p7.2">ESRI Shapefiles</a><img src="./private/new.gif"></li>
   </ol>
   <li> <a href="private/mapug.html#p8">Adding your own
 topography/bathymetry</a></li>
@@ -265,8 +272,9 @@ high-resolution coastline database</a></li>
   <li> <a href="private/mapug.html#p10">M_Map toolbox contents and
 description</a></li>
   <li> <a href="private/mapug.html#p11">Known Problems and Bugs</a></li>
+  <li> <a href="private/mapug.html#p11a">OCTAVE Compatibility Issues</a> <img src="./private/new.gif"></li>
   <li> <a href="private/mapug.html#p12">Changes since last
-release&nbsp;</a> <img src="./private/new.gif"> </li>
+release&nbsp;</a>  </li>
 </ol>
 For information, help, suggestions, or bug reports, contact <a
  href="http://www.eos.ubc.ca/people/faculty/pawlowicz/">Rich Pawlowicz </a>,

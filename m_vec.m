@@ -1,4 +1,4 @@
-function [hp, ht] = mvec(s, x, y, varargin)  % and color, etc
+function [hp, ht] = m_vec(s, x, y, varargin)  % and color, etc
 % M_VEC Draws fancy arrows/quiverplots on a map.
 %    [HP, HT]=M_VEC(S,LONG,LAT,VARARGIN) draws arrows as a patch 
 %    object on a map created by the M_Map package.
@@ -67,7 +67,7 @@ if nargin==0,  % demo
     % Set up the figure and axes at the start, so that the vector lengths
     % will come out right when the figure is printed:
 
-    orient tall
+  %  orient tall
     % Main axes, for the map.
     ha1 = axes;
     pos = get(ha1,'position');
@@ -94,7 +94,7 @@ if nargin==0,  % demo
     m_proj('ortho','lat',48','long',-123', 'rad', 10, ...
         	'rec', 'off' );
     m_coast('patch',[0.9 0.95 0.9]);
-    m_grid('linest','-','xtick',[-135:5:-110]);
+    m_grid('linestyle','-','xtick',[-135:5:-110]);
     title('Demonstration of m\_vec')
 
 
@@ -424,7 +424,7 @@ Faces = reshape(Faces,7,nvec).';
 % to be printed OK) when EdgeColor is 'none', so when the arrows are all
 % the same color, set the EdgeColor to be the same as FaceColor.
 % Set clip off here so arrows are complete - RP 7/Jun/06
-hp = patch('Faces', Faces, 'Vertices', Vert, 'tag', 'm_vec','clip','off');
+hp = patch('Faces', Faces, 'Vertices', Vert, 'tag', 'm_vec','clipping','off');
 if ischar(c) | (size(c,1) == 1 & size(c,2) == 3),
    set(hp, 'EdgeColor', c, 'FaceColor', c, 'LineWidth', 0.1);
 else

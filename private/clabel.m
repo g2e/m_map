@@ -50,6 +50,7 @@ function hh = clabel(cs,varargin)
 %   Fix by Eric Firing, efiring@soest.hawaii.edu, 4/97, to
 %   make the rotation angles correct when XDir and/or YDir are
 %   reverse.
+% 4/DEc/11 - isstr to ischar
 
 if nargin == 0
     error('Not enough input arguments.')
@@ -93,12 +94,12 @@ function H = inline_labels(CS,h,varargin)
 
 manual=0; v=[]; inargs=zeros(1,length(varargin));
 
-if nargin>=3 & isstr(varargin{1}) & strcmp(varargin{1},'manual'),
+if nargin>=3 & ischar(varargin{1}) & strcmp(varargin{1},'manual'),
   manual = 1;
   inargs(1)=1;
 end
 
-if ~manual & nargin>=3 & ~isstr(varargin{1}),
+if ~manual & nargin>=3 & ~ischar(varargin{1}),
   v = varargin{1};
   inargs(1)=1;
 end;
@@ -106,7 +107,7 @@ end;
 lab_int=72*2;  % label interval (points)
 
 for k=find(inargs==0),
- if isstr(varargin{k}) & ~isempty(findstr(varargin{k},'lab')),
+ if ischar(varargin{k}) & ~isempty(findstr(varargin{k},'lab')),
    inargs([k k+1])=1;
    lab_int=varargin{k+1};
  end;
@@ -414,7 +415,7 @@ choice = 0;
 
 
 if nargin > 2
-  if isstr(varargin{1}),
+  if ischar(varargin{1}),
     if strcmp(varargin{1}, 'manual')
       varargin(1)=[];
       manual=1;

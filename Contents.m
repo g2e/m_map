@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
-% Version 1.4d 1 Oct 2008
+% Version 1.4f 1 Dec 2011
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -61,6 +61,7 @@
 %    m_gshhs_f.m   - draws coastline from GSHHS full database
 %    m_plotbndry.m - draws a political boundary from the DCW 
 %    m_usercoast.m - draws a coastline using a user-specified subset database.
+%    m_shaperead.m - reads ESRI shapefiles
 %
 %    m_plot.m      - draws line data in map coords
 %    m_line.m      - draws line data in map coords

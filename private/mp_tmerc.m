@@ -30,6 +30,7 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 %  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
 % Mar/26/04 - 'varagin' to 'varargin' bug fixed (thanks to John Douglas)
 % Jan/10/08  - Robinson projection
+% May/17/12   - some fixes to Mollweide projection
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -174,17 +175,26 @@ switch optn,
         
         % Have to use interative scheme to get intermediate variable "theta".
 	%   cos(theta) changed to cos(2*theta) -thanks Zhigang Xu! Dec 2006.
+	%
+	%The program has a divide by zero
+	%error when theta= ±(pi/2).  I've introduced the variable "notpoles"
+	%to handle this exception, although there are certainly other ways to
+	% deal with the special cases = Kevin Lewis Feb 2011
+	% (my note - I'm just taking this as is)
+	%  May/2012 - added a bunch more 'notpoles' references (thanks to M. Losch)
         theta=(asin(lat/90)+lat*pi180)/2;
+	notpoles=find(abs(theta)<pi/2);  % kevin lewis 2011
         dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(2*theta))/2;
         k=1;
-        while any(abs(dt(:))>.001) & k<15,
-          theta=theta+dt;
+
+        while any(abs(dt(notpoles))>.001) & k<15,
+          theta(notpoles)=theta(notpoles)+dt(notpoles);  % fixed May 2012
           dt=-(2*theta+sin(2*theta)-pi*sin(lat*pi180))./(1+cos(2*theta))/2;
           k=k+1;
  %% fprintf('%f %f\n',max(theta(:))/pi180,max(abs(dt(:))));
         end;
         if k==15, warning('Iterative coordinate conversion is not converging!'); end;
-        theta=theta+dt;
+        theta(notpoles)=theta(notpoles)+dt(notpoles);  % fixed May 2012
         
         X=((long-MAP_VAR_LIST.clong).*cos(theta)+MAP_VAR_LIST.clong)/90;
         Y=sin(theta);
