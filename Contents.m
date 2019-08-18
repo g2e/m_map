@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
-% Version 1.4h  Nov 2014
+% Version 1.4i  Nov 2017
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -61,20 +61,24 @@
 %    m_gshhs_f.m   - draws coastline from GSHHS full database
 %    m_plotbndry.m - draws a political boundary from the DCW 
 %    m_usercoast.m - draws a coastline using a user-specified subset database.
-%    m_shaperead.m - reads ESRI shapefiles
 %
 %    m_plot.m      - draws line data in map coords
 %    m_line.m      - draws line data in map coords
 %    m_text.m      - adds text data in map coords
-%    m_legend.m    - Draw a legend box
-%    m_quiver      - draws arrows for vector data
-%    m_contour     - draws contour lines for gridded data
-%    m_contourf    - draws filled contours
-%    m_patch       - draws patch data
-%    m_track       - draws annotated tracklines
+%    m_legend.m    - draws a legend box
+%    m_quiver.m    - draws arrows for vector data
+%    m_contour.m   - draws contour lines for gridded data
+%    m_contourf.m  - draws filled contours
+%    m_patch.m     - draws patch data
+%    m_pcolor.m    - draws pcolor data
+%    m_streamline.m- draws streamlines
+%    m_scatter.m   - draws scatter plot
+%    m_annotation.m- annotation lines/boxes/text
+%
+%    m_track.m     - draws annotated tracklines
 %    m_hatch.m     - hatched or speckled patches.
-%    m_range_ring  - draws range rings (spherical coords)
-%    m_ellipse     - draws tidal ellipses (most requested ocean feature!)
+%    m_range_ring.m- draws range rings (spherical coords)
+%    m_ellipse.m   - draws tidal ellipses (most requested ocean feature!)
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
@@ -92,6 +96,14 @@
 %    m_tba2b.m     - used in installing high-resolution elevation database.
 %
 %    m_vec.m       - fancy arrows
+%    m_windbarb.m  - barbed wind arrows
+%
+%    m_contfbar.m  - draws colorbars for contourf plots
+%    m_colmap.m    - useful perceptually uniform colourmaps.
+%    m_shaperead.m - reads ESRI shapefiles
+%    mygrid_sand2.m- reads Sandwell and Smith bathymetry file
+%
+%    wysiwyg.m     - Sets figure window to match size/aspect of printed output
 %
 %  Internal functions (not meant to be user-callable)
 %
@@ -106,13 +118,9 @@
 %    private/mu_coast.m  - routines to handle coastlines.
 %
 %    private/mc_coords.m - coordinate systems based on different poles.
+%    private/mc_ellips.m - parameters of different ellipsoidal earth models
 %
-%    private/clabel.m.OLD    - patched version of clabel 
-%                         (matlab v5.1 version does not contain
-%                         capabilities for different text properties). 
-%                         Not compatible with R2011b (and later)   
-%
-%    private/m_coasts.mat - coastline data
+%    private/m_coasts.mat- low-res coastline data
 %
 %  HTML documentation
 %
