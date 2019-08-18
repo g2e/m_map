@@ -73,7 +73,7 @@ for k=1:length(long),
   [XX,YY]=m_ll2xy([X,X2,X3],[Y,Y(:,kk),Y(:,kk)],'clip','on');
   
   % Get rid of 2-point lines (these are probably clipped lines spanning the window)
-  fk=finite(XX(:));        
+  fk=isfinite(XX(:));        
   st=find(diff(fk)==1)+1;
   ed=find(diff(fk)==-1);
   if length(st)<length(ed), st=[1;st]; end;

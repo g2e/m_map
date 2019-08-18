@@ -29,12 +29,44 @@ function  [X,Y,vals,labI]=mp_tmerc(optn,varargin)
 % 17/8/98 - Mollweide projection.
 %  7/6/99 - fixed tendency to re-define .ulongs if .clong set by user
 % Mar/26/04 - 'varagin' to 'varargin' bug fixed (thanks to John Douglas)
+% Jan/10/08  - Robinson projection
 
 global MAP_PROJECTION MAP_VAR_LIST
 
-name={'Transverse Mercator','Sinusoidal','Gall-Peters','Hammer-Aitoff','Mollweide'};
+name={'Transverse Mercator','Sinusoidal','Gall-Peters','Hammer-Aitoff','Mollweide','Robinson'};
 
 pi180=pi/180;
+
+% Table of scaling values needed for Robinson projection
+% copied from the wikipedia entry for the robinson projection
+Robscal=[...
+00 	1.0000 	0.0000;
+05 	0.9986 	0.0620;
+10 	0.9954 	0.1240;
+15 	0.9900 	0.1860;
+20 	0.9822 	0.2480;
+25 	0.9730 	0.3100;
+30 	0.9600 	0.3720;
+35 	0.9427 	0.4340;
+40 	0.9216 	0.4958;
+45 	0.8962 	0.5571;
+50 	0.8679 	0.6176;
+55 	0.8350 	0.6769;
+60 	0.7986 	0.7346;
+65 	0.7597 	0.7903;
+70 	0.7186 	0.8435;
+75 	0.6732 	0.8936;
+80 	0.6213 	0.9394;
+85 	0.5722 	0.9761;
+90 	0.5322 	1.0000];
+Robscal(:,3)=Robscal(:,3)*0.5072;
+Robscal_o=[flipud(Robscal) ; Robscal(2:end,:).*repmat([-1 1 -1],18,1) ];
+% Use splines to interpolate this to many more points - then we can use
+% linear interpolate below and both the forward and reverse maps will be identical
+Robscal=[-90:.05:90]';
+Robscal(:,2)=interp1(Robscal_o(:,1),Robscal_o(:,2),Robscal(:,1));
+Robscal(:,3)=interp1(Robscal_o(:,1),Robscal_o(:,3),Robscal(:,1));
+
 
 switch optn,
 
@@ -73,6 +105,9 @@ switch optn,
         MAP_VAR_LIST.ulats=[-65 65];
       case {name{4},name{5}}
         MAP_VAR_LIST.ulongs=[-300 60];
+        MAP_VAR_LIST.ulats=[-90 90];
+      case {name{6}}
+        MAP_VAR_LIST.ulongs=[-180 180];
         MAP_VAR_LIST.ulats=[-90 90];
     end;
     MAP_VAR_LIST.clong=NaN;
@@ -153,6 +188,11 @@ switch optn,
         
         X=((long-MAP_VAR_LIST.clong).*cos(theta)+MAP_VAR_LIST.clong)/90;
         Y=sin(theta);
+	
+      case name(6),
+      	Y=interp1(Robscal(:,1),Robscal(:,3),lat)*pi;
+	X=(long-MAP_VAR_LIST.clong)/180.*interp1(Robscal(:,1),Robscal(:,2),lat)*pi;
+	
     end;
 
     % Clip out-of-range values (rectboxes)
@@ -187,6 +227,9 @@ switch optn,
         theta=asin(varargin{2});
         Y=asin((2*theta+sin(2*theta))/pi)/pi180;
         X=(varargin{1}*90-MAP_VAR_LIST.clong)./cos(theta)+MAP_VAR_LIST.clong;
+      case name(6),
+        Y=interp1(Robscal(:,3),Robscal(:,1),varargin{2}/pi);
+	X=varargin{1}./interp1(Robscal(:,1),Robscal(:,2),Y)*180/pi+MAP_VAR_LIST.clon;	
     end;
         
   case 'xgrid',
