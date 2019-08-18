@@ -14,7 +14,7 @@ function m_gshhs(resolution,varargin);
 %         for the current projection in a file FILENAME. This allows 
 %         speedier replotting using M_USERCOAST(FILENAME). 
 %    
-%         RES: A two-char string (optionally 1)
+%         RES: A one-char string (optionally 2 or 3)
 %         
 %         First char: resolution - one of
 %                      'c'  crude
@@ -28,6 +28,12 @@ function m_gshhs(resolution,varargin);
 %                      'b' WDB Border
 %                      'r' WDB River
 %  
+%         Third char - if 2nd char is 'c':
+%                      '1' Country borders
+%                      '2' State/Province and Country borders
+%                    - if 2nd char is 'r': '1','2','3','4' 
+%                      add successively more tributaries
+%
 %         (also maintained is this optional format:
 %
 %         RES - selections resolution
@@ -55,6 +61,7 @@ function m_gshhs(resolution,varargin);
 %  variable resolution input:
 % 20/Jan/2008 - added borders and rivers from gshhs v1.10
 % 4/DEc/11 - isstr to ischar
+% Sep/14 - added hierarchy to borders
 
 % Root of directories where gshhs_X.b files live
 FILNAME='private/';
@@ -65,9 +72,14 @@ typ_list=char('c','b','r');
 typ_names={'gshhs_','wdb_borders_','wdb_rivers_'};
 
 typ=1;
+flaglim='9';
+
 if ischar(resolution),
  if length(resolution)>=2,
    typ = strmatch(lower(resolution(2)),typ_list);
+ end;  
+ if length(resolution)>=3,
+   flaglim = resolution(3);
  end;  
  resolution = strmatch(lower(resolution(1)),res_list);
 end;
@@ -94,7 +106,7 @@ if length(varargin)>1 & strcmp(varargin{1},'save'),
   [ncst,Area,k]=mu_coast(res_char,file);
   eval(['save ' varargin{2} ' ncst k Area']);
 else
-  mu_coast(res_char,file,varargin{:},'tag',tag_name);
+  mu_coast([res_char flaglim],file,varargin{:},'tag',tag_name);
 end;
 
 m_coord(Currentmap.name);

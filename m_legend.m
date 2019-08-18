@@ -14,6 +14,8 @@ function [h] = m_legend(varargin)
 % Original Author:: Deirdre Byrne, dbyrne@umeoce.maine.edu 00/06/23
 
 % This software is provided "as is" without warranty of any kind.
+%
+% 13/Nov/2014 - suggested code change for matlab 2014b gaphics
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -97,7 +99,13 @@ for i = 1:lh
   xp = [0.05 0.2 0.35];
   iy = (i*sf-1)*0.8/lh + 0.25;
   yp = [iy iy iy];
-  if strcmp(get(handles(i),'type'),'line')
+  
+  if verLessThan('matlab','8.4.0'),
+    lintest=strcmp(get(handles(i),'type'),'line');
+  else
+    lintest=isgraphics(handles(i),'line');
+  end;
+  if lintest,    
     mark = get(handles(i),'marker');
     msize = get(handles(i),'markersize');
     linest = get(handles(i),'linestyle');

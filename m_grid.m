@@ -46,8 +46,9 @@ function m_grid(varargin);
 % 8/Sep/13 - added 'tickstyle' parameter
 % 27/Sep/13 - matlab 2013b out, includes graphic bug. Workaround provided by
 %             Corinne Bassin.
-
-
+% 10/Jul/14 - in 2014a BITMAX starts not to be used, changed to FLINTMAX...
+% 13/Nov/14 - 2014b graphics changes are biting; a number of version-dependent
+%              fixes implemented.
 
 % Note that much of the work in generating line data 
 % is done by calls to the individual projections - 
@@ -73,6 +74,16 @@ else
  IsOctave=logical(0);
 end;
   
+% I use bitmax in various places as 'a large number', but
+% as of 2014b this has been renamed
+
+global LARGVAL
+
+if verLessThan('matlab','8.3'),
+  LARGVAL=bitmax;
+else
+  LARGVAL=flintmax;
+end;    
 
 % Otherwise we are drawing a grid!
 
@@ -260,8 +271,14 @@ if ~IsOctave,
    %%a=ver('matlab');  % Ver doesn't return stuff under v5!
    a=version;
    %if  (sscanf(a(1:3),'%f') >6.0 & sscanf(a(1:3),'%f') <7.4)  & ~ispc,
-     patch('xdata',X(:),'ydata',Y(:),'zdata',-bitmax*ones(size(X(:))),'facecolor',gbackcolor,...
+    
+%%    if verLessThan('matlab','8.4.0'),
+     patch('xdata',X(:),'ydata',Y(:),'zdata',-LARGVAL*ones(size(X(:))),'facecolor',gbackcolor,...
 	   'edgecolor','k','linestyle','none','tag','m_grid_color');
+%%    else	   
+%%     patch('xdata',X(:),'ydata',Y(:),'zdata',-LARGVAL*(size(X(:))),'facecolor',gbackcolor,...
+%%	   'edgecolor','k','linestyle','none','tag','m_grid_color');
+%%    end;
    %
    %else
    % Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
@@ -484,6 +501,7 @@ m_coord(Currentmap.name);
 % Sat  98/02/21 Eric Firing
 %
 function   [rotang, horiz, vert] = upright(rotang, horiz, vert);
+if isnan(rotang), rotang=0; end   % Added in 2014!
 if rotang > 180, rotang = rotang - 360; end
 if rotang < -180, rotang = rotang + 360; end
 if rotang > 90,
@@ -661,6 +679,7 @@ function fancybox(vals,lims,gridarg1,gridarg2,dpatch,gticklen,gridarg3);
 %              depending on calling parameters.
 
 global MAP_PROJECTION
+global LARGVAL
 
 % Get xlocations including endpoints
 xval=sort([lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)]);
@@ -696,19 +715,19 @@ kk=[0:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
 patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
       reshape(u2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
+      repmat(LARGVAL  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
 patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
       reshape(l2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
+      repmat(LARGVAL-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
 
 kk=[dpatch*2:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
 patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
       reshape(l2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
+      repmat(LARGVAL  ,size(kk,2),size(kk,1)),'w','edgecolor','k','clipping','off','tag','m_grid_fancybox1');
 patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
       reshape(u2y(kk),size(kk,1),size(kk,2))',...
-      repmat(bitmax-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
+      repmat(LARGVAL-1,size(kk,2),size(kk,1)),'k','clipping','off','tag','m_grid_fancybox1');
 
 
 %---------------------------------------------------------
@@ -718,6 +737,7 @@ function fancybox2(vals,lims,gridarg1,gridarg2,dpatch,gticklen,gridarg3);
 %              depending on calling parameters.
 
 global MAP_PROJECTION
+global LARGVAL
 
 % Get xlocations including endpoints
 xval=sort([lims(1) vals(vals>lims(1) & vals<lims(2)) lims(2)]);
@@ -753,24 +773,24 @@ kk=[0:(dpatch*2):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
  patch(reshape(l2x(kk),size(kk,1),size(kk,2))',...
        reshape(l2y(kk),size(kk,1),size(kk,2))',...
-       repmat(bitmax-1,size(kk,2),size(kk,1)),...
+       repmat(LARGVAL-1,size(kk,2),size(kk,1)),...
        'w','edgecolor','k','clipping','off','linewidth',.2,'tag','m_grid_fancybox2');
  patch(reshape(u2x(kk),size(kk,1),size(kk,2))',...
        reshape(u2y(kk),size(kk,1),size(kk,2))',...
-       repmat(bitmax-1,size(kk,2),size(kk,1)),...
+       repmat(LARGVAL-1,size(kk,2),size(kk,1)),...
        'w','edgecolor','k','clipping','off','linewidth',.2,'tag','m_grid_fancybox2');
 
 kk=[0:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
 line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),...
-     repmat(bitmax,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
+     repmat(LARGVAL,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
 
 kk=[dpatch:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
 line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),...
-     repmat(bitmax,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
+     repmat(LARGVAL,k1,k2),'color','k','clipping','off','tag','m_grid_fancybox2');
 
 
 

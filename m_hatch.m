@@ -160,7 +160,11 @@ switch lower(styl),
     if any(xi),
       xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;yi=NaN;
+      if verLessThan('matlab','8.4.0'),
+        xi=NaN;yi=NaN;
+      else
+        xi=gobjects(1);yi=gobjects(1);
+      end;		
     end;    
   end; 
  case 'outspeckle',
@@ -175,7 +179,11 @@ switch lower(styl),
     if any(xi),
       xi=line(xi,yi,'marker','.','linestyle','none','markersize',2,varargin{:});
     else
-      xi=NaN;yi=NaN;
+      if verLessThan('matlab','8.4.0'),
+        xi=NaN;yi=NaN;
+      else
+        xi=gobjects(1);yi=gobjects(1);
+      end;		
     end;    
   end; 
     

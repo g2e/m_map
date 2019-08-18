@@ -57,7 +57,8 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 %        21/Mar/06  - handling of gshhs v1.3 (developed from suggestions by
 %                     Martin Borgh)
 %        26/Nov/07 - changed 'finite' to 'isfinite' after warnings
-%
+%        26/Sep/14 - added hierarchy flag to borders and rivers
+%        13/Nov/14 - suggested matlab2014b graphics fix
 
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -107,6 +108,7 @@ switch optn(1),
     load m_coasts
 end;
 
+ 
 % If all we wanted was to extract a sub-coastline, return.
 if nargout==3,
   return;
@@ -189,7 +191,12 @@ switch optn,
       oncearound=2*pi;    
   end;
 
-  p_hand=zeros(length(k)-1,1); % Patch handles
+  if verLessThan('matlab','8.4.0'),
+     p_hand=zeros(length(k)-1,1); % Patch handles
+  else
+     p_hand=gobjects(length(k)-1,1); % Patch handles
+  end;
+  
   
   for i=1:length(k)-1,
     x=X(k(i)+1:k(i+1)-1);
@@ -421,6 +428,13 @@ switch optn(1),
     ncst=NaN+zeros(110143,2);Area=zeros(20871,1);k=ones(27524,1);
     decfac=20;
 end;
+
+flaglim=9;
+if length(optn)>=2,
+  flaglim=str2num(optn(2));
+end;
+ 
+
 fid=fopen(file,'r','ieee-be');
 
 if fid==-1,
@@ -463,12 +477,13 @@ while cnt>0,
  % and/or the line limits cross the longitude jump or not.
  
 %% if e & (  a&( b&c&d | ~b&(c|d)) | ~a&(~b | (b&(c|d))) ),
- if e & (  (a&( (b&c&d) | (~b&(c|d)) )) | (~a&(~b | (b&(c|d))) ) ),
+ if e & (  (a&( (b&c&d) | (~b&(c|d)) )) | (~a&(~b | (b&(c|d))) ) ) & A(3)<=flaglim, 
  
    l=l+1;
  
    x=C(1:2:end)*1e-6;y=C(2:2:end)*1e-6;
- %%  plot(x,y);pause;
+%%   A(3)
+%%   line(x,y,'color','b');pause;
    
    %  make things continuous (join edges that cut across 0-meridian)
 
@@ -658,6 +673,7 @@ function [A,cnt]=get_gheader(fid);
 %	int flag;	/* = level + version << 8 + greenwich << 16 + source << 24 + river << 25 */
 %	/* flag contains 5 items, as follows:
 %	 * low byte:	level = flag & 255: Values: 1 land, 2 lake, 3 island_in_lake, 4 pond_in_island_in_lake
+%                                           for border database: 1=country, 2=state/province
 %	 * 2nd byte:	version = (flag >> 8) & 255: Values: Should be 7 for GSHHS release 7 (i.e., version 2.0)
 %	 * 3rd byte:	greenwich = (flag >> 16) & 1: Values: Greenwich is 1 if Greenwich is crossed
 %	 * 4th byte:	source = (flag >> 24) & 1: Values: 0 = CIA WDBII, 1 = WVS

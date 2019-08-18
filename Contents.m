@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
-% Version 1.4h 1 Apr 2013
+% Version 1.4h  Nov 2014
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 

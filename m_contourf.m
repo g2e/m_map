@@ -30,16 +30,16 @@ if isempty(MAP_PROJECTION),
   disp('No Map Projection initialized - call M_PROJ first!');
   return;
 end;
-
+ 
 if min(size(long))==1 & min(size(lat))==1,
  [long,lat]=meshgrid(long,lat);
 end;
-
+ 
 [X,Y]=m_ll2xy(long,lat,'clip','on');  %First find the points outside
-
+ 
 i=isnan(X);      % For these we set the *data* to NaN...
 data(i)=NaN;
-
+ 
                  % And then recompute positions without clipping. THis
                  % is necessary otherwise contouring fails (X/Y with NaN
                  % is a no-no. Note that this only clips properly down
