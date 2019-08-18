@@ -35,7 +35,10 @@ function [lon2,lat2,a21] = m_fdist(lon1,lat1,a12,s,spheroid)
 %            1e-10 degrees.
 %       (4) No warranties; use at your own risk.
 
-% R. Pawlowicz 9/Jan/2005
+% R. Pawlowicz (rich@ocgy.ubc.ca) 9/Jan/2005
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
 
 
 pi180=pi/180;

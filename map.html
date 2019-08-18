@@ -33,7 +33,7 @@ curve)... or not! </p>
 <p></p>
 <hr ,="" width="5">
 <center>
-<h4> Announcing M_Map v1.4f! (updated Dec/2011)</h4>
+<h4> Announcing M_Map v1.4g! (updated Sept/2013)</h4>
 </center>
 <table align="center" border="1" cellpadding="0" cellspacing="0"
  width="100%">
@@ -133,6 +133,14 @@ in lat/long terms or in planar X/Y terms.</li>
 bathymetry databases</li>
 </ol>
 <center> </center>
+New in release 1.4g are<br>
+<ol>
+  <li>m_ellipse.m to plot tidal ellipses (say, from <a href="http://www.eos.ubc.ca/~rich/index.html#T_Tide"> T_Tide </a>)
+  <li>Option to use either decimal-degrees or degrees/decimal-minutes in grid axis labels
+  <li> Matlab 2013b has a bad bug in the <tt>dataaspectratio</tt> axes property that affects pretty much everything graphical. This version of
+  M_Map has a workaround that MOSTLY works, but it would
+  be better to avoid using 2013b.
+  </ol>
 New in release 1.4f are<br>
 <ol>
   <li>m_shaperead.m to read SHAPEFILES! (so <a href="http://www.naturalearthdata.com/">Natural Earth</a> can be
@@ -227,10 +235,10 @@ options</a></li>
   </ol>
   <li> <a href="private/mapug.html#p4">Customizing the axes</a></li>
   <ol>
-    <li> <a href="private/mapug.html#p4.1">Grid lines and labels</a></li>
+    <li> <a href="private/mapug.html#p4.1">Grid lines and labels</a><img src="./private/new.gif"></li>
     <li> <a href="private/mapug.html#p4.2">Titles and x/ylabels</a></li>
     <li> <a href="private/mapug.html#p4.3">Legend Boxes&nbsp;</a></li>
-    <li> <a href="private/mapug.html#p4.4">Scale bar&nbsp;</a><img src="./private/new.gif"></li>
+    <li> <a href="private/mapug.html#p4.4">Scale bar&nbsp;</a></li>
   </ol>
   <li> <a href="private/mapug.html#p5">Adding your own data</a></li>
   <ol>
@@ -392,7 +400,7 @@ Lat/Long grid)</h4>
   <tt>Plat=90-.25-[0:359]*.5;Plon=-180+.25+[0:719]*.5;</tt><br>
   <br>
   <tt>% Since the grid is rectangluar in lat/long (i.e. not</tt><br>
-  <tt>% really a projection at all, althouhg it is included in</tt><br>
+  <tt>% really a projection at all, although it is included in</tt><br>
   <tt>% m_map under the name 'equidistant cyldindrical'), we </tt><br>
   <tt>% don't want to use the 'image' technique. Instead... </tt><br>
   <tt>% Create a grid, offsetting by half a grid point to account</tt><br>

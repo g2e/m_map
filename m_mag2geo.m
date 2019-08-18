@@ -24,6 +24,11 @@ function [longGEO,latGEO,phiVecGEO,thetaVecGEO]=m_mag2geo(longMAG,latMAG,phiVecM
 % Hapgood, M.A., Space Physics Coordinate Transformations:
 % A User Guide, Planet. Space Sci., Vol. 40, N0. 5, 1992.
 
+% R. Pawlowicz (rich@ocgy.ubc.ca)
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
+
 if nargin==2,
    [longGEO,latGEO]=mc_coords('mag2geo',longMAG,latMAG);
 elseif nargin==4,

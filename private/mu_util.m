@@ -21,6 +21,7 @@ function varargout=mu_util(optn,varargin);
 % 31/Mar/04 - added a fix in m_rectgrid that caused problems when a map
 % boundary coincided with a grid line.
 % 26/Oct/07 - fixed the same problem when it occurred near SOUTH pole!
+% 8/Sep/13 - added 'tickstyle' to grid generation
 
 switch optn,
   case 'clip',
@@ -117,7 +118,7 @@ end;
 
 
 %--------------------------------------------------------------------------
-function gval=m_getinterval(gmin,gmax,gtick);
+function gval=m_getinterval(gmin,gmax,gtick,gtickstyle);
 % M_GETINTERVAL picks nice spacing for grid ticks
 %        This occurs when the following call is made:
 %        TICKS=M_GRID('axisticks',MIN,MAX,APPROX_NUM_TICKS)
@@ -141,12 +142,22 @@ else
     
     exactint=(gmax-gmin)/(gtick-1)*60; %interval in minutes
 
-    % These are the intervals which we will allow (they are "nice" in the sense
-    % that they come to various even multiples of minutes or degrees)
-    niceints=[0.1 0.2 0.25 0.5 ...
-              1 2 3 4 5 6 10 12 15 20 30 ...
-              60*[1 2 3 4 5 6 8 9 10 12 15 18 20 25 30 40 50 60 100 120 180]];
-
+    if strcmp(gtickstyle,'dm'),
+       % These are the intervals which we will allow (they are "nice" in the sense
+       % that they come to various even multiples of minutes or degrees)
+       niceints=[0.1 0.2 0.25 0.5 ...
+        	 1 2 3 4 5 6 10 12 15 20 30 ...
+        	 60*[1 2 3 4 5 6 8 9 10 12 15 18 20 25 30 40 50 60 100 120 180]];
+    elseif strcmp(gtickstyle,'dd'),
+       % these are decimal intervals
+       niceints=60*[1/500 1/400 1/250 1/200 1/100 ...
+		     1/50 1/40 1/25 1/20 1/10 1/5 1/4 1/3 1/2 ...
+		     1 2 3 4 5 6 8 9 10 12 15 18 20 25 30 40 50 60 100 120 180];
+    else
+       error(['bad tickstyle - ''' gtickstyle '''']);
+    end;
+    
+ 
     [dun,I]=min(abs(niceints-exactint));
 
     gval=niceints(I)/60*[ceil(gmin*60/niceints(I)):fix(gmax*60/niceints(I))];
@@ -159,7 +170,7 @@ end;
 
  
 %--------------------------------------------------------------
-function [X,Y,vals,labI]=m_rectgrid(direc,Xlims,Ylims,Nx,Ny,label_pos);
+function [X,Y,vals,labI]=m_rectgrid(direc,Xlims,Ylims,Nx,Ny,label_pos,tickstyle);
 % M_RECTGRID This handles some of the computations involved in creating grids
 %            for rectangular maps. Essentially we make our "first guess" using the
 %            lat/long limits. Then these curves are clipped to the boundaries, after
@@ -175,7 +186,7 @@ Ny21=Ny2-1;
 
 % First try some wildly oversampled lines (not including the boundaries)
 
-vals=mu_util('axisticks',Xlims(1),Xlims(2),Nx);
+vals=mu_util('axisticks',Xlims(1),Xlims(2),Nx,tickstyle);
 
 if strcmp(MAP_VAR_LIST.rectbox,'on') |  strcmp(MAP_VAR_LIST.rectbox,'circle'),
 

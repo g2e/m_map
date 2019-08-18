@@ -33,6 +33,9 @@ function M=m_shaperead(fname,UBR);
 %
 
 % R. Pawlowicz rpawlowicz@eos.ubc.ca 24/Jan/2011
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
 
 
 if nargin<2,

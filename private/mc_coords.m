@@ -27,7 +27,8 @@ function [longOUT,latOUT,phiVecOUT,thetaVecOUT]=mc_coords(optn,longIN,latIN,phiV
 % R. Pawlowicz 9/01 - Vectorized, changed functionality, put into standard M_MAP form.
 %
 % 29/Sep/2005 - fixed bug (apparently no-one ever used this option before now!)
-
+%
+% 1 Nov 2012 - added IGRF2011 coords (thanks to Joe Kinrade)
 
 global MAP_PROJECTION MAP_COORDS
 
@@ -37,24 +38,32 @@ pi180=pi/180;
 switch optn,
   case 'name'
 
-    longOUT.name={'geographic','IGRF2000-geomagnetic'};
+    longOUT.name={'geographic','IGRF2000-geomagnetic','IGRF2011-geomagnetic'};
     return;
     
   case 'parameters',
     switch longIN,
-      case 'geographic',
-        longOUT.name='geographic';
-        longOUT.lambda = 0;
-	longOUT.phi = 0;
-	
-      case 'IGRF2000-geomagnetic',
-        g10=-29615;
-        g11=-1728;
-        h11=5186;
-	longOUT.name='IGRF2000-geomagnetic';
-        longOUT.lambda=  atan(h11/g11);
-        longOUT.phi   =  atan((g11*cos(longOUT.lambda)+h11*sin(longOUT.lambda))/g10);
-      
+        case 'geographic',
+            longOUT.name='geographic';
+            longOUT.lambda = 0;
+            longOUT.phi = 0;
+        
+        case 'IGRF2000-geomagnetic',
+            g10=-29615;
+            g11=-1728;
+            h11=5186;
+            longOUT.name='IGRF2000-geomagnetic';
+            longOUT.lambda=  atan(h11/g11);         
+            longOUT.phi   =  atan((g11*cos(longOUT.lambda)+h11*sin(longOUT.lambda))/g10);
+
+        case 'IGRF2011-geomagnetic'; %ADDED 2012-11-02 Joe Kinrade, Uni. of Bath
+            g10=-29496.5; %1st order IGFR2011 coefficient
+            g11=-1585.9;  %2nd order
+            h11=4945.1;   %3rd order
+            longOUT.name='IGRF2011-geomagnetic';
+            longOUT.lambda=  atan(h11/g11);         
+            longOUT.phi   =  atan((g11*cos(longOUT.lambda)+h11*sin(longOUT.lambda))/g10);
+
       otherwise	
         error('Unrecognized coordinate system');
     end;

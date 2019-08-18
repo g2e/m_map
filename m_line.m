@@ -30,7 +30,7 @@ k=1;
 while k<length(varargin),
   switch lower(varargin{k}(1:3)),
     case 'cli',
-      clp=varargin{k+1}
+      clp=varargin{k+1};
       if isempty(findstr(clp,'on')),
         varargin{k+1}='off';
       else

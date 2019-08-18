@@ -17,8 +17,11 @@ function [s,lon,lat] = m_geodesic(lon1,lat1,lon2,lat2,Npoints,varargin)
 %
 % See M_FDIST, M_IDIST, M_LLDIST
 
-% R. pawlowicz 10/Jan/2005
+% R. pawlowicz (rich@ocgy.ubc.ca) 10/Jan/2005
 %
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
 
 
 

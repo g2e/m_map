@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@eos.ubc.ca)
-% Version 1.4f 1 Dec 2011
+% Version 1.4h 1 Apr 2013
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -74,6 +74,7 @@
 %    m_track       - draws annotated tracklines
 %    m_hatch.m     - hatched or speckled patches.
 %    m_range_ring  - draws range rings (spherical coords)
+%    m_ellipse     - draws tidal ellipses (most requested ocean feature!)
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
@@ -106,9 +107,10 @@
 %
 %    private/mc_coords.m - coordinate systems based on different poles.
 %
-%    private/clabel.m    - patched version of clabel 
+%    private/clabel.m.OLD    - patched version of clabel 
 %                         (matlab v5.1 version does not contain
-%                         capabilities for different text properties).    
+%                         capabilities for different text properties). 
+%                         Not compatible with R2011b (and later)   
 %
 %    private/m_coasts.mat - coastline data
 %
@@ -122,7 +124,7 @@
 % Questions or problems; email me - rich@eos.ubc.ca.
 %
 % Rich Pawlowicz
-% Oceanography, Dept. of Earth and Ocean Sciences, Univ. of British Columbia, 
+% Dept. of Earth, Ocean, Atmospheric Sciences, Univ. of British Columbia, 
 % 6339 Stores Rd., Vancouver, B.C. CANADA V6T 1Z4
 % email: rich@eos.ubc.ca 
 %

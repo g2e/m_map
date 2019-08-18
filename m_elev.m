@@ -25,6 +25,8 @@ function [values,longs,lats]=m_elev(varargin);
 % 23/1/98 - redid everything to allow for raw bathymetry output option.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
 % 4/DEc/11 - isstr to ischar
+% 30/Aug/13 - hack edge-handling in azimuthal projections that wrap
+%             around.
 
 global MAP_PROJECTION MAP_VAR_LIST 
 
@@ -69,6 +71,18 @@ if llong<-360, rlong=rlong+360; llong=llong+360; end;
 lts=(blat:tlat);
 lgs=(llong:rlong);
 
+% RP Aug/2013
+% This is a hack necessary to make filled contours come out correctly
+% in cases where we have to handle a 'wrap around'. Generally we
+% want to get data past the map edges (so we can clip to map boundaries),
+% but if there is a 'wrap' then this creates patches that overlap on
+% themselves, which (when filled) show up in the background colour.
+if strcmp(MAP_PROJECTION.routine,'mp_azim') & length(lgs)==362,
+  lgs=lgs(1:361);
+  rlong=lgs(end); 
+end;
+  
+
 if rlong<0,
   topo=topo(lts+90.5,lgs+360.5);
 elseif llong<0 & rlong>=0,
@@ -77,7 +91,7 @@ else
   topo=topo(lts+90.5,lgs+.5);
 end;
 
-
+ 
 if draw_map,
 
   if nargin==0,

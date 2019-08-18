@@ -73,7 +73,11 @@ function [s,a12,a21] = m_idist(lon1,lat1,lon2,lat2,spheroid)
 %            above in (9).
 %       (12) No warranties; use at your own risk.
 %
-%  R. Pawlowicz
+%  R. Pawlowicz (rich@ocgy.ubc.ca)
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
+%
 %   9/jan/2005  - changed name, altered inputs to m_map style (lon first),
 %                added ellipses, many minor simplifications to tighten code.
 %   9/apr/2009  - distances was NaN if start and end points are the same,
