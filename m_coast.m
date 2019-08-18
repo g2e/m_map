@@ -1,7 +1,7 @@
 function m_coast(varargin);
 % M_COAST Add a coastline to a given map.
 %         M_COAST draw a coastline as either filled patches (slow) or
-%         lines (fast) on a given coastline. It uses a coastline database with
+%         lines (fast) on a given projection. It uses a coastline database with
 %         a resolution of about 1/4 degree. 
 %
 %         M_COAST( (standard line option,...,...) ) draws the coastline

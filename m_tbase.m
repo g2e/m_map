@@ -93,8 +93,8 @@ eaxes=[llong rlong 90*12-blat 90*12-tlat];
 efid=fopen([PATHNAME 'tbase.int'],'r');
 
 if efid==-1,
- error(sprintf(['Cannot open ' PATHNAME 'tbase.int !! \nHave you installed the database correctly?' ...
-        '\n           - see the User''s guide for instructions']));
+ error(sprintf(['Cannot open ' PATHNAME 'tbase.int !! \nHave you installed the TerrainBase database correctly?' ...
+        '\n   This (optional) database must be installed separately - see the M_Map user''s guide for instructions']));
 end;
 
 if (eaxes(2)>4319 ),   % Read it in in 2 pieces!

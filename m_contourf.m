@@ -17,6 +17,7 @@ function [cs,h,cf]=m_contourf(long,lat,data,varargin);
 % it's mine, so you can't sell it.
 
 % 19/02/98 - type - should have been 'clip','patch', rather than 'off'.
+%  9/12/98 - handle all-NaN plots without letting contour crash.
 
 
 global MAP_PROJECTION 
@@ -44,4 +45,8 @@ data(i)=NaN;
                  % means patches may nto line up properly a right/left edges.
 if any(i(:)), [X,Y]=m_ll2xy(long,lat,'clip','patch'); end;  
 
-[cs,h]=contourf(X,Y,data,varargin{:});
+if any(~i(:)),
+ [cs,h]=contourf(X,Y,data,varargin{:});
+else
+  cs=[];h=[];
+end;

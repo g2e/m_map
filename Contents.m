@@ -1,5 +1,5 @@
 % M_Map - mapping toolbox (Author: rich@ocgy.ubc.ca)
-% Version 1.3 15/June/1998
+% Version 1.3 21/Nov/1998
 %
 % You have collected your data, loaded it into Matlab, analyzed 
 % everything to death, and now you want to make a simple map showing 
@@ -14,11 +14,11 @@
 %
 % No more! 
 %
-%                            Announcing M_Map v1.3c! 
+%                            Announcing M_Map v1.3d! 
 %
 % M_Map is a set of mapping tools written for Matlab v5. These include: 
 %
-%    1. Routines to project data in 16 different spherical 
+%    1. Routines to project data in 18 different spherical 
 %       projections (and determine inverse mappings) 
 %    2. A grid generation routine to make nice axes with 
 %       limits either in long/lat terms or in planar
@@ -43,7 +43,8 @@
 %    m_proj.m      - initializes projections
 %
 %    m_grid.m      - draws grids 
-%    m_ungrid.m    - erases grids (if you want to change grid parameters)
+%    m_ungrid.m    - erases grids and stuff (if you want to change grid parameters)
+%    m_scale       - forces map to a given scale.
 %
 %    m_coast.m     - draws a coastline
 %    m_elev.m      - draws elevation data from 1 degree database
@@ -54,6 +55,7 @@
 %    m_gshhs_i.m   - draws coastline from GSHHS intermediate-resolution database
 %    m_gshhs_h.m   - draws coastline from GSHHS high-resolution database
 %    m_gshhs_f.m   - draws coastline from GSHHS full database
+%    m_plotbndry.m - draws a political boundary from the DCW 
 %    m_usercoast.m - draws a coastline using a user-specified subset database.
 %
 %    m_line.m      - draws line data in map coords
@@ -61,6 +63,8 @@
 %    m_quiver      - draws arrows for vector data
 %    m_contour     - draws contour lines for gridded data
 %    m_contourf    - draws filled contours
+%    m_patch       - draws patch data
+%    m_track       - draws annotated tracklines
 %
 %    m_ll2xy.m     - converts from long/lat to map coordinates
 %    m_xy2ll.m     - converts from map coordinates to long/lat
@@ -75,6 +79,7 @@
 %    private/mp_cyl.m    - cylindrical projections (equatorial)
 %    private/mp_conic.m  - conic projections
 %    private/mp_tmerc.m  - transverse cylindrical projections
+%    private/mp_utm.m    - elliptical universal transverse cylindrical projections
 %    private/mp_omerc.m  - oblique cylindrical projection
 %
 %    private/mu_util.m   - various utility routines

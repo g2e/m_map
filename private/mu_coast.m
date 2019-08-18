@@ -1,37 +1,41 @@
 function [ncst,Area,k]=mu_coast(optn,varargin);
 % MU_COAST Add a coastline to a given map.
 %         MU_COAST draw a coastline as either filled patches (slow) or
-%         lines (fast) on a given coastline. It uses a coastline database with
+%         lines (fast) on a given projection. It uses a coastline database with
 %         a resolution of about 1/4 degree. 
 %
-%         MU_COAST( (standard line option,...,...) ) draws the coastline
-%         as a simple line.
-%         MU_COAST('patch' ( ,standard patch options,...,...) ) draws the 
-%         coastline as a number of patches. 
+%         It is not meant to be called directly by the user, instead it contains
+%         code common to various functions in the m_map directory.
 %
-%         There are a number of options relating to the use of different
-%         coastline datasets. If you have coastline data in the M_Map format
-%         stored in the .mat file FILENAME (default ./private/m_coasts.mat) 
-%         then
-%              MU_COAST('user',FILENAME,...) 
-%         uses this data in your map. This is not particularly useful unless
-%         you make your own coastlines! The primary purpose of this feature is 
-%         to enable use of subsampled high-resolution coastline databases
-%         for repeated plotting of the same map.
+%         Calling sequence is MU_COAST(option,arguments) where
 %
-%         High-resolution coastlines in the GSHHS format, stored in FILNAME can 
-%         be used through the 'gshhs' property:
+%         Option string  
+%           c,l,i,h,f :  Accesses various GSHHS databases. Next argument is
+%                        GSHHS filename.
 %
-%             MU_COAST(SIZE,FILENAME,...
+%           u[ser] :   Accesses user-specified coastline file (a mat-file of
+%                      data saved from a previous MU_COAST call). Next argument
+%                      is filename
 %
-%         However, be warned that the loading this data can be very 
-%         timeconsuming. It is perhaps better to subsample the desired data
-%         once using
+%           v[ector] : Uses input vector of data. Next argument is the 
+%                     data in the form of a nx2 matrix of [longitude latitude].
+%                     Patches must have first and last points the same. In a vector,
+%                     different patches can be separated by NaN.
 %
-%             [ncst,Area,k]=MU_COAST('f','FILENAME);
-%             save MMAPFILE ncst Area k
-%            
-%             MU_COAST('user',MMAPFILE,...)
+%           d[efault] :  Accesses default coastline.
+%
+%         The arguments given above are then followed by (optional) arguments 
+%         specifying lines or patches, in the form:
+%
+%          optional arguments:  <line property/value pairs>, or
+%                               'patch',<patch property/value pairs>.
+%
+%         If no or one output arguments are specified then the coastline is drawn, with
+%         patch handles returned. 
+%         If 3 output arguments are specified in the calling sequence, then no drawing
+%         is done. This can be used to save subsampled coastlines for future use
+%         with the 'u' option, for fast drawing of multiple instances of a particular
+%         coastal region.
 %
 %
 %    
@@ -42,7 +46,7 @@ function [ncst,Area,k]=mu_coast(optn,varargin);
 % Notes: 15/June/98 - fixed some obscure problems that occured sometimes
 %                     when using conic projections with large extents that
 %                     crossed the 180-deg longitude line.
-%        31/Aug/98  - added "f" gshhs support (Thanks to RMO)
+%        31/Aug/98  - added "f" gshhs support (Thanks to RAMO)
 %
 % This software is provided "as is" without warranty of any kind. But
 % it's mine, so you can't sell it.
@@ -83,12 +87,17 @@ switch optn(1),
   case  'u',                   
     eval(['load ' varargin{1} ' -mat']);
     varargin(1)=[];
+  case 'v',
+    ncst=[NaN NaN;varargin{1};NaN NaN];
+    varargin(1)=[];
+    k=[find(isnan(ncst(:,1)))];  % Get k
+    Area=ones(size(k));          % Make dummy Area vector (all positive).
   otherwise
     load m_coasts
 end;
 
 % If all we wanted was to extract a sub-coastline, return.
-if nargout>0,
+if nargout==3,
   return;
 end;
 
@@ -154,6 +163,8 @@ switch optn,
       oncearound=2*pi;    
   end;
 
+  p_hand=zeros(length(k)-1,1); % Patch handles
+  
   for i=1:length(k)-1,
     x=X(k(i)+1:k(i+1)-1);
     fk=finite(x);
@@ -243,9 +254,9 @@ switch optn,
           end;
 %disp(['paused-1 ' int2str(i)]);pause;
           if Area(i)<0,
-            patch(xx,yy,varargin{2:end},'facecolor',get(gca,'color'));
+            p_hand(i)=patch(xx,yy,varargin{2:end},'facecolor',get(gca,'color'));
           else
-            patch(xx,yy,varargin{2:end});
+            p_hand(i)=patch(xx,yy,varargin{2:end});
           end;
           ed(1)=[];st(1)=[];edge2(1)=[];edge1(1)=[];
         else
@@ -269,9 +280,11 @@ switch optn,
   k=find((ed-st)==1);
   X(st(k))=NaN;
 
-  line(X,Y,varargin{:}); 
+  p_hand=line(X,Y,varargin{:}); 
 
 end;
+
+ncst=p_hand;
 
 %-----------------------------------------------------------------------
 function edg=c_edge(x,y);
@@ -330,7 +343,8 @@ function [ncst,k,Area]=get_coasts(optn,file);
 %  GET_COASTS  Loads various GSHHS coastline databases and does some preliminary
 %              processing to get things into the form desired by the patch-filling
 %              algorithm.
-
+%
+% Changes; 3/Sep/98 - RP: better decimation, fixed bug in limit checking.
 
 global MAP_PROJECTION MAP_VAR_LIST
 
@@ -344,23 +358,29 @@ mllim=rem(MAP_VAR_LIST.longs(1)+360+180,360)-180;
 mtlim=MAP_VAR_LIST.lats(2);
 mblim=MAP_VAR_LIST.lats(1);
 
+% decfac is for decimation of areas outside the lat/long bdys.
 switch optn(1),
   case 'f',   % 'full' (undecimated) database
     ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    decfac=12500;
   case 'h',
     ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    decfac=2500;
   case 'i',
     ncst=NaN+zeros(492283,2);Area=zeros(41520,1);k=ones(41521,1);
+    decfac=500;
   case 'l',
     ncst=NaN+zeros(101023,2);Area=zeros(10768,1);k=ones(10769,1);
+    decfac=100;
   case 'c',
     ncst=NaN+zeros(14872,2);Area=zeros(1868,1);k=ones(1869,1);
+    decfac=20;
 end;
 fid=fopen(file,'r','ieee-be');
 
 if fid==-1,
   warning(sprintf(['Coastline file ' file ...
-          ' not found \n(Have you installed it? See the User''s Guide for details)' ...
+          ' not found \n(Have you installed it? See the M_Map User''s Guide for details)' ...
           '\n ---Using default coastline instead']));
   load m_coasts
   return
@@ -374,15 +394,22 @@ Area2=Area;
 l=0;
 while cnt>0,
 
- C=fread(fid,A(2)*2,'int32');
-% pause;
+ % A: 1:ID, 2:num points, 3:land/lake etc., 4-7:w/e/s/n, 8:area, 9:greenwich crossed.
  
- a=rlim>llim;
- b=A(9)<65536;  %%rem(A(4)+360e6,360e6)<rem(A(5)+360e6,360e6); Cross boundary?
- c=llim<rem(A(5)+360e6,360e6);
+ C=fread(fid,A(2)*2,'int32'); % Read all points in the current segment.
+
+ 
+ a=rlim>llim;  % Map limits cross longitude jump? (a==1 is no)
+ b=A(9)<65536; % Cross boundary? (b==1 if no).
+ c=llim<rem(A(5)+360e6,360e6); 
  d=rlim>rem(A(4)+360e6,360e6);
+ e=tlim>A(6) & blim<A(7);
  
- if a&(b&c&d | ~b&(c|d)) | ~a&(~b | (b&(c|d))),
+ % This test checks whether the lat/long box containing the line overlaps that of
+ % the map. There are various cases to consider, depending on whether map limits
+ % and/or the line limits cross the longitude jump or not.
+ 
+ if e & (  a&(b&c&d | ~b&(c|d)) | ~a&(~b | (b&(c|d))) ),
  
    l=l+1;
  
@@ -391,9 +418,11 @@ while cnt>0,
    %  make things continuous (join edges that cut across 0-meridian)
 
    dx=diff(x);
-   if A(9)>65536 | any(dx)>356 | any(dx<356),
+%%fprintf('%f %f\n', max(dx),min(dx))
+%   if A(9)>65536 | any(dx)>356 | any(dx<356),
+%  if ~b | any(dx>356) | any(dx<-356),
      x=x-360*cumsum([x(1)>180;(dx>356) - (dx<-356)]);
-   end;
+%   end;
 
    % Antarctic is a special case - extend contour to make nice closed polygon
    % that doesn't surround the pole.   
@@ -427,25 +456,44 @@ while cnt>0,
    end;
    
    % Look for points outside the lat/long boundaries, and then decimate them
-   % by a factor of about 20 (don't get rid of them completely because that
+   % by a factor of about 'decfac' (don't get rid of them completely because that
    % can sometimes cause problems when polygon edges cross curved map edges).
    
    tol=.2;   
-   nn=y>mtlim+tol;  nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
-   nn=nn & rem(1:length(nn),20)'~=0;
+  
+   % Do y limits, then x so we can keep corner points.
+   
+   nn=y>mtlim+tol | y<mblim-tol;
+     % keep one extra point when crossing limits, also the beginning/end point.
+   nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
+     % decimate vigorously
+   nn=nn & rem(1:length(nn),decfac)'~=0;
    x(nn)=[];y(nn)=[];
-   nn=y<mblim-tol;  nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
-   nn=nn & rem(1:length(nn),20)'~=0;
-   x(nn)=[];y(nn)=[];
-   if mrlim>mllim,
-     nn=x>mrlim+tol;nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
-   nn=nn & rem(1:length(nn),20)'~=0;
-     x(nn)=[];y(nn)=[];
-     nn=x<mllim-tol;nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
-   nn=nn & rem(1:length(nn),20)'~=0;
-     x(nn)=[];y(nn)=[];
+         
+   if mrlim>mllim,  % no wraparound
+       % sections of line outside lat/long limits
+     nn=(x>mrlim+tol | x<mllim-tol) & y<mtlim & y>mblim;
+    else            % wraparound case
+     nn=(x>mrlim+tol & x<mllim-tol ) & y<mtlim & y>mblim;
    end;
+   nn=logical(nn-([0;diff(nn)]>0)-([diff(nn);0]<0));nn([1 end])=0;
+   nn=nn & rem(1:length(nn),decfac)'~=0;
+   x(nn)=[];y(nn)=[];
+   
+   % Move all points "near" to map boundaries.
+   % I'm not sure about the wisdom of this - it might be better to clip
+   % to the boundaries instead of moving. Hmmm. 
+      
+   y(y>mtlim+tol)=mtlim+tol;
+   y(y<mblim-tol)=mblim-tol;
+   if mrlim>mllim,   % Only clip long bdys if I can tell I'm on the right
+                     % or left (i.e. not in wraparound case)
+     x(x>mrlim+tol)=mrlim+tol;
+     x(x<mllim-tol)=mllim-tol;
+   end;   
+   
  %% plot(x,y);pause;
+ 
    k(l+1)=k(l)+length(x)+1;
    ncst(k(l)+1:k(l+1)-1,:)=[x,y];
    ncst(k(l+1),:)=[NaN NaN];
@@ -455,7 +503,7 @@ while cnt>0,
    % this divide so they appear at +190 but not -170. This causes problems later...
    % so as a kludge I replicate some of the problematic features at 190-360=-170.
    % Small islands are just duplicated, for the Eurasian landmass I just clip
-   % of the eastern part.
+   % off the eastern part.
    
    if xflag,
      l=l+1;Area(l)=Area(l-1); 
@@ -484,14 +532,10 @@ fclose(fid);
 %size(k)
 
 
-ncst((k(l+1)+1):end,:)=[];
+ncst((k(l+1)+1):end,:)=[];  % get rid of unused part of data matrices
 Area((l+1):end)=[];
 k((l+2):end)=[];
 
-
-%size(ncst)
-%size(Area)
-%size(k)
 
 
 

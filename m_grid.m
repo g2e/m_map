@@ -31,6 +31,7 @@ function m_grid(varargin);
 %  7/04/98 - Another fix to grid locations to not automatically add edge points
 %            (as requested by EF)
 %  7/05/98 - Added 'fancy' outline box.
+% 14/11/98 - Changed tag names from m_* to m_grid_*.
 
 
 % Note that much of the work in generating line data 
@@ -174,7 +175,7 @@ end;
 [X,Y]=feval(MAP_PROJECTION.routine,'box');
 
 if strcmp(gbox,'on');
-  line(X(:),Y(:),'linest','-','linewi',glinewidth,'color',gcolor,'tag','m_box','clip','off');
+  line(X(:),Y(:),'linest','-','linewi',glinewidth,'color',gcolor,'tag','m_grid_box','clip','off');
 end;
 
 % Axes background - to defeat the inverthardcopy, I need a non-white border (the edgecolor),
@@ -183,7 +184,7 @@ end;
 % Now, I used to set this at a large (negative) zdata, but this didn't work for PC users,
 % so now I just draw a patch
 patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
-      'edgecolor','k','linest','none','tag','m_color');
+      'edgecolor','k','linest','none','tag','m_grid_color');
 
 % Now I set it at the bottom of the children list so it gets drawn first (i.e. doesn't
 % cover anything)
@@ -191,7 +192,7 @@ patch('xdata',X(:),'ydata',Y(:),'facecolor',get(gca,'color'),...
  set(0, 'ShowHiddenHandles', 'on');
  hh=get(gca,'children');
  htags = get(hh,'tag');
- k = strmatch('m_color',htags);
+ k = strmatch('m_grid_color',htags);
  hht = hh;
  hh(k) = [];
  hh = [hh;hht(k)];
@@ -227,7 +228,7 @@ if ~isempty(xtick),
 
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_xgrid');
+      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_xgrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -269,9 +270,9 @@ if ~isempty(xtick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_xticks-lower','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-lower','clip','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_xticks-upper','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_xticks-upper','clip','off');
  end;
 
  % Add the labels! (whew)
@@ -282,7 +283,7 @@ if ~isempty(xtick),
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
    text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk, ...
         'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,...
-        'tag','m_xticklabel');
+        'tag','m_grid_xticklabel');
  end;
 
  if fudge_north=='y',
@@ -303,7 +304,7 @@ if ~isempty(ytick),
  % Draw the grid
  [n,m]=size(X);
  line(reshape([X;NaN+ones(1,m)],(n+1)*m,1),reshape([Y;NaN+ones(1,m)],(n+1)*m,1),...
-      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_ygrid');
+      'linest',glinestyle,'color',gcolor,'linewidth',0.1,'tag','m_grid_ygrid');
 
  % Get the tick data
  [ltx,lty,utx,uty]=maketicks(X,Y,gticklen,gtickdir);
@@ -344,9 +345,9 @@ if ~isempty(ytick),
  if drawticks,
    [n,m]=size(ltx);
    line(reshape([ltx;NaN+ones(1,m)],(n+1)*m,1),reshape([lty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_yticks-left','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-left','clip','off');
    line(reshape([utx;NaN+ones(1,m)],(n+1)*m,1),reshape([uty;NaN+ones(1,m)],(n+1)*m,1),...
-        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_yticks-right','clip','off');
+        'linest','-','color',gcolor,'linewidth',glinewidth,'tag','m_grid_yticks-right','clip','off');
  end;
 
  % Finally - the labels!
@@ -355,7 +356,7 @@ if ~isempty(ytick),
  for k=ik,
    [rotang(k), horizk, vertk] = upright(rotang(k), horiz, vert);
    text(xx(k),yy(k),labs{k},'horizontal',horizk,'vertical',vertk,...
-        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,'tag','m_yticklabels');
+        'rot',rotang(k),'fontsize',gfontsize*scl(k),'color',gcolor,'tag','m_grid_yticklabels');
  end;
 
 end;
@@ -561,12 +562,12 @@ u2y(2,id)=u2y(2,id)+dx.*([dpatch:-1:1 -1:-1:-dpatch]/(dpatch))*sig;
 px=prod(size(l2x));
 kk=[0:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
- patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_fancybox1');
- patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_fancybox1');
+ patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_grid_fancybox1');
+ patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
 kk=[dpatch*2:(dpatch*4):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
-patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_fancybox1');
-patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_fancybox1');
+patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w','edgecolor','k','clip','off','tag','m_grid_fancybox1');
+patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','k','clip','off','tag','m_grid_fancybox1');
 
 
 %---------------------------------------------------------
@@ -608,19 +609,19 @@ px=prod(size(l2x));
 kk=[0:(dpatch*2):px-3]'*ones(1,dpatch*2+2);
 kk=kk+ones(size(kk,1),1)*[1 2:2:(dpatch*2+2) (dpatch*2+1):-2:3];
  patch(reshape(l2x(kk),size(kk,1),size(kk,2))',reshape(l2y(kk),size(kk,1),size(kk,2))','w',...
-        'edgecolor','k','clip','off','linewi',.2,'tag','m_fancybox2');
+        'edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
  patch(reshape(u2x(kk),size(kk,1),size(kk,2))',reshape(u2y(kk),size(kk,1),size(kk,2))','w',...
-        'edgecolor','k','clip','off','linewi',.2,'tag','m_fancybox2');
+        'edgecolor','k','clip','off','linewi',.2,'tag','m_grid_fancybox2');
 
 kk=[0:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
-line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_fancybox2');
+line(reshape(mean(l2x(:,kk)),k1,k2),reshape(mean(l2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
 
 kk=[dpatch:(dpatch*2):size(l2x,2)-dpatch-1]'*ones(1,dpatch+1);
 kk=(kk+ones(size(kk,1),1)*[1:dpatch+1])';
 [k1,k2]=size(kk);
-line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_fancybox2');
+line(reshape(mean(u2x(:,kk))',k1,k2),reshape(mean(u2y(:,kk))',k1,k2),'color','k','clip','off','tag','m_grid_fancybox2');
 
 
 
