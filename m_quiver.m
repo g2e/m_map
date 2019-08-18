@@ -1,0 +1,53 @@
+function h=m_quiver(long,lat,u,v,varargin);
+%    M_QUIVER(LONG,LAT,U,V) plots velocity vectors as arrows with components 
+%    (u,v) at the points (LONG,LAT) on the currently defined map.  The 
+%    matrices LONG,LAT,U,V must all be the same size. U and V contain the 
+%    eastward and northward components of velocity. Arrow scaling is automatic.
+% 
+%    M_QUIVER(X,Y,U,V,S) automatically scales the arrows to fit within the 
+%    grid and then stretches them by S.  Use S=0 to plot the arrows without 
+%    the automatic scaling; In this case the scaling is 1 unit/degree 
+%    latitude. 
+% 
+%    M_QUIVER(...,LINESPEC) uses the plot linestyle specified for
+%    the velocity vectors.  Any marker in LINESPEC is drawn at the base
+%    instead of an arrow on the tip.  Use a marker of '.' to specify
+%    no marker at all.  See PLOT for other possibilities. M_QUIVER is a wrapper
+%    for QUIVER - for fancier arrows it is possible to replace the call to 
+%    QUIVER with one to another routine that draws fancy arrows, e.g. 
+%    ARROW (from TMW user-contrib software archive).
+%
+%    M_QUIVER(...,'filled') fills any markers specified.
+% 
+%    H = M_QUIVER(...) returns a vector of line handles.
+% 
+%    See also QUIVER.
+
+% Rich Pawlowicz (rich@ocgy.ubc.ca) 20/Jan/97
+%
+% This software is provided "as is" without warranty of any kind. But
+% it's mine, so you can't sell it.
+%
+
+
+
+global MAP_PROJECTION MAP_VAR_LIST
+
+% Have to have initialized a map first
+
+if isempty(MAP_PROJECTION),
+  disp('No Map Projection initialized - call M_PROJ first!');
+  return;
+end;
+
+
+
+[X,Y]=m_ll2xy(long,lat,'clip','point');
+
+[XN,YN]=m_ll2xy(long,lat+.1,'clip','point');
+[XE,YE]=m_ll2xy(long+(.1)./cos(lat*pi/180),lat,'clip','point');
+
+mU=u.*(XE-X)*10 + v.*(XN-X)*10;
+mV=u.*(YE-Y)*10 + v.*(YN-Y)*10;
+
+h=quiver(X,Y,mU,mV,varargin{:});

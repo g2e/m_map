@@ -1,0 +1,229 @@
+<HTML>
+<HEAD>
+<title> M_Map: A Mapping package for Matlab  </title>
+</HEAD>
+<body bgcolor="FFF5EE">
+
+<h1 align="center">M_Map: A mapping package for <a href="http://www.mathworks.com"> Matlab </a></h1>
+
+<hr>
+<center> <img src="./private/mlogo.gif">  </center> <br>
+
+
+<hr>
+<p>
+
+You have collected your data, loaded it into <a href="http://www.mathworks.com"> Matlab </a>, 
+analyzed everything to death, and now you want to make a simple map showing how it 
+relates to the world.
+
+<p>
+
+But you can't.
+
+<p>
+
+Instead you have to figure out how to save all your data, and then read it into
+another program (like, for example <a href="http://www.soest.hawaii.edu/soest/gmt.html"> GMT </a>),
+and then spend all that extra time
+figuring out why it doesn't give you what
+you expected it would... 
+
+<p>
+
+No more!
+
+<p>
+
+<hr, width=.5>
+
+<center> <h4> Announcing M_Map v1.2! </h4> </center>
+
+<hr, width=.5>
+
+M_Map is a set of mapping tools written for Matlab v5.
+These include:
+
+<ol>
+<li> Routines to project data in 14 different spherical projections (and determine
+inverse mappings) 
+<li> A grid generation routine to make nice axes with limits either in lat/long terms
+or in planar X/Y terms.
+<li> A coastline database (with 1/4 degree resolution)
+<li> A global elevation database (1 degree resolution)
+
+</ol>
+
+New in release 1.2 are
+<ol>
+<li> Built-in functions for drawing lines, text, and quiver plots in long/lat coords
+<li> Built-in functions for contouring data (filled and line contours) in long/lat coords
+<li> Hooks into a 5-minute global bathymetry (<a href="http://www.scd.ucar.edu/dss/datasets/ds759.2.html"> TerrainBase </a>) available from the net.
+</ol>
+<hr>
+<p>
+You can download the M_Map toolbox either as a <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2.tar.gz"> gzipped tar-file </a>, or as <a href="http://www.ocgy.ubc.ca/~rich/m_map1.2.zip"> zip archive </a> (Click on these links to download). Both are
+around 160k in size. Once you have this archive, read the  <a href="./private/mapug.html#p1">  Getting started </a> section of the <a href="./private/mapug.html"> User's guide  </a> to
+correctly install this toolbox. If you want to see what you can do with M_Map,
+see <a href="#examples"> some examples</a>.
+
+<p>
+
+<hr>
+
+<h2>  <a href="./private/mapug.html"> User's guide  </a> </h2>
+<ol>
+<li> <a href="./private/mapug.html#p1">  Getting started </a>
+<li> <a href="./private/mapug.html#p2"> Specifying projections </a>
+<ol>
+<li> <a href="./private/mapug.html#p2.1"> Azimuthal projections </a>
+<li> <a href="./private/mapug.html#p2.2"> Cylindrical and Pseudo-cylindrical projections </a>
+<li> <a href="./private/mapug.html#p2.3"> Conic projections </a>
+<li> <a href="./private/mapug.html#p2.4"> Yeah, but which projection should I use? </a><img src="./private/new.gif">
+</ol>
+<li> <a href="./private/mapug.html#p3"> Coastlines and Bathymetry  </a>
+<ol>
+<li> <a href="./private/mapug.html#p3.1"> Coastline options </a>
+<li> <a href="./private/mapug.html#p3.2"> Topography/Bathymetry options </a>
+</ol>
+<li> <a href="./private/mapug.html#p4"> Customizing the axes </a>
+<ol>
+<li> <a href="./private/mapug.html#p4.1"> Grid lines and labels </a>
+<li> <a href="./private/mapug.html#p4.2"> Titles and x/ylabels </a>
+</ol>
+<li> <a href="./private/mapug.html#p5"> Adding your own data </a>
+<ol>
+<li> <a href="./private/mapug.html#p5.1"> Converting  longitude/latitude to projection coordinates </a>
+<li> <a href="./private/mapug.html#p5.2"> Converting  projection coordinates to longitude/latitude </a>
+<li> <a href="./private/mapug.html#p5.3"> Drawing lines, text, arrows, and contours </a> <img src="./private/new.gif">
+</ol>
+<li> <a href="./private/mapug.html#p6"> More complex plots </a>
+<li> <a href="./private/mapug.html#p7"> Adding your own coastlines </a>
+<li> <a href="./private/mapug.html#p8"> Adding your own topography/bathymetry </a>
+<li> <a href="./private/mapug.html#p9"> Using TerrainBase 5-minute global bathymetry/topography </a> <img src="./private/new.gif">
+<li> <a href="./private/mapug.html#p10"> M_Map toolbox contents and description </a>
+<li> <a href="./private/mapug.html#p11"> Known Problems and Bugs </a> <img src="./private/new.gif">
+</ol>
+
+For information, help, suggestions, or bug reports, 
+contact <a href="http://www.eos.ubc.ca/people/faculty/pawlowicz/"> Rich Pawlowicz </a>, 
+(<a href="mailto:rich@ocgy.ubc.ca"> rich@ocgy.ubc.ca </a>)
+
+
+<hr>
+
+<h2><a name="examples"> Examples </h2>
+
+<h4> M_Map Logo </h4>
+
+<pre>
+m_proj('ortho','lat',48','long',-123');
+m_coast('patch','r');
+m_grid('linest','-','xticklabels',[],'yticklabels',[]);
+patch(.55*[-1 1 1 -1],.25*[-1 -1 1 1]-.55,'w');
+text(0,-.55,'M\_Map','fontsize',25,'color','b',...
+   'vertical','middle','horizontal','center');
+set(gcf,'units','inches','position',[2 2 3 3]);
+set(gcf,'paperposition',[3 3 3 3]);
+</pre>
+<center> <img src="./private/mlogo.gif">  </center> <br>
+
+<h4> Lambert Conformal Conic projection of North American Topography </h4>
+
+<pre>
+m_proj('lambert','long',[-160 -40],'lat',[30 80]);
+m_coast('patch',[1 .85 .7]);
+m_elev('contourf',[500:500:6000]);
+m_grid;
+colormap(flipud(copper));
+</pre>
+<center> <img src="./private/exlamber.gif">  </center> <br>
+
+<h4> Stereographic projection of North Polar regions </h4>
+<pre>
+% Note that coastline is drawn OVER the grid because of the order in which
+% the two routines are called
+
+m_proj('stereographic','lat',90,'long',30,'radius',25);
+m_elev('contour',[-3500:1000:-500],'edgecolor','b');
+m_grid('xtick',12,'tickdir','out','ytick',[70 80],'linest','-');
+m_coast('patch',[.7 .7 .7],'edgecolor','r');
+</pre>
+<center> <img src="./private/exster.gif">  </center> <br>
+
+<h4> Interrupted Sinusoidal projection of World Oceans </h4>
+<pre>
+Slongs=[-100 0;-75 25;-5 45; 25 145;45 100;145 295;100 290];
+Slats= [  8 80;-80  8; 8 80;-80   8; 8  80;-80   0;  0  80];
+for l=1:7,
+ m_proj('sinusoidal','long',Slongs(l,:),'lat',Slats(l,:));
+ m_coast('patch','g');
+ m_grid('fontsize',6,'xticklabels',[],'xtick',[-180:30:360],...
+        'ytick',[-80:20:80],'yticklabels',[],'linest','-','color',[.9 .9 .9]);
+end;
+
+% The multiple maps trick is useful only with this projection. In order to
+% see all the maps we must undo the axis limits set by m_grid calls:
+
+set(gca,'xlimmode','auto','ylimmode','auto');
+</pre>
+<center> <img src="./private/exsinus.gif">  </center> <br>
+
+<h4> Oblique Mercator Projection with quiver and contour data</h4>
+<pre>
+%% Nice looking data
+[lon,lat]=meshgrid([-136:2:-114],[36:2:54]);
+u=sin(lat/6);
+v=sin(lon/6);
+
+m_proj('oblique','lat',[56 30],'lon',[-132 -120],'aspect',.8);
+
+subplot(121);
+m_coast('patch',[.9 .9 .9],'edgecolor','none');
+m_grid('tickdir','out','yaxislocation','right',...
+       'xaxislocation','top','xlabeldir','end','ticklen',.02);
+hold on;
+m_quiver(lon,lat,u,v);
+xlabel('Simulated surface winds');
+
+subplot(122);
+m_coast('patch',[.9 .9 .9],'edgecolor','none');
+m_grid('tickdir','out','yticklabels',[],...
+       'xticklabels',[],'linestyle','none','ticklen',.02);
+hold on;
+[cs,h]=m_contour(lon,lat,sqrt(u.*u+v.*v));
+clabel(cs,h,'fontsize',8);
+xlabel('Simulated something else');
+</pre>
+<center> <img src="./private/exquiv.gif">  </center> <br>
+
+<h4> Miller Projection with Great Circle </h4>
+<pre>
+% Plot a circular orbit
+lon=[-180:180];
+lat=atan(tan(60*pi/180)*cos((lon-30)*pi/180))*180/pi;
+
+m_proj('miller','lat',82);
+m_coast('color',[0 .6 0]);
+m_grid('linestyle','none');
+
+m_line(lon,lat,'linewi',3,'color','r');
+</pre>
+<center> <img src="./private/exmiller.gif">  </center> <br>
+
+<h4> Lambert Conformal Projection with high-resolution bathymetry of Western Mediterranean </h4>
+<pre>
+m_proj('lambert','lon',[-10 20],'lat',[33 48]);
+m_tbase('contourf');
+m_grid('linestyle','none');
+</pre>
+<center> <img src="./private/extbase.gif">  </center> <br>
+
+
+
+<hr>
+
+
+<I> Last changed 6/Feb/1998. Questions and comments to 
+  <a href="mailto:rich@ocgy.ubc.ca">rich@ocgy.ubc.ca</a>
+ </I>
