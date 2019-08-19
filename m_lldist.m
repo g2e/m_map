@@ -2,8 +2,8 @@ function [dist,lons,lats] = m_lldist(long,lat,N)
 % M_LLDIST Spherical earth distance between points in long/lat coordinates. 
 %   RANGE=M_LLDIST(LONG,LAT) gives the distance in kilometers between
 %   successive points in the vectors LONG and LAT, computed
-%   using the Haversine formula on a spherical earth of radius
-%   6378.137km. Distances are probably good to better than 1% of the
+%   using the Haversine formula on a spherical earth of average radius
+%   6371km. Distances are probably good to better than 1% of the
 %   "true" distance on the ellipsoidal earth
 %
 %   [RANGE,LONGS,LATS]=M_LLDIST(LONG,LAT,N) computes the N-point geodesics
@@ -22,7 +22,7 @@ function [dist,lons,lats] = m_lldist(long,lat,N)
 
 
 pi180=pi/180;
-earth_radius=6378.137;
+earth_radius=6371;
 
 m=length(long)-1;
 

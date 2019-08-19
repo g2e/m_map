@@ -28,7 +28,7 @@ function scale_factor=m_scale(scale_factor)
 %
 
 % Need earth radius, in centimeters.
-erad=637813700; %cm (from WGS-84)
+erad=637100000; %cm (from WGS-84 average)
 
 if nargin==0
 

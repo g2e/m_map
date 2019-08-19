@@ -115,7 +115,7 @@ end
 
  
 % Need earth radius, in m.
-erad=6378137; %m (from WGS-84)
+erad=6371000; %m (from WGS-84 average)
 
 
 if  ( length(posx)==2 && length(posy)==1)

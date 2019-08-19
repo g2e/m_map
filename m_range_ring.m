@@ -18,7 +18,7 @@ function h=m_range_ring(long,lat,range,varargin)
 %    edge of certian projections). THis can be done using
 %    M_RANGE_RING(LONG,LAT,RANGE,NPTS, <line property/value pairs>)
 %
-%    NB: Earth radius is assumed to 6378.137km (WGS-84 value), and
+%    NB: Earth radius is assumed to 6371km (WGS-84 average value), and
 %    calculations are for spherical geometry.
 
 % Rich Pawlowicz (rich@ocgy.ubc.ca) 18/Dec/1998
@@ -39,7 +39,7 @@ end
 
 
 pi180=pi/180;
-earth_radius=6378.137;
+earth_radius=6371;
 n=72;
 
 if length(varargin)>0 && ~ischar(varargin{1})
