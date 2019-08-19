@@ -14,7 +14,7 @@ function h=m_gshhs(resolution,varargin)
 %         for the current projection in a file FILENAME. This allows 
 %         speedier replotting using M_USERCOAST(FILENAME). 
 %    
-%         RES: A one-char string (optionally 2 or 3)
+%         RES: A one-char string (optionally 2 to 4)
 %         
 %         First char: resolution - one of
 %                      'c'  crude
@@ -31,17 +31,25 @@ function h=m_gshhs(resolution,varargin)
 %         Third char - if 2nd char is 'b':
 %                      '1' Country borders
 %                      '2' State/Province and Country borders
+%                    - if 2nd char is 'c':
+%                      '1' coast
+%                      '2' coast + lakes
+%                      '3' coast + lakes + lake islands
+%                      '4' coast + lakes + lake islands + lake island ponds
 %                    - if 2nd char is 'r': '1','2','3','4' 
 %                      add successively more tributaries
+%
+%         Fourth char - if 2nd char is 'c': 'i' uses Antarctic ice line
+%                       no 4th char gives grounding line
 %
 %         (also maintained is this optional format:
 %
 %         RES - selections resolution
-%                  1  or 'crude'	
-%                  2  or 'low'  	
-%                  3  or 'intermediate'  
-%                  4  or 'high' 	
-%                  5  or 'full  	
+%                  1  for 'crude'	
+%                  2  for 'low'  	
+%                  3  for 'intermediate'  
+%                  4  for 'high' 	
+%                  5  for 'full  	
 %
 %         but please don't use this).
 %
@@ -64,6 +72,7 @@ function h=m_gshhs(resolution,varargin)
 % Sep/14 - added hierarchy to borders
 % Aug/18 - fixed error that occurred when called m_gshhs_X with 'save'
 %          option (Thanks to H. Grant for pointing this out).
+% Aug/19 - add support for coastline layer depth and Antarctic ice line
 
 
 % Root of directories where all the gshhs_X.b, wdb_borders-X.b and wdb_rivers_X.b
@@ -79,6 +88,7 @@ typ_names={'gshhs_','wdb_borders_','wdb_rivers_'};
 
 typ=1;
 flaglim='9';
+ice='';
 
 if ischar(resolution)
  if length(resolution)>=2
@@ -87,6 +97,9 @@ if ischar(resolution)
  if length(resolution)>=3
    flaglim = resolution(3);
  end  
+ if length(resolution)>=4,
+   ice = resolution(4);
+ end
  resolution =  find(strcmpi(resolution(1),res_list));
 end
  
@@ -113,7 +126,7 @@ if length(varargin)>1 && strcmp(varargin{1},'save')
   save(varargin{2},'ncst','k','Area');
   h=varargin{2};   % Error if you call m_gshhs_i with 'save' option - thanks HG, Aug/1/2018
 else
-  h=mu_coast([res_char flaglim],file,varargin{:},'tag',tag_name);
+  h=mu_coast([res_char num2str(typ) flaglim ice],file,varargin{:},'tag',tag_name);
 end
 
 m_coord(Currentmap.name);

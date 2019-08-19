@@ -450,9 +450,17 @@ switch optn(1)
     decfac=20;
 end
 
+typ=1;
 flaglim=9;
+ice=0;
 if length(optn)>=2
-  flaglim=str2num(optn(2));
+  typ=str2num(optn(2));
+end
+if length(optn)>=3
+  flaglim=str2num(optn(3));
+end
+if length(optn)>=4
+  ice=1;
 end
  
 
@@ -481,14 +489,15 @@ while cnt>0
  
    % For versions > 12 there are 2 Antarctics - ice-line and grounding line,
    % also they changed the limits from 0-360 to -180 to 180.
-   if g.ver>14 
-     switch g.level
-       case 6   
-         g.level=flaglim+1; % ice line - don't show
-       case 5   
-         g.level=1;         % grounding line - use this.
-     end
-   else
+   %  if g.ver>14 
+   %    switch g.level
+   %      case 6   
+   %        g.level=flaglim+1; % ice line - don't show
+   %      case 5   
+   %        g.level=1;         % grounding line - use this.
+   %    end
+   %  else
+   if g.ver<15
      %For Antarctica the lime limits are 0 to 360 (exactly), thus c==0 and the
      %line is not chosen for (e.g. a conic projection of part of Antarctica)
      % Fix 30may/02 
@@ -508,7 +517,7 @@ while cnt>0
    if     e  ...
       && (    (  a&&( (b&&c&&d) || (~b&&(c||d) ) ) )    ...
            || ( ~a&&(    ~b     || ( b&&(c||d) ) ) )  ) ...
-      && g.level<=flaglim 
+      && g.level<=flaglim && ((typ==1 && g.level~=5+ice) || typ>1)
   
      l=l+1;
      x=C(1:2:end)*1e-6;
@@ -554,7 +563,7 @@ while cnt>0
        Area2(l)=sum( diff(x).*(y(1:(end-1))+y(2:end))/2 ); % Area "on the page"
        Area(l)=g.area/10;                                  % Area "on the globe"
 
-       if rem(g.level,2)==0  % Make lakes (2) and islands (1) differently oriented
+       if rem(g.level,2)==0 && g.level<5 % Make lakes (2) and islands (1) differently oriented
          Area(l)=-abs(Area(l)); 
          if Area2(l)>0, x=x(end:-1:1);y=y(end:-1:1); end
        else
