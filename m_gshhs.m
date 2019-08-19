@@ -77,7 +77,7 @@ function h=m_gshhs(resolution,varargin)
 
 % Root of directories where all the gshhs_X.b, wdb_borders-X.b and wdb_rivers_X.b
 % files live
-FILNAME='private/';
+FILNAME='';
 
 
 %-------------don't change below here----------------------------
