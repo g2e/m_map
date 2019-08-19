@@ -43,6 +43,7 @@ function [xi,yi,x,y]=m_hatch(lon,lat,varargin)
 %
 %% 4/DEc/11 - isstr to ischar
 %  Apr/12  - handle NaN-separated coastlines
+%  22/May/15 - improve wraparound behavior
 
 global MAP_PROJECTION
 
@@ -70,13 +71,12 @@ if ~isempty(varargin) && ~ischar(varargin{1})
   varargin(1)=[];
 end
 
-
+% workaround wraparound issue
+lon=[lon(:);nan;lon(:)+360;nan;lon(:)-360];
+lat=[lat(:);nan;lat(:);nan;lat(:)];
 
 % If we have a naN-separated multi-line input vector:
-
 ii=find(isnan(lon));
-
-if any(ii)
 
   % if there isn't a NaN to mark the first or last segments
   if ii(1)>1, ii=[1;ii(:)]; end
@@ -87,7 +87,8 @@ if any(ii)
   
   xi=[];yi=[];x=[];y=[];
   for k=1:length(ii)-1
-    [xiT,yiT,xT,yT]=m_hatch(lon(ii(k)+1:ii(k+1)-1),lat(ii(k)+1:ii(k+1)-1),styl,angle,step,varargin{:});
+    % call subfunction without wraparound triplication
+    [xiT,yiT,xT,yT]=m_hatch_single(lon(ii(k)+1:ii(k+1)-1),lat(ii(k)+1:ii(k+1)-1),styl,angle,step,varargin{:});
     xi=[xi,NaN,xiT];
     yi=[yi,NaN,yiT];
     x=[x,NaN,xT];
@@ -108,8 +109,8 @@ if any(ii)
 end
       
 %----------------------
-% otherwise, handle a single line without NaN
-
+% handle a single line without NaN
+function [xi,yi,x,y]=m_hatch_single(lon,lat,styl,angle,step,varargin);
    
 [x,y,I]=m_ll2xy(lon,lat,'clip','patch');
  
