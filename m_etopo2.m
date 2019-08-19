@@ -45,7 +45,7 @@ function [values,longs,lats]=m_etopo2(varargin)
 %%% This will have to be set by YOU the USER! ---------------------
 
 %PATHNAME='/ocean/rich/more/mmapbase/etopo2v2/';   % Be sure to end the path with a "/" or
-PATHNAME='/ocean/rich/more/mmapbase/etopo1/';   % Be sure to end the path with a "/" or
+PATHNAME='';   % Be sure to end the path with a "/" or
                                                  % whatever your separator is.
 %  Note - etopo2v2 now comes in 4 flavours - both grid-centered
 % and cell-centered, with both in either big-endian or little-endian
