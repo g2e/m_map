@@ -19,6 +19,7 @@ function h=m_line(long,lat,varargin)
 %            "tag" properties through).
 % 18/july/00 - Fixed m_line so you could do clipping through it.
 % 6/Nov/00 - eliminate returned stuff if ';' neglected (thx to D Byrne)
+% 21/June/10 - redraw lines at several equivalent longitudes (gge)
 
 %
 % This software is provided "as is" without warranty of any kind. But
@@ -28,6 +29,8 @@ clp='on';
 
 k=1;
 while k<length(varargin)
+  % avoid indexing error in switch statement
+  if(numel(varargin{k})<3); k=k+2; continue; end
   switch lower(varargin{k}(1:3))
     case 'cli'
       clp=varargin{k+1};
@@ -43,11 +46,23 @@ while k<length(varargin)
   end
 end
 
-[X,Y]=m_ll2xy(long,lat,'clipping',clp);
+% row vector to column vector
+if(isvector(long)); long=long(:); end
+if(isvector(lat)); lat=lat(:); end
 
 if nargout>0
+  [X,Y]=m_ll2xy(long,lat,'clip',clp);
   h=line(X,Y,'tag','m_line',varargin{:});
+  [X,Y]=m_ll2xy(long-360,lat,'clip',clp);
+  h=[h line(X,Y,'tag','m_line',varargin{:})];
+  [X,Y]=m_ll2xy(long+360,lat,'clip',clp);
+  h=[h line(X,Y,'tag','m_line',varargin{:})];
 else
+  [X,Y]=m_ll2xy(long,lat,'clip',clp);
+  line(X,Y,'tag','m_line',varargin{:});
+  [X,Y]=m_ll2xy(long-360,lat,'clip',clp);
+  line(X,Y,'tag','m_line',varargin{:});
+  [X,Y]=m_ll2xy(long+360,lat,'clip',clp);
   line(X,Y,'tag','m_line',varargin{:});
 end
 
