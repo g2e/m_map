@@ -200,7 +200,7 @@ end
 
 
 return
-
+end
 %%%%%
 
 function [xi,yi]=drawhatch(x,y,angle,step,xsc,ysc,speckle)
@@ -337,4 +337,4 @@ yi = xi*sa+yi*ca;
 xi = xy/xsc+x0;
 yi = yi/ysc+y0;
 
-
+end
