@@ -1,6 +1,6 @@
-function h = m_scatter(long,lat,varargin)
+function h = m_scatter(varargin)
 % M_SCATTER Scatter/bubble plot
-%    M_SCATTER(LON,LAT,Y,S,C) displays colored circles at the locations specified
+%    M_SCATTER(LON,LAT,S,C) displays colored circles at the locations specified
 %    by the vectors LON and LAT (which must be the same size).  
 % 
 %    S determines the area of each marker (in points^2). S can be a
@@ -20,7 +20,7 @@ function h = m_scatter(long,lat,varargin)
 %    a bubble plot.
 %    M_SCATTER(...,M) uses the marker M instead of 'o'.
 %    M_SCATTER(...,'filled') fills the markers.
-%  
+%    M_SCATTER(AX,...) plots in the axes given by AX.
 %    H = M_SCATTER(...) returns handles to the scatter objects created.
 % 
 %    Use M_PLOT for single color, single marker size scatter plots.
@@ -35,14 +35,19 @@ if isempty(MAP_PROJECTION)
   return;
 end
 
-if nargin < 2
+ax=0;
+if (nargin > 0) && (numel(varargin{1}) == 1) && ...
+      ishandle(varargin{1}) && strcmp(get(varargin{1},'type'),'axes')
+  ax=1;
+end
+if nargin < 2+ax
   help m_scatter
   return
 end
 
-[x,y] = m_ll2xy(long,lat);
+[varargin{ax+(1:2)}] = m_ll2xy(varargin{ax+(1:2)});
 
-h=scatter(x,y,varargin{:});
+h=scatter(varargin{:});
 
 set(h,'tag','m_scatter');
 
