@@ -45,7 +45,8 @@ if nargin < 2+ax
   return
 end
 
-[varargin{ax+(1:2)}] = m_ll2xy(varargin{ax+(1:2)});
+% clip points outside map limits
+[varargin{ax+(1:2)}] = m_ll2xy(varargin{ax+(1:2)},'clip','point');
 
 h=scatter(varargin{:});
 
